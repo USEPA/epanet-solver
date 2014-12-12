@@ -27,5 +27,7 @@ The source code distributed here is identical to the code found at the official 
 Active Development
 ------------------
 We are actively developing features in the following areas:
+
+ - Thread Safety and HPC
  - Real Time Monitoring
  - Water Quality 
