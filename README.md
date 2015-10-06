@@ -22,10 +22,9 @@ Git Hub and software repositories are geared towards people with software develo
 
 Find Out More
 -------------
-The source code distributed here is identical to the code found at the official [EPANET Website](http://www.epa.gov/nrmrl/wswrd/dw/epanet.html). 
+The source code distributed here is identical to the code found at the official [EPANET Website](http://www2.epa.gov/water-research/epanet). 
 
 Active Development
 ------------------
 We are actively developing features in the following areas:
- - Real Time Monitoring
- - Water Quality 
+- ?
