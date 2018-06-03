@@ -11,6 +11,10 @@ AUTHOR:     L. Rossman
 **********************************************************************
 */
 
+#ifndef ENUMSTXT_H
+#define ENUMSTXT_H
+#include "text.h"
+
 char *NodeTxt[]         = {t_JUNCTION,
                            t_RESERVOIR,
                            t_TANK}; 
@@ -114,15 +118,6 @@ char *SectTxt[]         = {s_TITLE,     s_JUNCTIONS, s_RESERVOIRS,
                            s_TAGS,      s_END,
                            NULL};
 
-char *RptSectTxt[]      = {NULL,       t_JUNCTION, t_RESERVOIR,
-                           t_TANK,     t_PIPE,     t_PUMP,
-                           t_VALVE,    t_CONTROL,  t_RULE,
-                           t_DEMANDFOR,t_SOURCE,   t_EMITTER,
-                           t_PATTERN,  t_CURVE,    t_QUALITY,
-                           t_STATUS,   t_ROUGHNESS,t_ENERGY,
-                           t_REACTION, t_MIXING,   t_REPORT,
-                           t_TIME,     t_OPTION};
-
 char *Fldname[]         = {t_ELEV,      t_DEMAND,    t_HEAD,
                            t_PRESSURE,  t_QUALITY,   t_LENGTH,
                            t_DIAM,      t_FLOW,      t_VELOCITY,
@@ -130,6 +125,5 @@ char *Fldname[]         = {t_ELEV,      t_DEMAND,    t_HEAD,
                            t_SETTING,   t_REACTRATE, t_FRICTION,
                            "", "", "", "", "", "", NULL};
 
-char *LogoTxt[]         = {LOGO1,LOGO2,LOGO3,LOGO4,LOGO5,LOGO6,NULL};
 
-
+#endif
