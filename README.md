@@ -1,14 +1,30 @@
-EPANET {#epanet-readme}
-======
+Water-Distribution-Network-Model
+================================
 
-[![Build Status](https://travis-ci.org/OpenWaterAnalytics/EPANET.svg?branch=master)](https://travis-ci.org/OpenWaterAnalytics/EPANET)
+ORD Water Distribution Network Model (AKA "EPANET")
 
-The EPANET Library is a pressurized pipe network hydraulic and water quality analysis toolkit written in C. 
+Introduction
+------------
+This is the official EPANET source code repository maintained by US EPA ORD, NRMRL, Water Supply and Water Resources Division located in Cincinnati, Ohio.
 
-If you are interested in using/extending EPANET for academic, personal, or commercial use, then you've come to the right place. For community discussion, FAQ, and roadmapping of the project, go to the [Community Forum](http://community.wateranalytics.org/category/epanet). 
+EPANET performs extended period simulation of hydraulics and water quality within potable water distribution networks. EPANET source code is written in the C Programming Language and released in the Public Domain.
 
-Please see the [`version 2.1` Release Notes](https://github.com/OpenWaterAnalytics/EPANET/blob/master/ReleaseNotes2_1.md) for information relevant to users of the previous official version (2.00.12). If you would like to contribute by addressing any of the outstanding [Issues](https://github.com/OpenWaterAnalytics/EPANET/issues), then please comment on the Issue, then Fork this repo to your own account and base your commits on the [`dev` branch](https://github.com/OpenWaterAnalytics/EPANET/tree/dev). Once you are finished, you can open a Pull Request to test the code and discuss merging your changes back into the community respository.
+Lewis Rossman created EPANET in the early 1990s and actively developed and maintained the project until 2008. Over the intervening years he received support from too many members of the WDS modeling community to name individually. 
+ 
+Intended Audience
+-----------------
+The intended audience for this repository can be divided roughly into two groups:
+ 
+ - Programmers interested in water distribution system modeling
+ - Engineers working on water distribution system modeling interested in programming
+ 
+Git Hub and software repositories are geared towards people with software development experience. If you've ever hacked EPANET or built a Matlab script for running hydraulic simulations, you may find the contents of this repository helpful. We encourage you to fork EPANET and develop a great new feature to share with the community. 
 
-__Note:__ This repository is not affiliated with, or endorsed by, the USEPA. For the last "official" release of EPANET (2.00.12 UI and Toolkit) please go to the [EPA's GitHub repo](https://github.com/USEPA/Water-Distribution-Network-Model) or [the USEPA website](http://www2.epa.gov/water-research/epanet). It is also not the graphical user interface version. This is the hydraulic and water quality solver engine.
+Find Out More
+-------------
+The source code distributed here is identical to the code found at the official [EPANET Website](http://www2.epa.gov/water-research/epanet). 
 
-However, if you are interested in extending EPANET for academic, personal, or commercial use, then you've come to the right place. For community discussion, FAQ, and roadmapping of the project, go to the [Community Forum](http://community.wateranalytics.org/category/epanet). 
+Active Development
+------------------
+We are actively developing features in the following areas:
+- ?
