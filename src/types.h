@@ -17,6 +17,8 @@ AUTHOR:     L. Rossman
                                                                      
 **********************************************************************
 */
+#ifndef TYPES_H
+#define TYPES_H
 
 /*********************************************************/
 /* All floats have been re-declared as doubles (7/3/07). */
@@ -35,9 +37,9 @@ typedef  int          INT4;                                                    /
 -----------------------------
 */
 /*** Updated ***/
-#define   CODEVERSION        20012                                             //(2.00.12 - LR)
+#define   CODEVERSION        20100
 #define   MAGICNUMBER        516114521
-#define   VERSION            200
+#define   ENGINE_VERSION     201
 #define   EOFMARK            0x1A  /* Use 0x04 for UNIX systems */
 #define   MAXTITLE  3        /* Max. # title lines                     */
 #define   MAXID     31       /* Max. # characters in ID name           */      //(2.00.11 - LR)
@@ -165,6 +167,14 @@ typedef struct        /* CURVE OBJECT */
    double *Y;          /* Y-values         */
 }  Scurve;
 
+typedef struct        /* Coord OBJECT */
+{
+	char   ID[MAXID+1];  /* Coord ID         */
+	double X;            /* X-value          */
+	double Y;            /* Y-value          */
+	char   HaveCoords;   /* Coordinates flag */
+}  Scoord;
+
 struct Sdemand            /* DEMAND CATEGORY OBJECT */
 {
    double Base;            /* Baseline demand  */
@@ -206,6 +216,7 @@ typedef struct            /* LINK OBJECT */
    double  Kb;             /* Bulk react. coeff */
    double  Kw;             /* Wall react. coeff */
    double  R;              /* Flow resistance   */
+   double  Rc;             /* Reaction cal      */
    char    Type;           /* Link type         */
    char    Stat;           /* Initial status    */
    char    Rpt;            /* Reporting flag    */
@@ -451,3 +462,4 @@ enum HdrType                    /* Type of table heading   */
                   NODEHDR,      /*  Node Results           */
                   LINKHDR};     /*  Link Results           */
 
+#endif

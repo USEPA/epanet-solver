@@ -25,6 +25,10 @@ AUTHOR:     L. Rossman
 **  NOTE: The exportable functions that can be called
 **        via the DLL are prototyped in TOOLKIT.H.
 */
+
+#ifndef FUNCS_H
+#define FUNCS_H
+
 void    initpointers(void);               /* Initializes pointers       */
 int     allocdata(void);                  /* Allocates memory           */
 void    freeTmplist(STmplist *);          /* Frees items in linked list */
@@ -82,6 +86,7 @@ int     pumpdata(void);                   /* Processes pump data        */
 int     valvedata(void);                  /* Processes valve data       */
 int     patterndata(void);                /* Processes pattern data     */
 int     curvedata(void);                  /* Processes curve data       */
+int     coordata(void);                   /* Processes coordinate data  */
 int     demanddata(void);                 /* Processes demand data      */
 int     controldata(void);                /* Processes simple controls  */
 int     energydata(void);                 /* Processes energy data      */
@@ -279,3 +284,5 @@ int     saveepilog(void);                 /* Saves output file epilog   */
 
 /* ------------ INPFILE.C --------------*/
 int     saveinpfile(char *);              /* Saves network to text file  */
+
+#endif

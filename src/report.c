@@ -24,11 +24,14 @@ formatted string S to the report file.
                                                                     
 ********************************************************************
 */
-#define _CRT_SECURE_NO_DEPRECATE
 
 #include <stdio.h>
 #include <string.h>
+#ifndef __APPLE__
 #include <malloc.h>
+#else
+#include <stdlib.h>
+#endif
 #include <math.h>
 #include <time.h>
 #include "hash.h"
@@ -49,7 +52,6 @@ extern char *NodeTxt[];
 extern char *LinkTxt[];
 extern char *StatTxt[];
 extern char *TstatTxt[];
-extern char *LogoTxt[];
 extern char *RptFormTxt[];
 
 typedef   REAL4 *Pfloat;
@@ -144,16 +146,31 @@ void  writelogo()
 **--------------------------------------------------------------
 */
 {
-   int    i;
+   int i;
+   int version;
+   int major;
+   int minor;
+   char s[80];
    time_t timer;         /* time_t structure & functions time() & */
                          /* ctime() are defined in time.h         */
+   
+   version = CODEVERSION;
+   major=  version/10000;
+   minor=  (version%10000)/100;
+
    time(&timer);
    strcpy(DateStamp,ctime(&timer));
    PageNum = 1;
    LineNum = 2;
    fprintf(RptFile,FMT18);
    fprintf(RptFile,"%s",DateStamp);
-   for (i=0; LogoTxt[i] != NULL; i++) writeline(LogoTxt[i]);
+   writeline(LOGO1);
+   writeline(LOGO2);
+   writeline(LOGO3);
+   writeline(LOGO4);
+   sprintf(s,LOGO5, major , minor);
+   writeline(s);
+   writeline(LOGO6);
    writeline("");
 }                        /* End of writelogo */
 
@@ -293,15 +310,15 @@ void  writehydstat(int iter, double relerr)
    for (i=1; i<=Ntanks; i++)
    {
       n = Tank[i].Node;
-      if (ABS(D[n]) < 0.001) newstat = CLOSED;
-      else if (D[n] >  0.0)  newstat = FILLING;
-      else if (D[n] <  0.0)  newstat = EMPTYING;
+      if (ABS(NodeDemand[n]) < 0.001) newstat = CLOSED;
+      else if (NodeDemand[n] >  0.0)  newstat = FILLING;
+      else if (NodeDemand[n] <  0.0)  newstat = EMPTYING;
       else newstat = OldStat[Nlinks+i];
       if (newstat != OldStat[Nlinks+i])
       {
          if (Tank[i].A > 0.0)
             sprintf(s1,FMT50,atime,Node[n].ID,StatTxt[newstat],
-               (H[n]-Node[n].El)*Ucf[HEAD],Field[HEAD].Units);
+               (NodeHead[n]-Node[n].El)*Ucf[HEAD],Field[HEAD].Units);
          else sprintf(s1,FMT51,atime,Node[n].ID,StatTxt[newstat]);
          writeline(s1);
          OldStat[Nlinks+i] = newstat;
@@ -311,15 +328,15 @@ void  writehydstat(int iter, double relerr)
    /* Display status changes for links */
    for (i=1; i<=Nlinks; i++)
    {
-      if (S[i] != OldStat[i])
+      if (LinkStatus[i] != OldStat[i])
       {
          if (Htime == 0)
             sprintf(s1,FMT52,atime,LinkTxt[Link[i].Type],Link[i].ID,
-               StatTxt[S[i]]);
+               StatTxt[LinkStatus[i]]);
          else sprintf(s1,FMT53,atime,LinkTxt[Link[i].Type],Link[i].ID,
-            StatTxt[OldStat[i]],StatTxt[S[i]]);
+            StatTxt[OldStat[i]],StatTxt[LinkStatus[i]]);
          writeline(s1);
-         OldStat[i] = S[i];
+         OldStat[i] = LinkStatus[i];
       }
    }
    writeline(" ");
@@ -760,7 +777,7 @@ void  writestatchange(int k, char s1, char s2)
    {
 
 /*** Updated 10/25/00 ***/
-      setting = K[k];   //Link[k].Kc;
+      setting = LinkSetting[k];   //Link[k].Kc;
 
       switch (Link[k].Type)
       {
@@ -868,7 +885,7 @@ int  writehydwarn(int iter, double relerr)
    /* Check for negative pressures */
    for (i=1; i<=Njuncs; i++)
    {
-      if (H[i] < Node[i].El && D[i] > 0.0)
+      if (NodeHead[i] < Node[i].El && NodeDemand[i] > 0.0)
       {
          sprintf(Msg,WARN06,clocktime(Atime,Htime));
          if (Messageflag) writeline(Msg);
@@ -881,10 +898,10 @@ int  writehydwarn(int iter, double relerr)
    for (i=1; i<=Nvalves; i++)
    {
       j = Valve[i].Link;
-      if (S[j] >= XFCV)
+      if (LinkStatus[j] >= XFCV)
       {
          sprintf(Msg,WARN05,LinkTxt[Link[j].Type],Link[j].ID,
-            StatTxt[S[j]],clocktime(Atime,Htime));
+            StatTxt[LinkStatus[j]],clocktime(Atime,Htime));
          if (Messageflag) writeline(Msg);
          flag = 5;
       }
@@ -894,10 +911,10 @@ int  writehydwarn(int iter, double relerr)
    for (i=1; i<=Npumps; i++)
    {
       j = Pump[i].Link;
-      s = S[j];                                                                //(2.00.11 - LR)
-      if (S[j] >= OPEN)                                                        //(2.00.11 - LR)
+      s = LinkStatus[j];                                                                //(2.00.11 - LR)
+      if (LinkStatus[j] >= OPEN)                                                        //(2.00.11 - LR)
       {                                                                        //(2.00.11 - LR)
-          if (Q[j] > K[j]*Pump[i].Qmax) s = XFLOW;                             //(2.00.11 - LR)
+          if (Q[j] > LinkSetting[j]*Pump[i].Qmax) s = XFLOW;                             //(2.00.11 - LR)
           if (Q[j] < 0.0) s = XHEAD;                                           //(2.00.11 - LR)
       }                                                                        //(2.00.11 - LR)
       if (s == XHEAD || s == XFLOW)                                            //(2.00.11 - LR)
@@ -981,7 +998,7 @@ int  disconnected()
    mcount = Ntanks;
    for (i=1; i<=Njuncs; i++)
    {
-      if (D[i] < 0.0)
+      if (NodeDemand[i] < 0.0)
       {
          mcount++;
          nodelist[mcount] = i;
@@ -996,7 +1013,7 @@ int  disconnected()
    count = 0;
    for (i=1; i<=Njuncs; i++)
    {
-      if (!marked[i] && D[i] != 0.0)  /* Skip if no demand */
+      if (!marked[i] && NodeDemand[i] != 0.0)  /* Skip if no demand */
       {
          count++;
          if (count <= MAXCOUNT && Messageflag)
@@ -1065,7 +1082,7 @@ void  marknodes(int m, int *nodelist, char *marked)
          }
 
          /* Mark connection node if link not closed */
-         if (S[k] > CLOSED)
+         if (LinkStatus[k] > CLOSED)
          {
             marked[j] = 1;
             m++;
