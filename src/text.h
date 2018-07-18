@@ -14,6 +14,8 @@ AUTHOR:     L. Rossman
 ****************************************************
 */
 /* ------------ Keyword Dictionary ---------- */
+#ifndef TEXT_H
+#define TEXT_H
 
 #define   w_USE         "USE"
 #define   w_SAVE        "SAVE"
@@ -330,10 +332,10 @@ AUTHOR:     L. Rossman
 #define LOGO4  \
 "*                   Analysis for Pipe Networks                   *"
 #define LOGO5  \
-"*                         Version 2.00.12                        *"           //(2.00.12 - LR)
+"*                         Version %d.%d                            *"
 #define LOGO6  \
 "******************************************************************"
-#define FMT01  "\n... EPANET Version 2.0\n"
+#define FMT01  "\n... EPANET Version %d.%d\n"
 #define FMT02  "\n  o Retrieving network data"
 #define FMT03  "\n Correct syntax is:\n epanet <input file> <output file>\n"
 #define FMT04  "\n    Cannot use duplicate file names."
@@ -491,6 +493,10 @@ AUTHOR:     L. Rossman
 #define ERR250 "Input Error 250: function call contains invalid format."
 #define ERR251 "Input Error 251: function call contains invalid parameter code."
 
+#define ERR253 "Input Error 253: Function call error - No such demand category index."
+#define ERR254 "Input Error 254: Function call error - Node have no coordinates."
+#define ERR255 "Input Error 255: Function call error - Coordinates were not loaded."
+
 #define ERR301 "File Error 301: identical file names."
 #define ERR302 "File Error 302: cannot open input file."
 #define ERR303 "File Error 303: cannot open report file."
@@ -500,6 +506,8 @@ AUTHOR:     L. Rossman
 #define ERR307 "File Error 307: cannot read hydraulics file."
 #define ERR308 "File Error 308: cannot save results to file."
 #define ERR309 "File Error 309: cannot save results to report file."
+
+#define ERR401 "Sync Error 401: Qstep is not dividable by Hstep. Can't sync."
 
 #define R_ERR201 "Input Error 201: syntax error in following line of "
 #define R_ERR202 "Input Error 202: illegal numeric value in following line of "
@@ -528,3 +536,4 @@ AUTHOR:     L. Rossman
 #define WARN5 "WARNING: Valves cannot deliver enough flow."
 #define WARN6 "WARNING: System has negative pressures."
 
+#endif
