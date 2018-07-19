@@ -11,7 +11,13 @@ AUTHOR:     L. Rossman
                                                                      
 ************************************************************************
 */
-EXTERN FILE     *InFile,               /* Input file pointer           */
+#ifndef VARS_H
+#define VARS_H
+
+#include <stdio.h>
+#include "hash.h"
+
+EXTERN FILE			*InFile,               /* Input file pointer           */
                 *OutFile,              /* Output file pointer          */
                 *RptFile,              /* Report file pointer          */
                 *HydFile,              /* Hydraulics file pointer      */
@@ -58,7 +64,8 @@ EXTERN char     Msg[MAXMSG+1],         /* Text of output message       */
                 SaveHflag,             /* Hydraul. results saved flag  */
                 OpenQflag,             /* Quality system opened flag   */
                 SaveQflag,             /* Quality results saved flag   */
-                Saveflag;              /* General purpose save flag    */
+                Saveflag,              /* General purpose save flag    */
+                Coordflag;             /* Load coordinates flag        */
 EXTERN int      MaxNodes,              /* Node count from input file   */
                 MaxLinks,              /* Link count from input file   */
                 MaxJuncs,              /* Junction count               */
@@ -136,28 +143,34 @@ EXTERN long     Tstart,                /* Starting time of day (sec)   */
 EXTERN SField   Field[MAXVAR];         /* Output reporting fields      */
 
 /* Array pointers not allocated and freed in same routine */
-EXTERN char     *S,                    /* Link status                  */
+EXTERN char           *LinkStatus,           /* Link status                  */
                 *OldStat;              /* Previous link/tank status    */
-EXTERN double   *D,                    /* Node actual demand           */
-                *C,                    /* Node actual quality          */
+EXTERN double         *NodeDemand,           /* Node actual demand           */
+                *NodeQual,             /* Node actual quality          */
                 *E,                    /* Emitter flows                */
-                *K,                    /* Link settings                */
+                *LinkSetting,          /* Link settings                */
                 *Q,                    /* Link flows                   */
-                *R,                    /* Pipe reaction rate           */
-                *X;                    /* General purpose array        */
-EXTERN double   *H;                    /* Node heads                   */
+                *PipeRateCoeff,        /* Pipe reaction rate           */
+                *X,                    /* General purpose array        */
+                *TempQual;             /* General purpose array for water quality        */
+EXTERN double   *NodeHead;             /* Node heads                   */
+EXTERN double *QTankVolumes;
+EXTERN double *QLinkFlow;
 EXTERN STmplist *Patlist;              /* Temporary time pattern list  */ 
 EXTERN STmplist *Curvelist;            /* Temporary list of curves     */
 EXTERN Spattern *Pattern;              /* Time patterns                */
 EXTERN Scurve   *Curve;                /* Curve data                   */
+EXTERN Scoord   *Coord;                /* Coordinate data              */
 EXTERN Snode    *Node;                 /* Node data                    */
 EXTERN Slink    *Link;                 /* Link data                    */
 EXTERN Stank    *Tank;                 /* Tank data                    */
 EXTERN Spump    *Pump;                 /* Pump data                    */
 EXTERN Svalve   *Valve;                /* Valve data                   */
 EXTERN Scontrol *Control;              /* Control data                 */
-EXTERN HTtable  *Nht, *Lht;            /* Hash tables for ID labels    */
+EXTERN ENHashTable  *NodeHashTable, *LinkHashTable;            /* Hash tables for ID labels    */
 EXTERN Padjlist *Adjlist;              /* Node adjacency lists         */
+EXTERN double _relativeError;
+EXTERN int _iterations; /* Info about hydraulic solution */
 
 /*
 ** NOTE: Hydraulic analysis of the pipe network at a given point in time
@@ -194,3 +207,5 @@ EXTERN int      *Order,      /* Node-to-row of A                    */
 EXTERN int      *XLNZ,       /* Start position of each column in NZSUB  */
                 *NZSUB,      /* Row index of each coeff. in each column */
                 *LNZ;        /* Position of each coeff. in Aij array    */
+
+#endif

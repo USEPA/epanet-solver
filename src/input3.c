@@ -19,12 +19,13 @@ All functions in this module are called from newline() in INPUT2.C.
 
 **********************************************************************
 */
-#define _CRT_SECURE_NO_DEPRECATE
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 #include <math.h>
 #include "hash.h"
 #include "text.h"
@@ -96,9 +97,9 @@ int  juncdata()
       demand->Pat = p;
       demand->next = Node[Njuncs].D;
       Node[Njuncs].D = demand;
-      D[Njuncs] = y;
+      NodeDemand[Njuncs] = y;
    }
-   else D[Njuncs] = MISSING;
+   else NodeDemand[Njuncs] = MISSING;
 /*** end of update ***/
    return(0);
 }                        /* end of juncdata */
@@ -576,6 +577,37 @@ int  curvedata()
    return(0);
 }
 
+int  coordata()
+/*
+ **--------------------------------------------------------------
+ **  Input:   none
+ **  Output:  returns error code
+ **  Purpose: processes coordinate data
+ **  Format:
+ **    [COORD]
+ **      id  x  y
+ **--------------------------------------------------------------
+ */
+{
+	double x, y;
+  int j;
+  
+	/* Check for valid node ID */
+	if (Ntokens < 3) return(201);
+  
+  /* Check for valid data */
+  if ((j = findnode(Tok[0])) == 0) return(203);
+	if (!getfloat(Tok[1],&x)) return(202);
+	if (!getfloat(Tok[2],&y)) return(202);
+    
+	/* Save coord data */
+	strncpy(Coord[j].ID, Node[j].ID, MAXID);
+	Coord[j].X  = x;
+	Coord[j].Y  = y;
+	Coord[j].HaveCoords = TRUE;
+	
+  return(0);
+}                        /* end of coordata */
 
 int  demanddata()
 /*
@@ -626,11 +658,11 @@ int  demanddata()
 
 /*** Updated 6/24/02 ***/
    demand = Node[j].D;
-   if (demand && D[j] != MISSING)
+   if (demand && NodeDemand[j] != MISSING)
    {
       demand->Base = y;
       demand->Pat  = p;
-      D[j] = MISSING;
+      NodeDemand[j] = MISSING;
    }
 /*** End of update ***/
 
@@ -1314,7 +1346,7 @@ int  reportdata()
 /* Check if input is a reporting criterion. */
 
 /*** Special case needed to distinguish "HEAD" from "HEADLOSS" ***/            //(2.00.11 - LR)
-   if (strcomp(Tok[0], w_HEADLOSS)) i = HEADLOSS;                              //(2.00.11 - LR)
+   if (strcomp(Tok[0], t_HEADLOSS)) i = HEADLOSS;                              
    else i = findmatch(Tok[0],Fldname);                                         //(2.00.11 - LR)
    if (i >= 0)                                                                 //(2.00.11 - LR)
 /*****************************************************************/            //(2.00.11 - LR)
@@ -1413,8 +1445,7 @@ int  timedata()
          if ( (y = hour(Tok[n-1],Tok[n])) < 0.0) return(213);
       }
    }
-   t = (long)(3600.0*y);
-
+   t = (long)(3600.0*y+0.5);
 /* Process the value assigned to the matched parameter */
    if      (match(Tok[0],w_DURATION))  Dur = t;      /* Simulation duration */
    else if (match(Tok[0],w_HYDRAULIC)) Hstep = t;    /* Hydraulic time step */
