@@ -4,9 +4,9 @@ Quality Assurance Project Plan
 Research and Development on ORD’s Water Distribution Network Model – EPANET
 ---------------------------------------------------------------------------
 
-####US EPA/ORD/NRMRL/ Water Supply and Water Resources Division
+#### US EPA/ORD/NRMRL/ Water Supply and Water Resources Division
 
-####October 2017
+#### October 2017
 
 **List of Acronyms**
 
