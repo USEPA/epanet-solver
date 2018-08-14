@@ -1,63 +1,64 @@
-**Quality Assurance Project Plan**
+Quality Assurance Project Plan
+==============================
 
-**Research and Development on ORD's Water Distribution Network Model --
-EPANET **
+Research and Development on ORD’s Water Distribution Network Model – EPANET
+---------------------------------------------------------------------------
 
-**US EPA/ORD/NRMRL/ Water Supply and Water Resources Division**
+##US EPA/ORD/NRMRL/ Water Supply and Water Resources Division
 
-October, 2017
+##October 2017
 
 **List of Acronyms**
 
-ASC Advanced Simulation & Computing
+ASC - Advanced Simulation & Computing
 
-EPA Environmental Protection Agency
+EPA - Environmental Protection Agency
 
-GIS Graphical Information System
+GIS - Graphical Information System
 
-GPU Graphics Processing Unit
+GPU - Graphics Processing Unit
 
-LOF Level of Formality
+LOF - Level of Formality
 
-ORD Office of Research and Development
+ORD - Office of Research and Development
 
-OW Office of Water
+OW - Office of Water
 
-OWA Open Water Analytics
+OWA - Open Water Analytics
 
-QA Quality Assurance
+QA - Quality Assurance
 
-QAPP Quality Assurance Project Plan
+QAPP - Quality Assurance Project Plan
 
-QC Quality Control
+QC - Quality Control
 
-RAP Research Action Plan
+RAP - Research Action Plan
 
-UI User Interface
+UI - User Interface
 
-VOTD Version of the Day
+VOTD - Version of the Day
 
-WDN Water Distribution Network
+WDN - Water Distribution Network
 
-WDSA Water Distribution System Analysis
+WDSA - Water Distribution System Analysis
 
-WST Water Security Tool
+WST - Water Security Tool
 
-WNTR Water Network Tool for Resilience
+WNTR - Water Network Tool for Resilience
 
 **Table of Contents**
 
-Introduction
+-   Introduction
 
-Project Management
+-   Project Management
 
-Model and Algorithm Development
+-   Model and Algorithm Development
 
-Software Engineering
+-   Software Engineering
 
-Data Acquisition and Management
+-   Data Acquisition and Management
 
-Software Verification
+-   Software Verification
 
 Introduction
 ============
@@ -221,18 +222,18 @@ quality can be measured in several meaningful ways:
 The quality assurance/quality control (QA/QC) goals for this software
 development project include the following:
 
-• Objectivity---each step in the software development cycle should use
-methods that are explicitly stated and adhered to
+> • Objectivity---each step in the software development cycle should use
+> methods that are explicitly stated and adhered to
 
-• Thoroughness---all elements of the study should be carried out and
-documented in a thorough manner
+> • Thoroughness---all elements of the study should be carried out and
+> documented in a thorough manner
 
-• Consistency---all work should be performed and documented in a
-consistent manner
+> • Consistency---all work should be performed and documented in a
+> consistent manner
 
-• Transparency---the programming code, testing scripts, and
-documentation should clearly describe the assumptions and methods used
-and verify the capabilities specified in the functional requirements.
+> • Transparency---the programming code, testing scripts, and
+> documentation should clearly describe the assumptions and methods used
+> and verify the capabilities specified in the functional requirements.
 
 Guidelines and procedures are needed to govern software development. Our
 goal is to create EPANET software of the highest utility and quality.
