@@ -61,7 +61,7 @@ xcuserdata
 [Dd]ebug/
 [Rr]elease/
 x64/
-#build/
+build/
 [Bb]in/
 [Oo]bj/
 
@@ -219,3 +219,18 @@ temp/
 .project
 .cproject
 .pydevproject
+
+# Testing Stuff
+nrtestsuite/
+tests/data/
+tests/outfile/data/en*
+
+
+#Cmake stuff
+__cmake_systeminformation/
+buildprod*/
+*_export.h
+
+
+# git merge
+*.orig

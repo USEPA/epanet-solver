@@ -1,21 +1,20 @@
 /*
-****************************************************
-
-      String Constants for EPANET Program                            
-                                                                     
-VERSION:    2.00                                               
-DATE:       5/8/00
-            10/25/00
-            8/15/07     (2.00.11)
-            2/14/08    (2.00.12)
-AUTHOR:     L. Rossman
-            US EPA - NRMRL
-                                                                     
-****************************************************
+ ******************************************************************************
+ Project:      OWA EPANET
+ Version:      2.2
+ Module:       text.h
+ Description:  string constants used throughout EPANET
+ Authors:      see AUTHORS
+ Copyright:    see AUTHORS
+ License:      see LICENSE
+ Last Updated: 11/27/2018
+ ******************************************************************************
 */
-/* ------------ Keyword Dictionary ---------- */
+
 #ifndef TEXT_H
 #define TEXT_H
+
+//------- Keyword Dictionary ------------------------------
 
 #define   w_USE         "USE"
 #define   w_SAVE        "SAVE"
@@ -140,7 +139,16 @@ AUTHOR:     L. Rossman
 #define   w_RQTOL       "RQTOL"
 #define   w_CHECKFREQ   "CHECKFREQ"
 #define   w_MAXCHECK    "MAXCHECK"
-#define   w_DAMPLIMIT   "DAMPLIMIT"                                            
+#define   w_DAMPLIMIT   "DAMPLIMIT"
+
+#define   w_FLOWCHANGE  "FLOWCHANGE"
+#define   w_HEADERROR   "HEADERROR"
+
+#define   w_MODEL       "MODEL"
+#define   w_DDA         "DDA"
+#define   w_PDA         "PDA"
+#define   w_REQUIRED    "REQ"
+#define   w_EXPONENT    "EXP"
 
 #define   w_SECONDS     "SEC"
 #define   w_MINUTES     "MIN"
@@ -185,7 +193,8 @@ AUTHOR:     L. Rossman
 #define   w_ELSE        "ELSE"
 #define   w_PRIORITY    "PRIO"
 
-/* ---------Input Section Names ---------- */
+// ------ Input File Section Names ------------------------
+
 #define   s_TITLE       "[TITLE]"
 #define   s_JUNCTIONS   "[JUNCTIONS]"
 #define   s_RESERVOIRS  "[RESERVOIRS]"
@@ -216,8 +225,8 @@ AUTHOR:     L. Rossman
 #define   s_TAGS        "[TAGS]"
 #define   s_END         "[END]"
 
-/* ---------------- Units ---------------- */
-/*** Limit units to MAXID or less characters ***/
+//------- Units -------------------------------------------
+
 #define   u_CFS         "cfs"
 #define   u_GPM         "gpm"
 #define   u_AFD         "a-f/d"
@@ -248,13 +257,15 @@ AUTHOR:     L. Rossman
 #define   u_per1000FT   "/1000ft"
 #define   u_HP          "hp"
 
-/* -------------- Curve Types ----------------- */
+//------- Curve Types ------------------------------------- 
+
 #define   c_HEADLOSS    "HEADLOSS"
 #define   c_PUMP        "PUMP"
 #define   c_EFFIC       "EFFIC"
 #define   c_VOLUME      "VOLUME"
 
-/* ------------------  Text Phrases ------------------- */
+//------- Text Phrases ------------------------------------
+
 #define   t_ABOVE       "above"
 #define   t_BELOW       "below"
 #define   t_HW          "Hazen-Williams"
@@ -320,9 +331,13 @@ AUTHOR:     L. Rossman
 #define   t_perM3       "  /m3"
 #define   t_perMGAL     "/Mgal"
 #define   t_DIFFER      "DIFFERENTIAL"
+#define   t_FIXED       "Fixed Demands"
+#define   t_POWER       "Power Function"
+#define   t_ORIFICE     "Orifice Flow"
 
 
-/* ------------------ Format Messages ------------------*/
+//----- Summary Report Format Strings ---------------------
+
 #define LOGO1  \
 "******************************************************************"
 #define LOGO2  \
@@ -335,17 +350,12 @@ AUTHOR:     L. Rossman
 "*                         Version %d.%d                            *"
 #define LOGO6  \
 "******************************************************************"
-#define FMT01  "\n... EPANET Version %d.%d\n"
 #define FMT02  "\n  o Retrieving network data"
-#define FMT03  "\n Correct syntax is:\n %s <input file> <output file>\n"
 #define FMT04  "\n    Cannot use duplicate file names."
 #define FMT05  "\n    Cannot open input file "
 #define FMT06  "\n    Cannot open report file "
 #define FMT07  "\n    Cannot open output file "
 #define FMT08  "\n    Cannot open temporary output file"
-#define FMT09  "\n\n... EPANET completed.\n"
-#define FMT10  "\n\n... EPANET completed. There are warnings.\n"
-#define FMT11  "\n\n... EPANET completed. There are errors.\n"
 #define FMT14  "\n  o Computing hydraulics at hour "
 #define FMT15  "\n  o Computing water quality at hour "
 #define FMT16  "\n  o Transferring results to file"
@@ -359,12 +369,16 @@ AUTHOR:     L. Rossman
 #define FMT23  "    Number of Pumps ................... %-d"
 #define FMT24  "    Number of Valves .................. %-d"
 #define FMT25  "    Headloss Formula .................. %s"
+#define FMT25a "    Nodal Demand Model ................ %s"
 #define FMT26  "    Hydraulic Timestep ................ %-.2f %s"
 #define FMT27  "    Hydraulic Accuracy ................ %-.6f"
 
 #define FMT27a "    Status Check Frequency ............ %-d"                   
 #define FMT27b "    Maximum Trials Checked ............ %-d"                   
-#define FMT27c "    Damping Limit Threshold ........... %-.6f"                 
+#define FMT27c "    Damping Limit Threshold ........... %-.6f"
+
+#define FMT27d "    Headloss Error Limit .............. %-.6f %s"
+#define FMT27e "    Flow Change Limit ................. %-.6f %s"
 
 #define FMT28  "    Maximum Trials .................... %-d"
 #define FMT29  "    Quality Analysis .................. None"
@@ -388,10 +402,9 @@ AUTHOR:     L. Rossman
 #define FMT47  "       with %s below %-.2f %s"
 #define FMT48  "       with %s above %-.2f %s"
 
-/* ---------- Status Report Format Strings ------------ */
-#define FMT49  "Hydraulic Status:"
+//----- Status Report Format Strings ----------------------
 
-/*** Updated 6/24/02 ***/
+#define FMT49  "Hydraulic Status:"
 #define FMT50  "%10s: Tank %s is %s at %-.2f %s"
 #define FMT51  "%10s: Reservoir %s is %s"
 #define FMT52  "%10s: %s %s %s"
@@ -409,11 +422,14 @@ AUTHOR:     L. Rossman
 #define FMT61  "%10s: Valve %s caused ill-conditioning"
 #define FMT62  "%10s: System ill-conditioned at node %s"
 #define FMT63  "%10s: %s %s changed by rule %s"
-#define FMT64  "%10s: Balancing the network:"
+#define FMT64  "%10s: Balancing the network:\n"
 #define FMT65  "            Trial %2d: relative flow change = %-.6f"
-/*** End of update ***/
+#define FMT66  "                      maximum  flow change = %.4f for Link %s"
+#define FMT67  "                      maximum  flow change = %.4f for Node %s"
+#define FMT68  "                      maximum  head error  = %.4f for Link %s\n"
 
-/* -------------------- Energy Report Table ------------------- */
+//----- Energy Report Table -------------------------------
+
 #define FMT71  "Energy Usage:"
 #define FMT72  \
         "           Usage   Avg.     Kw-hr      Avg.      Peak      Cost"
@@ -422,40 +438,40 @@ AUTHOR:     L. Rossman
 #define FMT74  "%38s Demand Charge: %9.2f"
 #define FMT75  "%38s Total Cost:    %9.2f"
 
-/* -------------------- Node Report Table --------------------- */
+//----- Node Report Table ---------------------------------
+
 #define FMT76  "%s Node Results:"
 #define FMT77  "Node Results:"
 #define FMT78  "Node Results at %s hrs:"
 
-/* -------------------- Link Report Table --------------------- */
+//----- Link Report Table ---------------------------------
+
 #define FMT79  "%s Link Results:"
 #define FMT80  "Link Results:"
 #define FMT81  "Link Results at %s hrs:"
 #define FMT82  "\n\f\n  Page %-d    %60.60s\n"
 
-/* ------------------- Progress Messages ---------------------- */
-#define FMT100 "Retrieving network data..."
-#define FMT101 "Computing hydraulics at hour %s"
-#define FMT102 "Computing water quality at hour %s"
-#define FMT103 "Saving results to file..."
+//----- Progress Messages ---------------------------------
+
+#define FMT100 "    Retrieving network data ...                   "
+#define FMT101 "    Computing hydraulics at hour %-10s       "
+#define FMT102 "    Computing water quality at hour %-10s    "
+#define FMT103 "    Writing output report ...                     "
+#define FMT106 "    Transferring results to file ...              "
 #define FMT104 "Analysis begun %s"
 #define FMT105 "Analysis ended %s"
 
-/*------------------- Error Messages --------------------*/
-
-
-
-
+//----- Rule Error Messages -------------------------------
 
 #define R_ERR201 "Input Error 201: syntax error in following line of "
 #define R_ERR202 "Input Error 202: illegal numeric value in following line of "
 #define R_ERR203 "Input Error 203: undefined node in following line of "
 #define R_ERR204 "Input Error 204: undefined link in following line of "
 #define R_ERR207 "Input Error 207: attempt to control a CV in following line of "
-
 #define R_ERR221 "Input Error 221: mis-placed clause in following line of "
 
-/*-------------------- Specific Warning Messages -------------------------*/
+//----- Specific Warning Messages -------------------------
+
 #define WARN01 "WARNING: System unbalanced at %s hrs."
 #define WARN02 \
 "WARNING: Maximum trials exceeded at %s hrs. System may be unstable."
@@ -466,7 +482,8 @@ AUTHOR:     L. Rossman
 #define WARN05  "WARNING: %s %s %s at %s hrs."
 #define WARN06  "WARNING: Negative pressures at %s hrs."
 
-/*-------------------- General Warning Messages -------------------------*/
+//----- General Warning Messages --------------------------
+
 #define WARN1 "WARNING: System hydraulically unbalanced."
 #define WARN2 "WARNING: System may be hydraulically unstable."
 #define WARN3 "WARNING: System disconnected."

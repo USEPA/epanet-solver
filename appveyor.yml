@@ -5,49 +5,81 @@
 #
 #  Author: Michael E. Tryby
 #          US EPA - ORD/NRMRL
-# 
+#
 
 version: 2.0.{build}
 
-image: 
-  - Visual Studio 2013
+matrix:
+  allow_failures:
+  #GROUP: (SUPPORTED/EXPERIMENTAL)
+  #EXPERIMENTAL is allowed to fail under build matrix
+  - GROUP: "EXPERIMENTAL"
+
+environment:
+  matrix:
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    GENERATOR: "Visual Studio 15 2017"
+    GROUP: "SUPPORTED"
+    BOOST_ROOT: "C:/Libraries/boost_1_67_0"
+    PLATFORM: "win32"
+    REF_BUILD_ID: "538_1"
+  # New build on Visual Studio 15 2017
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    GENERATOR: "Visual Studio 15 2017 Win64"
+    GROUP: "EXPERIMENTAL"
+    BOOST_ROOT: "C:/Libraries/boost_1_67_0"
+    PLATFORM: "win64"
+    REF_BUILD_ID: "538_2"
 
 # called before repo cloning
-init: 
+init:
+  - set SUT_BUILD_ID=%APPVEYOR_BUILD_NUMBER%_%APPVEYOR_JOB_NUMBER%
   - set EPANET_HOME=%APPVEYOR_BUILD_FOLDER%
   - set BUILD_HOME=buildprod
   - set TEST_HOME=nrtestsuite
-  - set NRTEST_SCRIPT=C:\Python27\Scripts
-  - set GENERATOR="Visual Studio 10 2010"
-  - set BOOST_ROOT="C:\\Libraries\\boost"
-  - set BOOST_LIB="C:\\Libraries\\boost\\lib32-msvc-12.0"
+  - set PATH=%PATH%;%BOOST_ROOT%/
+
+  # See values set
+  - echo %APPVEYOR_BUILD_WORKER_IMAGE%
+  - echo %BUILD_HOME%
+  - echo %GENERATOR%
+  - echo %BOOST_ROOT%
 
 # called after repo clone
-install: 
+install:
   - python -m pip install -r tools\requirements-appveyor.txt
 
 # called before build
 before_build:
   - mkdir %BUILD_HOME%
   - cd %BUILD_HOME%
-  - cmake -G %GENERATOR% 
-    -DBOOST_ROOT="%BOOST_ROOT%"
-    -DBOOST_LIBRARYDIR="%BOOST_LIB%"
-    -DBoost_USE_STATIC_LIBS="ON" ..
+  - cmake -G "%GENERATOR%"
+    -DBUILD_TESTS=ON
+    -DBOOST_ROOT="%BOOST_ROOT%" ..
 
 # run custom build script
-build_script: 
-  - cmake --build . --config Release 
+build_script:
+  - cmake --build . --config Release
 
 before_test:
   - cd %EPANET_HOME%
-  - tools\before-test.cmd %TEST_HOME% %EPANET_HOME%\%BUILD_HOME%\bin\Release %APPVEYOR_REPO_COMMIT%
+  - tools\before-test.cmd %PLATFORM% %REF_BUILD_ID% %SUT_BUILD_ID% %APPVEYOR_REPO_COMMIT%
 
 # run custom test script
 test_script:
   # run unit tests
   - cd %BUILD_HOME%\tests
-  - ctest -C Release
+  - ctest -C Release --output-on-failure
   # run regression tests
   - cd %EPANET_HOME%
-  - tools\run-nrtest.cmd %NRTEST_SCRIPT% %TEST_HOME% %APPVEYOR_REPO_COMMIT%
+  - tools\run-nrtest.cmd %REF_BUILD_ID% %SUT_BUILD_ID%
+
+on_success:
+  - cd %TEST_HOME%\benchmark
+  - appveyor PushArtifact receipt.json
+
+on_failure:
+  - cd %TEST_HOME%\benchmark
+  # zip up the SUT benchmarks
+  - 7z a benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip .\epanet-%SUT_BUILD_ID%
+  - appveyor PushArtifact benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip
