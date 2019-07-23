@@ -19,11 +19,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-# configure file groups
-set(EPANET_OUT_SOURCES  src/epanet_output.c
-                       ../util/errormanager.c
-                       ../util/filemanager.c
-                       ../util/cstr_helper.c)
+set(EPANET_OUT_PUBLIC_HEADERS
+    include/epanet_output.h
+    include/epanet_output_enums.h
+    include/epanet_output_export.h
+    )
 
 
 # the binary output file API

@@ -104,6 +104,13 @@ IF (MSVC)
 ENDIF (MSVC)
 
 
+set(EPANET_PUBLIC_HEADERS
+    include/epanet2.h
+    include/epanet2_2.h
+    include/epanet2_enums.h
+    )
+
+
 # configure file groups
 file(GLOB EPANET_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} src/*.c src/util/*.c)
 file(GLOB EPANET_LIB_ALL RELATIVE ${PROJECT_SOURCE_DIR} src/* src/util/*)
