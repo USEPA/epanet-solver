@@ -19,17 +19,28 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-# configure file groups
-set(EPANET_OUT_SOURCES  src/epanet_output.c
-                       ../util/errormanager.c
-                       ../util/filemanager.c
-                       ../util/cstr_helper.c)
+set(EPANET_OUT_PUBLIC_HEADERS
+    include/epanet_output.h
+    include/epanet_output_enums.h
+    include/epanet_output_export.h
+    )
 
 
 # the binary output file API
-add_library(epanet-output SHARED ${EPANET_OUT_SOURCES})
-target_include_directories(epanet-output PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-                                                ${CMAKE_CURRENT_SOURCE_DIR}/../)
+add_library(epanet-output
+    SHARED
+        src/epanet_output.c
+        $<TARGET_OBJECTS:util_objs>
+    )
+
+target_include_directories(epanet-output
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${INCLUDE_DIST}>
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/
+    )
+
 
 include(GenerateExportHeader)
 generate_export_header(epanet-output
@@ -40,3 +51,14 @@ generate_export_header(epanet-output
 
 file(COPY ${CMAKE_CURRENT_BINARY_DIR}/epanet_output_export.h DESTINATION
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+
+
+install(TARGETS epanet-output EXPORT epanet-outputTargets
+    RUNTIME    DESTINATION "${TOOL_DIST}"
+    LIBRARY    DESTINATION "${TOOL_DIST}"
+    ARCHIVE    DESTINATION "${LIBRARY_DIST}"
+    FRAMEWORK  DESTINATION "${TOOL_DIST}"
+    )
+
+install(FILES ${EPANET_OUT_PUBLIC_HEADERS} DESTINATION "${INCLUDE_DIST}")
