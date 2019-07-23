@@ -27,10 +27,13 @@ IF (MSVC)
 ENDIF (MSVC)
 
 
-# configure file groups
+
+set(HEADER_PATH
+    "${PROJECT_SOURCE_DIR}/include"
+    )
 set(EPANET_PUBLIC_HEADERS
-    include/epanet2_2.h
-    include/epanet2_enums.h
+    ${HEADER_PATH}/epanet2_2.h
+    ${HEADER_PATH}/epanet2_enums.h
     )
 
 set(EPANET_PRIVATE_HEADERS
@@ -68,7 +71,7 @@ set(EPANET_SOURCES
     smatrix.c
     )
 
-
+# configure file groups
 source_group("Library"
     FILES
         ${EPANET_PRIVATE_HEADERS}
@@ -130,18 +133,18 @@ else()
         SHARED
             ${EPANET_PRIVATE_HEADERS}
             ${EPANET_SOURCES}
-            ${CMAKE_SOURCE_DIR}/include/epanet2.def
+            ${PROJECT_SOURCE_DIR}/include/epanet2.def
         )
-    set_source_files_properties(${CMAKE_SOURCE_DIR}/include/epanet2.def
+    set_source_files_properties(${PROJECT_SOURCE_DIR}/include/epanet2.def
         PROPERTIES_HEADER_FILE_ONLY TRUE
         )
 
-  endif ("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)" OR NOT MSVC)
+  endif()
 endif()
 
 target_include_directories(epanet2
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
     )
 
@@ -154,4 +157,13 @@ install(TARGETS epanet2
     FRAMEWORK  DESTINATION "${TOOL_DIST}"
     )
 
-install(FILES ${EPANET_PUBLIC_HEADERS} DESTINATION "${INCLUDE_DIST}")
+# Need to list files out individually otherwise is won't work
+install(
+    FILES
+        "${PROJECT_SOURCE_DIR}/include/epanet2.def"
+        "${PROJECT_SOURCE_DIR}/include/epanet2.h"
+        "${PROJECT_SOURCE_DIR}/include/epanet2_2.h"
+        "${PROJECT_SOURCE_DIR}/include/epanet2_enums.h"
+    DESTINATION
+        "${INCLUDE_DIST}"
+    )
