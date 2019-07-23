@@ -118,6 +118,13 @@ file(GLOB EPANET_LIB_ALL RELATIVE ${PROJECT_SOURCE_DIR} src/* src/util/*)
 list(REMOVE_ITEM EPANET_LIB_ALL "src/epanet_py.c")
 source_group("Library" FILES ${EPANET_LIB_ALL})
 
+# the shared library
+IF("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)" OR NOT MSVC)
+  add_library(epanet2 SHARED ${EPANET_LIB_ALL})
+ELSE(TRUE)
+  add_library(epanet2 SHARED ${EPANET_LIB_ALL} ${PROJECT_SOURCE_DIR}/include/epanet2.def)
+  set_source_files_properties(${PROJECT_SOURCE_DIR}/include/epanet2.def PROPERTIES_HEADER_FILE_ONLY TRUE)
+ENDIF("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)" OR NOT MSVC)
 
 # create build target for epanet library with python API
 IF (BUILD_PY_LIB)
