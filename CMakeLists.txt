@@ -32,7 +32,7 @@ if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
 endif()
 
 
-project(epanet
+project(epanet-solver
     VERSION 2.2.0
     )
 
