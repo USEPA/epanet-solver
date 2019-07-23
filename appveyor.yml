@@ -16,8 +16,8 @@ matrix:
   - GROUP: "EXPERIMENTAL"
 
 environment:
-  BUILD_HOME: buildprod
-  TEST_HOME:  nrtestsuite
+  BUILD_HOME: "buildprod"
+  TEST_HOME:  "nrtestsuite"
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     GENERATOR: "Visual Studio 15 2017"
@@ -64,7 +64,7 @@ build_script:
 
 before_test:
   - cd %EPANET_HOME%
-  - tools\before-test.cmd %PLATFORM% %REF_BUILD_ID% %SUT_BUILD_ID% %APPVEYOR_REPO_COMMIT%
+  - tools\before-test.cmd %REF_BUILD_ID%
 
 # run custom test script
 test_script:
@@ -73,7 +73,7 @@ test_script:
   - ctest -C Release --output-on-failure
   # run regression tests
   - cd %EPANET_HOME%
-  - tools\run-nrtest.cmd %REF_BUILD_ID% %SUT_BUILD_ID%
+  - tools\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
 
 on_success:
   - cd %TEST_HOME%\benchmark

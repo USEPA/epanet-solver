@@ -11,21 +11,27 @@
 ::    python -m pip install -r requirements.txt
 ::
 ::  Environment Variables:
-::    BUILD_HOME
-::    TEST_HOME
+::    BUILD_HOME - relative path
+::    TEST_HOME  - relative path
 ::    PLATFORM
 ::    REF_BUILD_ID
 ::
 ::  Arguments:
-::    1 - (SUT_VERSION)
-::    2 - (SUT_BUILD_ID)
+::    1 - (SUT_VERSION)  - optional argument
+::    2 - (SUT_BUILD_ID) - optional argument
 ::
 
 ::@echo off
 setlocal EnableDelayedExpansion
 
+:: determine project directory
 set "SCRIPT_HOME=%~dp0"
-cd %TEST_HOME%
+cd %SCRIPT_HOME%
+pushd ..
+set PROJ_DIR=%CD%
+popd
+
+cd %PROJ_DIR%\%TEST_HOME%
 
 :: Check existence
 
@@ -39,8 +45,8 @@ if [%2]==[] ( set "SUT_BUILD_ID=local"
 :: check if app config file exists
 if not exist apps\epanet-%SUT_BUILD_ID%.json (
   mkdir apps
-  call %SCRIPT_HOME%\app-config.cmd %BUILD_HOME%\bin\Release %PLATFORM% %SUT_BUILD_ID% %SUT_VERSION%^
-     > apps\epanet-%SUT_BUILD_ID%.json
+  call %SCRIPT_HOME%\app-config.cmd %PROJ_DIR%\%BUILD_HOME%\bin\Release^
+    %PLATFORM% %SUT_BUILD_ID% %SUT_VERSION% > apps\epanet-%SUT_BUILD_ID%.json
 )
 
 
@@ -70,7 +76,7 @@ set RTOL_VALUE=0.01
 set ATOL_VALUE=0.0
 
 :: change current directory to test suite
-cd %TEST_HOME%
+::cd %TEST_HOME%
 
 :: if present clean test benchmark results
 if exist %TEST_OUTPUT_PATH% (
