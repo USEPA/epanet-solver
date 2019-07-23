@@ -25,12 +25,33 @@
 #   CMake is available at https://cmake.org/download/
 #
 
-cmake_minimum_required (VERSION 2.8.8)
+cmake_minimum_required (VERSION 3.0)
 
-project(EPANET)
+project(epanet
+    VERSION 2.2.0
+    )
+
 
 # Append local dir to module search path
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+# Sets the position independent code property for all targets
+SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+
+
+# Sets default install prefix when cmakecache is initialized for first time
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "..." FORCE)
+endif()
+
+# Define install locations (will be prepended by install prefix)
+set(TOOL_DIST "bin")
+set(INCLUDE_DIST "include")
+set(LIBRARY_DIST "lib")
+set(CONFIG_DIST  "cmake")
+
+
 
 option(BUILD_TESTS "Build tests (requires Boost)" OFF)
 option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
@@ -40,6 +61,8 @@ option(BUILD_COVERAGE "Build library for coverage" OFF)
 IF (NOT BUILD_PY_LIB)
   add_subdirectory(run)
 ENDIF (NOT BUILD_PY_LIB)
+
+add_subdirectory(src/util)
 add_subdirectory(src/outfile)
 
 IF (BUILD_TESTS)
@@ -67,8 +90,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
-# Sets the position independent code property for all targets
-SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 
 
 IF (APPLE)
@@ -96,7 +118,6 @@ IF (BUILD_PY_LIB)
   # exclude legacy epanet 2.0 API and include epanet py API
   list(REMOVE_ITEM EPANET_LIB_ALL "src/epanet2.c")
   add_library(epanet_py SHARED ${EPANET_LIB_ALL} src/epanet_py.c src/util/errormanager.c)
-  target_include_directories(epanet_py PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
   include(GenerateExportHeader)
   GENERATE_EXPORT_HEADER(epanet_py
@@ -118,7 +139,6 @@ APPEND_COVERAGE_COMPILER_FLAGS()
 set(CMAKE_C_FLAGS_DEBUG "-O0")
 
 add_library(epanet2 SHARED ${EPANET_LIB_ALL})
-target_include_directories(epanet2 PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 
 # create build target for default epanet library with 2.0 and 2.2 API
@@ -132,6 +152,63 @@ ELSE (BUILD_PY_LIB)
     set_source_files_properties(${PROJECT_SOURCE_DIR}/include/epanet2.def PROPERTIES_HEADER_FILE_ONLY TRUE)
   ENDIF("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)" OR NOT MSVC)
 
-  target_include_directories(epanet2 PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
 ENDIF (BUILD_PY_LIB)
+
+target_include_directories(epanet2
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${INCLUDE_DIST}>
+    )
+
+
+
+install(TARGETS epanet2
+    EXPORT epanet2Targets
+    RUNTIME    DESTINATION "${TOOL_DIST}"    COMPONENT bin
+    LIBRARY    DESTINATION "${TOOL_DIST}"    COMPONENT shlib
+    ARCHIVE    DESTINATION "${LIBRARY_DIST}"
+    FRAMEWORK  DESTINATION "${TOOL_DIST}"
+    )
+
+install(FILES ${EPANET_PUBLIC_HEADERS} DESTINATION "${INCLUDE_DIST}")
+
+
+
+# Install license, authors, releaseNotes
+install(
+    FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
+        "${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes2_2.md"
+    DESTINATION
+        "./"
+    )
+
+# Create target import scripts so other cmake projects can use epanet libraries
+install(
+    EXPORT
+        epanet2Targets
+    DESTINATION
+        "${CONFIG_DIST}"
+    FILE
+        epanet2-config.cmake
+    )
+
+install(
+    EXPORT
+        epanet-outputTargets
+    DESTINATION
+        "${CONFIG_DIST}"
+    FILE
+        epanet-output-config.cmake
+    )
+
+
+
+# Configure CPack driven installer package
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_PACKAGE_VENDOR "US_EPA")
+set(CPACK_ARCHIVE_FILE_NAME "epanet")
+
+
+include(CPack)
