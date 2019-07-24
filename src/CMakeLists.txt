@@ -21,12 +21,6 @@ IF (APPLE)
   set(CMAKE_MACOSX_RPATH 1)
 ENDIF (APPLE)
 
-IF (MSVC)
-  set(CMAKE_C_FLAGS_RELEASE "/GL")
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-ENDIF (MSVC)
-
-
 
 set(HEADER_PATH
     "${PROJECT_SOURCE_DIR}/include"
@@ -142,6 +136,26 @@ else()
   endif()
 endif()
 
+target_compile_options(epanet2
+    PUBLIC
+        "$<$<CXX_COMPILER_ID:MSVC>:"
+            "/MT$<$<CONFIG:Debug>:d>"
+            "$<$<CONFIG:Release>:/GL>"
+        ">"
+    )
+
+target_compile_definitions(epanet2
+    PUBLIC
+        "_CRT_SECURE_NO_DEPRECATE"
+    )
+
+target_link_options(epanet2
+    PUBLIC
+        "$<$<CXX_COMPILER_ID:MSVC>:"
+            "$<$<CONFIG:Release>:/LTCG>"
+        ">"
+    )
+
 target_include_directories(epanet2
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -157,7 +171,7 @@ install(TARGETS epanet2
     FRAMEWORK  DESTINATION "${TOOL_DIST}"
     )
 
-# Need to list files out individually otherwise is won't work
+# Need to list files out individually otherwise it won't work
 install(
     FILES
         "${PROJECT_SOURCE_DIR}/include/epanet2.def"

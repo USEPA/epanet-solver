@@ -33,6 +33,13 @@ add_library(epanet-output
         $<TARGET_OBJECTS:util_objs>
     )
 
+target_compile_options(epanet-output
+    PUBLIC
+        "$<$<CXX_COMPILER_ID:MSVC>:"
+            "/MT$<$<CONFIG:Debug>:d>"
+        ">"
+    )
+
 target_include_directories(epanet-output
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
