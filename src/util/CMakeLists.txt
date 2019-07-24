@@ -25,13 +25,6 @@ set(UTIL_HEADERS
 
 add_library(util_objs OBJECT ${UTIL_SOURCES})
 
-target_compile_options(util_objs
-    PUBLIC
-        "$<$<CXX_COMPILER_ID:MSVC>:"
-            "/MT$<$<CONFIG:Debug>:d>"
-        ">"
-    )
-
 target_include_directories(util_objs
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}

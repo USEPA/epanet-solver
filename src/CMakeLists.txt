@@ -139,7 +139,6 @@ endif()
 target_compile_options(epanet2
     PUBLIC
         "$<$<CXX_COMPILER_ID:MSVC>:"
-            "/MT$<$<CONFIG:Debug>:d>"
             "$<$<CONFIG:Release>:/GL>"
         ">"
     )

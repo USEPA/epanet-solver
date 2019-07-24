@@ -44,6 +44,8 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
+# Searches for and create install rules for vcruntime.dll, msvcp.dll, etc.
+include(InstallRequiredSystemLibraries)
 
 # Sets default install prefix when cmakecache is initialized for first time
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
