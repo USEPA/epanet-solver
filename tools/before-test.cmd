@@ -31,7 +31,6 @@ set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
 set PROJ_DIR=%CD%
-popd
 
 set "EPANET_NRTESTS_URL=https://github.com/OpenWaterAnalytics/epanet-example-networks"
 
@@ -42,8 +41,9 @@ if not defined TEST_HOME ( set "TEST_HOME=nrtestsuite" )
 
 :: determine platform from CMakeCache.txt if not already defined
 if not defined PLATFORM (
-  for /F "tokens=*" %%p in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %PROJ_DIR%\%BUILD_HOME%\CmakeCache.txt' ) do ( set "FLAG=%%p" )
-  for /F "delims=: tokens=3" %%m in ( 'echo %FLAG%' ) do if "%%m"=="X86" ( set "PLATFORM=win32" ) else ( set "PLATFORM=win64" )
+  set PLATFORM=
+  for /F "tokens=*" %%p in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do ( set "FLAG=%%p" )
+  for /F "delims=: tokens=3" %%m in ( 'echo %FLAG%' ) do if /I "%%m" EQU "X86" ( set "PLATFORM=win32" ) else ( set "PLATFORM=win64" )
 )
 
 :: set REF_BUILD_ID using argument to script
@@ -64,11 +64,11 @@ if defined LATEST_TAG (
 ) else ( echo ERROR: Unable to determine latest tag & exit /B 1 )
 
 :: create a clean directory for staging regression tests
-if exist %PROJ_DIR%\%TEST_HOME% (
-  rmdir /s /q %PROJ_DIR%\%TEST_HOME%
+if exist %TEST_HOME% (
+  rmdir /s /q %TEST_HOME%
 )
-mkdir  %PROJ_DIR%\%TEST_HOME%
-cd  %PROJ_DIR%\%TEST_HOME%
+mkdir  %TEST_HOME%
+cd  %TEST_HOME%
 
 
 :: retrieve nrtest cases for regression testing
@@ -88,4 +88,4 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 mklink /D .\tests .\epanet-example-networks-%LATEST_TAG:~1%\epanet-tests > nul
 
 :: return to project home
-cd %PROJ_DIR%
+cd ..
