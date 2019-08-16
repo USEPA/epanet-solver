@@ -137,6 +137,10 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+# Doxygen
+doc/html/
+
+
 # Click-Once directory
 publish/
 
