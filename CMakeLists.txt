@@ -59,20 +59,25 @@ set(LIBRARY_DIST "lib")
 set(CONFIG_DIST  "cmake")
 
 
+option(BUILD_DOCS "Build toolkit docs (requires Doxygen)" OFF)
 option(BUILD_TESTS "Build tests (requires Boost)" OFF)
 option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
 option(BUILD_COVERAGE "Build library for coverage" OFF)
 
 
-IF (NOT BUILD_PY_LIB)
+if(BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
+
+if(NOT BUILD_PY_LIB)
   add_subdirectory(run)
-ENDIF (NOT BUILD_PY_LIB)
+endif()
 
 add_subdirectory(src)
 add_subdirectory(src/util)
 add_subdirectory(src/outfile)
 
-IF (BUILD_TESTS)
+if(BUILD_TESTS)
     #Prep ourselves for compiling with boost
     IF(WIN32)
         set(Boost_USE_STATIC_LIBS       ON)
@@ -88,7 +93,7 @@ IF (BUILD_TESTS)
     add_subdirectory(tests)
     add_subdirectory(tests/outfile)
     add_subdirectory(tests/util)
-ENDIF (BUILD_TESTS)
+endif(BUILD_TESTS)
 
 
 # Install license, authors, releaseNotes
