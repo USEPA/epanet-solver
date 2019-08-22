@@ -1,65 +1,99 @@
+
+
+
+/**
+@defgroup SolverGroup Solver API
+These functions are associated with the EPANET Toolkit Library
+*/
+
 /**
 @defgroup Project Project Functions
+@ingroup SolverGroup
+
 These functions are used to manage a project.
 */
 
 /**
 @defgroup Hydraulics Hydraulic Analysis Functions
+@ingroup SolverGroup
+
 These functions are used to perform a hydraulic analysis.
 */
 
 /**
 @defgroup Quality Water Quality Analysis Functions
+@ingroup SolverGroup
+
 These functions are used to perform a water quality analysis.
 */
 
 /**
 @defgroup Reporting Reporting Functions
+@ingroup SolverGroup
+
 These functions are used to report simulation results.
 */
 
 /**
 @defgroup Options Analysis Options Functions
+@ingroup SolverGroup
+
 These functions are used to get and set analysis options.
 */
 
 /**
 @defgroup Nodes Network Node Functions
+@ingroup SolverGroup
+
 These functions are used for working with network nodes.
 */
 
 /**
 @defgroup Demands Nodal Demand Functions
+@ingroup SolverGroup
+
 These functions are used for managing nodal demands.
 */
 
 /**
 @defgroup Links Network Link Functions
+@ingroup SolverGroup
+
 These functions are used for working with network links.
 */
 
 /**
 @defgroup Patterns Time Pattern Functions
+@ingroup SolverGroup
+
 These functions are used for working with time patterns.
 */
 
 /**
 @defgroup Curves Data Curve Functions
+@ingroup SolverGroup
+
 These functions are used for working with data curves.
 */
 
 /**
 @defgroup Controls Simple Control Functions
+@ingroup SolverGroup
+
 These functions are used for working with simple conditional controls.
 */
 
 /**
 @defgroup Rules Rule-Based Control Functions
+@ingroup SolverGroup
+
 These functions are used for working with rule-based controls.
 */
 
 /**
 @defgroup Enumerations Enumerated Types
+@ingroup SolverGroup
+
 These are the toolkit's enumerated types whose members are used as function arguments.
 */
 
@@ -298,6 +332,7 @@ These are the toolkit's enumerated types whose members are used as function argu
 
 /**
 @defgroup ErrorCodes Error Codes
+@ingroup SolverGroup
 
 | Code | Meaning                           |
 |------|---------                          |
@@ -367,6 +402,7 @@ These are the toolkit's enumerated types whose members are used as function argu
 
 /**
 @defgroup WarningCodes Warning Codes
+@ingroup SolverGroup
 
 | Code | Description                       |
 |------|---------                          |

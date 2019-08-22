@@ -7,12 +7,23 @@
  *              US EPA - ORD/NRMRL
  */
 
+ /**
+ @file epanet_output_enums.h
+ @brief Epanet output API enum types
+ */
 
 #ifndef EPANET_OUTPUT_ENUMS_H_
 #define EPANET_OUTPUT_ENUMS_H_
 
 /**
- Network element types
+@defgroup OutputEnums Enumerated Types
+@ingroup OutputGroup
+@{
+*/
+
+/**
+Defines element types used by @ref ENR_getElementName to distinguish
+which network element type is being queried.
 */
 typedef enum {
     ENR_node        = 1,  //!< Nodes
@@ -20,7 +31,8 @@ typedef enum {
 } ENR_ElementType;
 
 /**
-Unit types
+Defines the unit type -- flow, pressure, or quality -- used by
+@ref ENR_getUnits to distinguish which unit type is being queried.
 */
 typedef enum {
     ENR_flowUnits   = 1,  //!< Flow units
@@ -29,23 +41,23 @@ typedef enum {
 } ENR_Units;
 
 /**
-Flow unit types
+Defines flow unit types.
 */
 typedef enum {
-  EN_CFS            = 0,  //!< Cubic feet per second
-  EN_GPM            = 1,  //!< Gallons per minute
-  EN_MGD            = 2,  //!< Million gallons per day
-  EN_IMGD           = 3,  //!< Imperial million gallons per day
-  EN_AFD            = 4,  //!< Acre-feet per day
-  EN_LPS            = 5,  //!< Liters per second
-  EN_LPM            = 6,  //!< Liters per minute
-  EN_MLD            = 7,  //!< Million liters per day
-  EN_CMH            = 8,  //!< Cubic meters per hour
-  EN_CMD            = 9   //!< Cubic meters per day
-} EN_FlowUnits;
+    ENR_CFS         = 0,  //!< Cubic feet per second
+    ENR_GPM         = 1,  //!< Gallons per minute
+    ENR_MGD         = 2,  //!< Million gallons per day
+    ENR_IMGD        = 3,  //!< Imperial million gallons per day
+    ENR_AFD         = 4,  //!< Acre-feet per day
+    ENR_LPS         = 5,  //!< Liters per second
+    ENR_LPM         = 6,  //!< Liters per minute
+    ENR_MLD         = 7,  //!< Million liters per day
+    ENR_CMH         = 8,  //!< Cubic meters per hour
+    ENR_CM          = 9   //!< Cubic meters per day
+} ENR_FlowUnits;
 
 /**
-Pressure unit types
+Defines pressure unit types.
 */
 typedef enum {
 	ENR_PSI         = 0,  //!< Pounds per square inch psi
@@ -54,7 +66,7 @@ typedef enum {
 } ENR_PressUnits;
 
 /**
-Quality unit types
+Defines quality unit types.
 */
 typedef enum {
     ENR_NONE        = 0,  //!< None
@@ -65,7 +77,8 @@ typedef enum {
 } ENR_QualUnits;
 
 /**
-Report and time types
+Defines report and time types used by @ref ENR_getTimes to distinguish the
+desired parameter of the query.
 */
 typedef enum {
     ENR_reportStart = 1,  //!< Report start
@@ -75,7 +88,9 @@ typedef enum {
 }ENR_Time;
 
 /**
-Node attribute types
+Defines node attribute types used by @ref ENR_getNodeResult,
+@ref ENR_getNodeSeries, and @ref ENR_getNodeAttribute to distinguish the
+desired parameter of the query.
 */
 typedef enum {
     ENR_demand      = 1,  //!< Nodal demand
@@ -85,7 +100,9 @@ typedef enum {
 } ENR_NodeAttribute;
 
 /**
-Link attribute types
+Defines link attribute types used by @ref ENR_getLinkResult,
+@ref ENR_getLinkSeries, and @ref ENR_getLinkAttribute to distinguish the
+desired parameter of the query.
 */
 typedef enum {
     ENR_flow        = 1,  //!< Link flow rate
@@ -98,5 +115,8 @@ typedef enum {
     ENR_frctnFctr   = 8   //!< Link friction factor
 } ENR_LinkAttribute;
 
+/**
+@}
+*/
 
 #endif /* EPANET_OUTPUT_ENUMS_H_ */

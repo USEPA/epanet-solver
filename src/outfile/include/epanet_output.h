@@ -8,13 +8,31 @@
  *          US EPA - ORD/NRMRL
  */
 
+ /**
+ @file epanet_output.h
+ @brief Output API provides an interface for retrieving results from an
+ EPANET binary output file.
+ */
+
+
 #ifndef EPANET_OUTPUT_H_
 #define EPANET_OUTPUT_H_
-/* Epanet output binary file API */
 
+/**
+@defgroup OutputFunc Output Functions
+@ingroup OutputGroup
+@{
+*/
 
-#define MAXFNAME     259   // Max characters in file name
-#define MAXID         31   // Max characters in ID name
+/**
+@brief MAXFNAME Max characters in file name
+*/
+#define MAXFNAME     259
+
+/**
+@brief MAXID Max characters in ID name
+*/
+#define MAXID         31
 
 
 /**
@@ -31,12 +49,12 @@ typedef void *ENR_Handle;
 extern "C" {
 #endif
 
+
 /**
 @brief Initializes pointer to output handle.
 @param[out] p_handle an EPANET output handle that gets passed into
 all other Output API functions.
 @return an error code -- 0 on success or -1 on failure
-
 */
 int EXPORT_OUT_API ENR_init(ENR_Handle *p_handle);
 
@@ -292,6 +310,11 @@ This function allocates memory for the message buffer. The caller is
 responsible for freeing it using ::ENR_free.
 */
 int EXPORT_OUT_API ENR_checkError(ENR_Handle p_handle, char **msg_buffer);
+
+
+/**
+@}
+*/
 
 
 #ifdef __cplusplus
