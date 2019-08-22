@@ -53,7 +53,7 @@ typedef enum {
     ENR_LPM         = 6,  //!< Liters per minute
     ENR_MLD         = 7,  //!< Million liters per day
     ENR_CMH         = 8,  //!< Cubic meters per hour
-    ENR_CM          = 9   //!< Cubic meters per day
+    ENR_CMD         = 9   //!< Cubic meters per day
 } ENR_FlowUnits;
 
 /**
