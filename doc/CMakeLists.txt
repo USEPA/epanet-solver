@@ -22,9 +22,12 @@ set(DOXY_SOURCES
     toolkit-files.dox
     input-file.dox
     toolkit-units.dox
-    modules.dox
-    ../include/epanet2_enums.h
     ../include/epanet2_2.h
+    ../include/epanet2_enums.h
+    modules.dox
+    ../src/outfile/include/epanet_output.h
+    ../src/outfile/include/epanet_output_enums.h
+    output.dox
     )
 
 
@@ -42,7 +45,7 @@ set(DOXYGEN_DISABLE_INDEX "YES")
 set(DOXYGEN_GENERATE_TREEVIEW "YES")
 set(DOXYGEN_ENUM_VALUES_PER_LINE "0")
 set(DOXYGEN_MACRO_EXPANSION "YES")
-set(DOXYGEN_PREDEFINED "DLLEXPORT=")
+set(DOXYGEN_PREDEFINED "__declspec(x)=")
 set(DOXYGEN_CLASS_DIAGRAMS "NO")
 
 

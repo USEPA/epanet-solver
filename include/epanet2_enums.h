@@ -1,7 +1,4 @@
-/** @file epanet2_enums.h
-*/
-/*
- ******************************************************************************
+/*******************************************************************************
  Project:      OWA EPANET
  Version:      2.2
  Module:       epanet2_enums.h
@@ -13,12 +10,20 @@
  ******************************************************************************
 */
 
+/** @file epanet2_enums.h
+*/
 
 #ifndef EPANET2_ENUMS_H
 #define EPANET2_ENUMS_H
 
 
-// --- Define the EPANET toolkit constants
+/**
+@defgroup Enumerations Enumerated Types
+@ingroup SolverGroup
+
+These are the toolkit's enumerated types whose members are used as function arguments.
+@{
+*/
 
 /// Size Limts
 /**
@@ -463,5 +468,8 @@ typedef enum {
   EN_R_IS_ACTIVE = 3    //!< Control valve is active
 } EN_RuleStatus;
 
+/**
+@}
+*/
 
 #endif //EPANET2_ENUMS_H

@@ -3,11 +3,8 @@
 //   epanet_output.c -- API for reading results from EPANET binary output file
 //
 //   Version:    0.40
-//   Date        04/02/2019
-//               09/06/2017
-//               06/17/2016
-//               08/05/2014
-//               05/21/2014
+//   Date created: 05/21/2014
+//   Modified:     08/21/2019
 //
 //   Author:     Michael E. Tryby
 //               US EPA - ORD/NRMRL
@@ -78,7 +75,7 @@ typedef struct data_s {
 //-----------------------------------------------------------------------------
 //   Local functions
 //-----------------------------------------------------------------------------
-void  errorLookup(int errcode, char* errmsg, int length);
+void  errorLookup(int errcode, char *errmsg, int length);
 int   validateFile(ENR_Handle);
 float getNodeValue(ENR_Handle, int, int, int);
 float getLinkValue(ENR_Handle, int, int, int);
@@ -130,10 +127,10 @@ int EXPORT_OUT_API ENR_close(ENR_Handle *p_handle)
  **-------------------------------------------------------------------------
  */
 {
-    data_t* p_data;
+    data_t *p_data;
     int errorcode = 0;
 
-    p_data = (data_t*)(*p_handle);
+    p_data = (data_t *)(*p_handle);
 
     if (p_data == NULL || p_data->file_handle == NULL)
         errorcode = -1;
@@ -153,7 +150,7 @@ int EXPORT_OUT_API ENR_close(ENR_Handle *p_handle)
     return errorcode;
 }
 
-int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char* path)
+int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char *path)
 /*------------------------------------------------------------------------
  **   Input:   path
  **   Output:  p_handle = pointer to ENR_Handle struct
@@ -166,9 +163,9 @@ int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char* path)
 {
     int err, errorcode = 0;
     F_OFF bytecount;
-    data_t* p_data;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else
@@ -216,7 +213,7 @@ int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char* path)
     return errorcode;
 }
 
-int EXPORT_OUT_API ENR_getVersion(ENR_Handle p_handle, int* version)
+int EXPORT_OUT_API ENR_getVersion(ENR_Handle p_handle, int *version)
 /*------------------------------------------------------------------------
  **    Input: p_handle = pointer to ENR_Handle struct
  **   Output: version  Epanet version
@@ -227,9 +224,9 @@ int EXPORT_OUT_API ENR_getVersion(ENR_Handle p_handle, int* version)
  */
 {
     int errorcode = 0;
-    data_t* p_data;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else
@@ -242,7 +239,7 @@ int EXPORT_OUT_API ENR_getVersion(ENR_Handle p_handle, int* version)
     return set_error(p_data->error_handle, errorcode);
 }
 
-int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int** elementCount, int* length)
+int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int **elementCount, int *length)
 /*------------------------------------------------------------------------
  **    Input:   p_handle = pointer to ENR_Handle struct
  **   Output:  array of element counts (nodes, tanks, links, pumps, valves)
@@ -252,10 +249,10 @@ int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int** elementCount, int* 
  */
 {
     int errorcode = 0;
-    int* temp = newIntArray(NELEMENTTYPES);
-    data_t* p_data;
+    int *temp = newIntArray(NELEMENTTYPES);
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else
@@ -273,7 +270,7 @@ int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int** elementCount, int* 
     return set_error(p_data->error_handle, errorcode);
 }
 
-int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int* unitFlag)
+int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int *unitFlag)
 /*------------------------------------------------------------------------
  **   Input:   p_handle = pointer to ENR_Handle struct
  **            code
@@ -301,11 +298,11 @@ int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int* unitFl
     int errorcode = 0;
     F_OFF offset;
     char temp[MAXID_P1];
-    data_t* p_data;
+    data_t *p_data;
 
     *unitFlag = -1;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else
@@ -350,7 +347,7 @@ int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int* unitFl
     return set_error(p_data->error_handle, errorcode);
 }
 
-int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int* time)
+int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int *time)
 /*------------------------------------------------------------------------
  **   Input:   p_handle = pointer to ENR_Handle struct
  **            code = element code
@@ -365,7 +362,7 @@ int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int* time)
 
     *time = -1;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else
@@ -398,13 +395,13 @@ int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int* time)
     return set_error(p_data->error_handle, errorcode);
 }
 
-int EXPORT_OUT_API ENR_getChemData(ENR_Handle p_handle, char** name, int* length)
+int EXPORT_OUT_API ENR_getChemData(ENR_Handle p_handle, char **name, int *length)
 {
     return 0;
 }
 
 int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
-        int elementIndex, char** name, int* length)
+        int elementIndex, char **name, int *length)
 /*------------------------------------------------------------------------
  **   Input:   p_handle = pointer to ENR_Handle struct
  **            type = ENR_node or ENR_link
@@ -419,10 +416,10 @@ int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
 {
     F_OFF offset;
     int errorcode = 0;
-    char* temp;
-    data_t* p_data;
+    char *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     /* Allocate memory for name */
@@ -464,7 +461,7 @@ int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
 }
 
 int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
-        int* linkIndex, float** outValues, int* length)
+        int *linkIndex, float **outValues, int *length)
 /*
  * Purpose: Returns pump energy usage statistics.
  *
@@ -479,10 +476,10 @@ int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
 {
     F_OFF offset;
     int errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     // Check for valid pump index
@@ -508,7 +505,7 @@ int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
     return set_error(p_data->error_handle, errorcode);
 }
 
-int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float** outValues, int* length)
+int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **outValues, int *length)
 /*
  *  Purpose: Returns network wide average reaction rates and average
  *  source mass inflow:
@@ -520,10 +517,10 @@ int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float** outValues, int*
 {
     F_OFF offset;
     int errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     // Check memory for outValues
@@ -543,7 +540,7 @@ int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float** outValues, int*
     return set_error(p_data->error_handle, errorcode);
 }
 
-void EXPORT_OUT_API ENR_free(void** array)
+void EXPORT_OUT_API ENR_free(void **array)
 //
 //  Purpose: Frees memory allocated by API calls
 //
@@ -555,7 +552,7 @@ void EXPORT_OUT_API ENR_free(void** array)
 }
 
 int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_NodeAttribute attr,
-        int startPeriod, int endPeriod, float** outValueSeries, int* dim)
+        int startPeriod, int endPeriod, float **outValueSeries, int *dim)
 //
 //  Purpose: Get time series results for particular attribute. Specify series
 //  start and length using seriesStart and seriesLength respectively.
@@ -565,10 +562,10 @@ int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_Nod
 //
 {
     int k, length, errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else if (nodeIndex < 1 || nodeIndex > p_data->nodeCount) errorcode = 423;
@@ -590,7 +587,7 @@ int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_Nod
 }
 
 int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int linkIndex, ENR_LinkAttribute attr,
-        int startPeriod, int endPeriod, float** outValueSeries, int* dim)
+        int startPeriod, int endPeriod, float **outValueSeries, int *dim)
 //
 //  Purpose: Get time series results for particular attribute. Specify series
 //  start and length using seriesStart and seriesLength respectively.
@@ -601,10 +598,10 @@ int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int linkIndex, ENR_Lin
 //
 {
     int k, length, errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else if (linkIndex < 1 || linkIndex > p_data->linkCount) errorcode = 423;
@@ -625,7 +622,7 @@ int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int linkIndex, ENR_Lin
 }
 
 int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
-        ENR_NodeAttribute attr, float** outValueArray, int* length)
+        ENR_NodeAttribute attr, float **outValueArray, int *length)
 //
 //   Purpose:
 //        For all nodes at given time, get a particular attribute
@@ -645,10 +642,10 @@ int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
 {
     F_OFF offset;
     int errorcode = 0;
-    float * temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     // if the time index is out of range return an error
@@ -674,7 +671,7 @@ int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
 }
 
 int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
-        ENR_LinkAttribute attr, float** outValueArray, int* length)
+        ENR_LinkAttribute attr, float **outValueArray, int *length)
 //
 //   Purpose:
 //        For all links at given time, get a particular attribute
@@ -694,10 +691,10 @@ int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
 {
     F_OFF offset;
     int errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     // if the time index is out of range return an error
@@ -724,7 +721,7 @@ int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
 }
 
 int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
-        int nodeIndex, float** outValueArray, int* length)
+        int nodeIndex, float **outValueArray, int *length)
 //
 //   Purpose: For a node at given time, get all attributes.
 //
@@ -732,10 +729,10 @@ int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
 //
 {
     int j, errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
     else if (periodIndex < 0 || periodIndex >= p_data->nPeriods) errorcode = 422;
@@ -760,8 +757,8 @@ int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
 //
 {
     int j, errorcode = 0;
-    float* temp;
-    data_t* p_data;
+    float *temp;
+    data_t *p_data;
 
     p_data = (data_t*)p_handle;
 
@@ -782,16 +779,16 @@ int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
 
 void EXPORT_OUT_API ENR_clearError(ENR_Handle p_handle)
 {
-    data_t* p_data;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
     clear_error(p_data->error_handle);
 }
 
-int EXPORT_OUT_API ENR_checkError(ENR_Handle p_handle, char** msg_buffer)
+int EXPORT_OUT_API ENR_checkError(ENR_Handle p_handle, char **msg_buffer)
 {
-    data_t* p_data;
-    p_data = (data_t*)p_handle;
+    data_t *p_data;
+    p_data = (data_t *)p_handle;
 
     if (p_data == NULL) return -1;
 
@@ -799,12 +796,12 @@ int EXPORT_OUT_API ENR_checkError(ENR_Handle p_handle, char** msg_buffer)
 }
 
 
-void errorLookup(int errcode, char* dest_msg, int dest_len)
+void errorLookup(int errcode, char *dest_msg, int dest_len)
 //
 //  Purpose: takes error code returns error message
 //
 {
-    const char* msg;
+    const char *msg;
 
     switch (errcode)
     {
@@ -842,7 +839,7 @@ int validateFile(ENR_Handle p_handle)
     F_OFF filepos;
     data_t* p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     // Read magic number from beginning of file
     seek_file(p_data->file_handle, 0L, SEEK_SET);
@@ -867,17 +864,16 @@ int validateFile(ENR_Handle p_handle)
     return errorcode;
 }
 
-float getNodeValue(ENR_Handle p_handle, int periodIndex, int nodeIndex,
-        int attr)
+float getNodeValue(ENR_Handle p_handle, int periodIndex, int nodeIndex, int attr)
 //
 //   Purpose: Retrieves an attribute value at a specified node and time
 //
 {
     F_OFF offset;
     REAL4 y;
-    data_t* p_data;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     // calculate byte offset to start time for series
     offset = p_data->outputStartPos + periodIndex*p_data->bytesPerPeriod;
@@ -890,17 +886,16 @@ float getNodeValue(ENR_Handle p_handle, int periodIndex, int nodeIndex,
     return y;
 }
 
-float getLinkValue(ENR_Handle p_handle, int periodIndex, int linkIndex,
-        int attr)
+float getLinkValue(ENR_Handle p_handle, int periodIndex, int linkIndex, int attr)
 //
 //   Purpose: Retrieves an attribute value at a specified link and time
 //
 {
     F_OFF offset;
     REAL4 y;
-    data_t* p_data;
+    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
+    p_data = (data_t *)p_handle;
 
     // Calculate byte offset to start time for series
     offset = p_data->outputStartPos + periodIndex*p_data->bytesPerPeriod
@@ -914,26 +909,26 @@ float getLinkValue(ENR_Handle p_handle, int periodIndex, int linkIndex,
     return y;
 }
 
-float* newFloatArray(int n)
+float *newFloatArray(int n)
 //
 //  Warning: Caller must free memory allocated by this function.
 //
 {
-    return (float*) malloc((n)*sizeof(float));
+    return (float *) malloc((n)*sizeof(float));
 }
 
-int* newIntArray(int n)
+int *newIntArray(int n)
 //
 //  Warning: Caller must free memory allocated by this function.
 //
 {
-    return (int*) malloc((n)*sizeof(int));
+    return (int *) malloc((n)*sizeof(int));
 }
 
-char* newCharArray(int n)
+char *newCharArray(int n)
 //
 //  Warning: Caller must free memory allocated by this function.
 //
 {
-    return (char*) malloc((n)*sizeof(char));
+    return (char *) malloc((n)*sizeof(char));
 }

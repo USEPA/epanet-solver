@@ -1,7 +1,3 @@
-/** @file epanet2_2.h
- @see http://github.com/openwateranalytics/epanet
- */
-
 /*
  ******************************************************************************
  Project:      OWA EPANET
@@ -14,6 +10,11 @@
  Last Updated: 07/20/2019
  ******************************************************************************
  */
+
+ /** @file epanet2_2.h
+  @see http://github.com/openwateranalytics/epanet
+  */
+
 
 #ifndef EPANET2_2_H
 #define EPANET2_2_H
@@ -53,6 +54,16 @@ typedef struct Project *EN_Project;
     Project Functions
 
 ********************************************************************/
+
+/**
+@defgroup Project Project Functions
+@ingroup SolverGroup
+
+These functions are used to manage a project.
+
+@{
+*/
+
 
   /**
   @brief Creates an EPANET project.
@@ -194,11 +205,23 @@ typedef struct Project *EN_Project;
   */
   int DLLEXPORT EN_close(EN_Project ph);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Hydraulic Analysis Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Hydraulics Hydraulic Analysis Functions
+  @ingroup SolverGroup
+
+  These functions are used to perform a hydraulic analysis.
+  @{
+  */
 
   /**
   @brief Runs a complete hydraulic simulation with results for all time periods
@@ -374,11 +397,23 @@ typedef struct Project *EN_Project;
   */
   int DLLEXPORT EN_closeH(EN_Project ph);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Water Quality Analysis Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Quality Water Quality Analysis Functions
+  @ingroup SolverGroup
+
+  These functions are used to perform a water quality analysis.
+  @{
+  */
 
   /**
   @brief Runs a complete water quality simulation with results at uniform
@@ -511,11 +546,23 @@ typedef struct Project *EN_Project;
   */
   int DLLEXPORT EN_closeQ(EN_Project ph);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Reporting Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Reporting Reporting Functions
+  @ingroup SolverGroup
+
+  These functions are used to report simulation results.
+  @{
+  */
 
   /**
   @brief Writes a line of text to a project's report file.
@@ -638,11 +685,23 @@ typedef struct Project *EN_Project;
   */
   int  DLLEXPORT EN_getstatistic(EN_Project ph, int type, double* value);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Analysis Options Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Options Analysis Options Functions
+  @ingroup SolverGroup
+
+  These functions are used to get and set analysis options.
+  @{
+  */
 
   /**
   @brief Retrieves the value of an analysis option.
@@ -739,13 +798,25 @@ typedef struct Project *EN_Project;
   Note that the trace node is specified by ID name and not by index.
   */
   int  DLLEXPORT EN_setqualtype(EN_Project ph, int qualType, char *chemName,
-                 char *chemUnits, char *traceNode);
+      char *chemUnits, char *traceNode);
+
+  /**
+  @}
+  */
 
   /********************************************************************
 
   Node Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Nodes Network Node Functions
+  @ingroup SolverGroup
+
+  These functions are used for working with network nodes.
+  @{
+  */
 
   /**
   @brief Adds a new node to a project.
@@ -891,11 +962,23 @@ typedef struct Project *EN_Project;
   */
   int  DLLEXPORT EN_setcoord(EN_Project ph, int index, double x, double y);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Nodal Demand Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Demands Nodal Demand Functions
+  @ingroup SolverGroup
+
+  These functions are used for managing nodal demands.
+  @{
+  */
 
   /**
   @brief Retrieves the type of demand model in use and its parameters.
@@ -1051,11 +1134,23 @@ typedef struct Project *EN_Project;
   */
   int DLLEXPORT EN_setdemandname(EN_Project ph, int nodeIndex, int demandIdx, char *demandName);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Link Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Links Network Link Functions
+  @ingroup SolverGroup
+
+  These functions are used for working with network links.
+  @{
+  */
 
   /**
   @brief Adds a new link to a project.
@@ -1209,8 +1304,8 @@ typedef struct Project *EN_Project;
 
   These properties have units that depend on the units used for flow rate (see @ref Units).
   */
-  int DLLEXPORT EN_setpipedata(EN_Project ph, int index, double length, double diam,
-                double rough,  double mloss);
+  int DLLEXPORT EN_setpipedata(EN_Project ph, int index, double length,
+      double diam, double rough,  double mloss);
 
 
   /********************************************************************
@@ -1246,11 +1341,23 @@ typedef struct Project *EN_Project;
   */
   int  DLLEXPORT EN_setheadcurveindex(EN_Project ph, int linkIndex, int curveIndex);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Time Pattern Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Patterns Time Pattern Functions
+  @ingroup SolverGroup
+
+  These functions are used for working with time patterns.
+  @{
+  */
 
   /**
   @brief Adds a new time pattern to a project.
@@ -1354,11 +1461,23 @@ typedef struct Project *EN_Project;
   */
   int  DLLEXPORT EN_setpattern(EN_Project ph, int index, double *values, int len);
 
+  /**
+  @}
+  */
+
   /********************************************************************
 
   Data Curve Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Curves Data Curve Functions
+  @ingroup SolverGroup
+
+  These functions are used for working with data curves.
+  @{
+  */
 
   /**
   @brief Adds a new data curve to a project.
@@ -1483,13 +1602,25 @@ typedef struct Project *EN_Project;
   use @ref EN_setcurvevalue to revise a curve's data points one at a time.
   */
   int  DLLEXPORT EN_setcurve(EN_Project ph, int index, double *xValues,
-                 double *yValues, int nPoints);
+      double *yValues, int nPoints);
+
+  /**
+  @}
+  */
 
   /********************************************************************
 
   Simple Controls Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Controls Simple Control Functions
+  @ingroup SolverGroup
+
+  These functions are used for working with simple conditional controls.
+  @{
+  */
 
   /**
   @brief Adds a new simple control to a project.
@@ -1545,14 +1676,25 @@ typedef struct Project *EN_Project;
   @return an error code.
   */
   int  DLLEXPORT EN_setcontrol(EN_Project ph, int index, int type, int linkIndex,
-                 double setting, int nodeIndex, double level);
+      double setting, int nodeIndex, double level);
 
+  /**
+  @}
+  */
 
   /********************************************************************
 
   Rule-Based Controls Functions
 
   ********************************************************************/
+
+  /**
+  @defgroup Rules Rule-Based Control Functions
+  @ingroup SolverGroup
+
+  These functions are used for working with rule-based controls.
+  @{
+  */
 
   /**
   @brief Adds a new rule-based control to a project.
@@ -1730,6 +1872,10 @@ typedef struct Project *EN_Project;
   @return an error code.
   */
   int  DLLEXPORT EN_setrulepriority(EN_Project ph, int index, double priority);
+
+  /**
+  @}
+  */
 
 #if defined(__cplusplus)
 }
