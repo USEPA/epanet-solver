@@ -13,6 +13,7 @@ These function are associated with the EPANET Output Library
 | Code   | Description                       |
 |--------|---------                          |
 | WARN10 | Warning: model run issued warnings                   |
+|  ||
 | ERR411 | Input Error 411: no memory allocated for results     |
 | ERR412 | Input Error 412: binary file hasn't been opened      |
 | ERR421 | Input Error 421: invalid parameter code              |

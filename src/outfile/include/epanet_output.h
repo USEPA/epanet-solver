@@ -1,5 +1,5 @@
 /*
- *  epanet_output.h - EPANET Output API
+ *  epanet_output.h - EPANET Output library
  *
  *  Created on: Jun 4, 2014
  *  Modified on August 21, 2018
@@ -10,7 +10,7 @@
 
  /**
  @file epanet_output.h
- @brief Output API provides an interface for retrieving results from an
+ @brief Output library provides an API for retrieving results from an
  EPANET binary output file.
  */
 
@@ -25,12 +25,12 @@
 */
 
 /**
-@brief MAXFNAME Max characters in file name
+@brief Max characters in file name
 */
 #define MAXFNAME     259
 
 /**
-@brief MAXID Max characters in ID name
+@brief Max characters in ID name
 */
 #define MAXID         31
 
@@ -85,6 +85,7 @@ int EXPORT_OUT_API ENR_getVersion(ENR_Handle p_handle, int *version);
 @return an error code
 
 Element count array contents:
+
   0. nodes
   1. tanks
   2. links
@@ -144,6 +145,7 @@ int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
 @return an error code
 
 Energy usage statistics:
+
   0. pump utilization
   1. avg. efficiency
   2. avg. kW/flow
@@ -166,6 +168,7 @@ int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
 @return an error code
 
 Average reaction rates and souce mass values:
+
   0. bulk
   1. wall
   2. tank

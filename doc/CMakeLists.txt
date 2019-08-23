@@ -22,8 +22,8 @@ set(DOXY_SOURCES
     toolkit-files.dox
     input-file.dox
     toolkit-units.dox
-    ../include/epanet2_enums.h
     ../include/epanet2_2.h
+    ../include/epanet2_enums.h
     modules.dox
     ../src/outfile/include/epanet_output.h
     ../src/outfile/include/epanet_output_enums.h
