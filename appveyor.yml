@@ -18,7 +18,7 @@ matrix:
 environment:
   BUILD_HOME: "buildprod"
   TEST_HOME: "nrtestsuite"
-  PYTHON: "C:/Python36-x64"
+  PYTHON: "C:\\Python36-x64"
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     GENERATOR: "Visual Studio 15 2017"
@@ -50,7 +50,7 @@ init:
 # called after repo clone
 install:
   - set "PATH=%PYTHON%;%PYTHON%/Scripts;%PYTHON%/Library/bin;%PATH%"
-  - %PYTHON%\python.exe -m pip install -r tools\requirements-appveyor.txt
+  - "%PYTHON%\\python.exe -m pip install -r tools\requirements-appveyor.txt"
 
 # called before build
 before_build:
