@@ -24,6 +24,14 @@
 ::@echo off
 setlocal EnableDelayedExpansion
 
+
+:: Check that required environment variables are set
+if not defined BUILD_HOME ( echo "ERROR: BUILD_HOME must be defined" & exit /B 1 )
+if not defined TEST_HOME ( echo "ERROR: TEST_HOME must be defined" & exit /B 1 )
+if not defined PLATFORM ( echo "ERROR: PLATFORM must be defined" & exit /B 1 )
+if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID must be defined" & exit /B 1 )
+
+
 :: determine project directory
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
@@ -31,10 +39,10 @@ pushd ..
 set PROJ_DIR=%CD%
 popd
 
+
 cd %PROJ_DIR%\%TEST_HOME%
 
-:: Check existence
-
+:: Process optional arguments
 if [%1]==[] (set "SUT_VERSION=unknown"
 ) else ( set "SUT_VERSION=%~1" )
 

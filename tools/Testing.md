@@ -14,14 +14,14 @@
     - Python 3
 
 ```
-\>pip install -r tools\requirements.txt
+\>pip install -r tools\requirements-appveyor.txt
 ```
 
 
 ### Build and Test
 
 ```
-ctest --build-and-test .\ .\buildprod --build-generator "Visual Studio 15 2017" --build-config Release --build-options -DBUILD_TESTS=ON -DBOOST_ROOT=C:\local\boost_1_67_0 --test-command ctest -C Release
+\>ctest --build-and-test .\ .\buildprod --build-generator "Visual Studio 15 2017" --build-config Release --build-options -DBUILD_TESTS=ON -DBOOST_ROOT=C:\local\boost_1_67_0 --test-command ctest -C Release
 ```
 
 
