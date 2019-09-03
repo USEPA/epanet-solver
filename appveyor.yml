@@ -50,7 +50,7 @@ init:
 # called after repo clone
 install:
   - set "PATH=%PYTHON%;%PYTHON%/Scripts;%PYTHON%/Library/bin;%PATH%"
-  - "%PYTHON%\\python.exe -m pip install -r tools\requirements-appveyor.txt"
+  - "%PYTHON%\\python.exe -m pip install -r tools\\requirements-appveyor.txt"
 
 # called before build
 before_build:
