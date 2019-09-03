@@ -49,7 +49,7 @@ init:
 
 # called after repo clone
 install:
-    set "PATH=%PYTHON%;%PYTHON%/Scripts;%PYTHON%/Library/bin;%PATH%"
+  - set "PATH=%PYTHON%;%PYTHON%/Scripts;%PYTHON%/Library/bin;%PATH%"
   - python -m pip install -r tools\requirements-appveyor.txt
 
 # called before build
