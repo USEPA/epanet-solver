@@ -44,7 +44,7 @@ set PROJ_DIR=%CD%
 :: set URL to github repo with test files
 set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
 
-:: if release tag isn't provided latest tag is desired
+:: if release tag isn't provided latest tag will be retrieved
 if [%1] == [] (set "RELEASE_TAG="
 ) else (set "RELEASE_TAG=%~1")
 
@@ -71,14 +71,15 @@ echo INFO: Staging files for regression testing
 
 :: determine latest tag in the tests repo
 if [%RELEASE_TAG%] == [] (
-  set "LATEST_URL=%EPANET_NRTESTS_URL%/releases/latest"
-  for /F delims^=^"^ tokens^=2 %%g in ('curl --silent %LATEST_URL%') do ( set "RELEASE_TAG=%%~nxg" )
+  for /F delims^=^"^ tokens^=2 %%g in ('curl --silent %EPANET_NRTESTS_URL%/releases/latest') do (
+    set "RELEASE_TAG=%%~nxg"
+  )
 )
 
 if defined RELEASE_TAG (
   set "TESTFILES_URL=%EPANET_NRTESTS_URL%/archive/%RELEASE_TAG%.zip"
   set "BENCHFILES_URL=%EPANET_NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip"
-) else ( echo ERROR: RELEASE_TAG invalid & exit /B 1 )
+) else ( echo ERROR: tag %RELEASE_TAG% is invalid & exit /B 1 )
 
 
 :: create a clean directory for staging regression tests
@@ -102,11 +103,9 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 7z e benchmark.zip -o. manifest.json -r > nul
 
 
-:: if not already defined determine REF_BUILD_ID from manifest file
-if [%REF_BUILD_ID%] == [] (
-  for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% manifest.json' ) do (
-    for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
-  )
+:: determine REF_BUILD_ID from manifest file
+for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% manifest.json' ) do (
+  for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
 )
 if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined" & exit /B 1 )
 
