@@ -43,7 +43,7 @@ EPANET can be built and unit tests run in one composite ctest command.
 
 ### Regression Test
 
-This command regression tests the local build against the latest benchmark.
+This command runs regression tests for the local build and compares them to the latest benchmark.
 ```
 \>tools\before-test.cmd && \>tools\run-nrtest.cmd
 ```
