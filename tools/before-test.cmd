@@ -25,20 +25,21 @@
 ::
 
 ::@echo off
-EnableDelayedExpansion
 
+:: determine project directory
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
 set PROJ_DIR=%CD%
 
+:: set URL to github repo with test files
 set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
 
-:: check for dependencies
-WHERE curl
-IF %ERRORLEVEL% NEQ 0 ECHO curl not installed & EXIT /B 1
-WHERE 7z
-IF %ERRORLEVEL% NEQ 0 ECHO 7zip not installed & EXIT /B 1
+:: check that dependencies are installed
+where curl
+if %ERRORLEVEL% neq 0 ( echo curl not installed & exit /B 1 )
+where 7z
+if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
 
 
 :: check BUILD_HOME and TEST_HOME and apply defaults
@@ -46,10 +47,13 @@ if not defined BUILD_HOME ( set "BUILD_HOME=buildprod" )
 if not defined TEST_HOME ( set "TEST_HOME=nrtestsuite" )
 
 
-:: determine platform from CMakeCache.txt if not already defined
+:: if not already defined determine platform from CmakeCache.txt file
 if [%PLATFORM%]==[] (
-  for /F "tokens=*" %%p in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do ( set "FLAG=%%p" )
-  if "%FLAG:~-3%" == "X86" ( set "PLATFORM=win32" ) else ( set "PLATFORM=win64" )
+  for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do (
+    for /F "delims=: tokens=3" %%m in ( 'echo %%f' ) do (
+      if "%%m" == "X86" ( set "PLATFORM=win32" ) else if "%%m" == "x64" ( set "PLATFORM=win64" )
+    )
+  )
 )
 if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit /B 1 )
 
@@ -58,7 +62,7 @@ if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit 
 echo INFO: Staging files for regression testing
 
 
-:: hack to determine latest tag in epanet-example-networks repo
+:: determine latest tag in the tests repo
 set "LATEST_URL=%EPANET_NRTESTS_URL%/releases/latest"
 for /F delims^=^"^ tokens^=2 %%g in ('curl --silent %LATEST_URL%') do ( set "LATEST_TAG=%%~nxg" )
 
@@ -67,12 +71,13 @@ if defined LATEST_TAG (
   set "BENCHFILES_URL=%EPANET_NRTESTS_URL%/releases/download/%LATEST_TAG%/benchmark-%PLATFORM%.zip"
 ) else ( echo ERROR: Unable to determine latest tag & exit /B 1 )
 
+
 :: create a clean directory for staging regression tests
 if exist %TEST_HOME% (
   rmdir /s /q %TEST_HOME%
 )
-mkdir  %TEST_HOME%
-cd  %TEST_HOME%
+mkdir %TEST_HOME%
+cd %TEST_HOME%
 
 
 :: retrieve nrtest cases for regression testing
@@ -88,11 +93,10 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 7z e benchmark.zip -o. manifest.json -r > nul
 
 
-:: determine REF_BUILD_ID from manifest if not already defined
+:: if not already defined determine REF_BUILD_ID from manifest file
 if [%REF_BUILD_ID%] == [] (
-  for /F "tokens=*" %%d in ( 'findstr %PLATFORM% manifest.json' ) do (
-    set "D=%%d"
-    set REF_BUILD_ID=%D:~22,-2%
+  for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% manifest.json' ) do (
+    for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
   )
 )
 if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined" & exit /B 1 )
