@@ -26,7 +26,7 @@ The following command installs the Python packages required for regression testi
 
 ### Build and Test
 
-EPANET can be build and unit tests run in one composite ctest command.
+EPANET can be built and unit tests run in one composite ctest command.
 ```
 \>ctest --build-and-test .\ .\buildprod --build-generator "Visual Studio 15 2017" --build-config Release --build-options -DBUILD_TESTS=ON -DBOOST_ROOT=C:\local\boost_1_67_0 --test-command ctest -C Release
 ```
@@ -34,8 +34,7 @@ EPANET can be build and unit tests run in one composite ctest command.
 
 ### Regression Test
 
-The regression testing scripts don't require any arguments.
+To run a regression test of the local build against the latest benchmark.
 ```
-\>tools\before-test.cmd
-\>tools\run-nrtest.cmd
+\>tools\before-test.cmd && \>tools\run-nrtest.cmd
 ```
