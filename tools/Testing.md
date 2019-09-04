@@ -1,9 +1,18 @@
+<!---
+   Testing.md
+
+   Date Created: Sept 4, 2019
+
+   Author: Michael E. Tryby
+           US EPA - ORD/NRMRL
+--->
+
 ## Testing EPANET locally on Windows
 
 
 ### Dependencies
 
-Before the project can be built the required dependencies must be installed.
+Before the project can be built and tested the required dependencies must be installed.
 
 Summary of Build Dependencies: Windows
   - Build and Test
@@ -34,7 +43,7 @@ EPANET can be built and unit tests run in one composite ctest command.
 
 ### Regression Test
 
-To run a regression test of the local build against the latest benchmark.
+This command regression tests the local build against the latest benchmark.
 ```
 \>tools\before-test.cmd && \>tools\run-nrtest.cmd
 ```
