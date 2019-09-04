@@ -23,7 +23,7 @@ Summary of Build Dependencies: Windows
   - Regression Test
     - curl
     - 7z
-    - Python 3
+    - Python 3.6 64 bit
 
 
 The following command installs the Python packages required for regression testing.

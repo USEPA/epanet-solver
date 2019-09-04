@@ -16,15 +16,23 @@
 ::    TEST_HOME  - relative path
 ::
 ::  Arguments:
-::    None
+::    1 - (RELEASE_TAG) release tag for benchmark version (defaults to latest tag)
 ::
 ::  Note:
 ::    Tests and benchmark files are stored in the epanet-nrtests repo.
 ::    This script retrieves them using a stable URL associated with a GitHub
-::    release stages the files and sets up the environment for nrtest to run.
+::    release, stages the files, and sets up the environment for nrtest to run.
 ::
 
 ::@echo off
+
+
+:: check that dependencies are installed
+where curl
+if %ERRORLEVEL% neq 0 ( echo curl not installed & exit /B 1 )
+where 7z
+if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
+
 
 :: determine project directory
 set "SCRIPT_HOME=%~dp0"
@@ -32,14 +40,13 @@ cd %SCRIPT_HOME%
 pushd ..
 set PROJ_DIR=%CD%
 
+
 :: set URL to github repo with test files
 set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
 
-:: check that dependencies are installed
-where curl
-if %ERRORLEVEL% neq 0 ( echo curl not installed & exit /B 1 )
-where 7z
-if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
+:: if release tag isn't provided latest tag is desired
+if [%1] == [] (set "RELEASE_TAG="
+) else (set "RELEASE_TAG=%~1")
 
 
 :: check BUILD_HOME and TEST_HOME and apply defaults
@@ -63,13 +70,15 @@ echo INFO: Staging files for regression testing
 
 
 :: determine latest tag in the tests repo
-set "LATEST_URL=%EPANET_NRTESTS_URL%/releases/latest"
-for /F delims^=^"^ tokens^=2 %%g in ('curl --silent %LATEST_URL%') do ( set "LATEST_TAG=%%~nxg" )
+if [%RELEASE_TAG%] == [] (
+  set "LATEST_URL=%EPANET_NRTESTS_URL%/releases/latest"
+  for /F delims^=^"^ tokens^=2 %%g in ('curl --silent %LATEST_URL%') do ( set "RELEASE_TAG=%%~nxg" )
+)
 
-if defined LATEST_TAG (
-  set "TESTFILES_URL=%EPANET_NRTESTS_URL%/archive/%LATEST_TAG%.zip"
-  set "BENCHFILES_URL=%EPANET_NRTESTS_URL%/releases/download/%LATEST_TAG%/benchmark-%PLATFORM%.zip"
-) else ( echo ERROR: Unable to determine latest tag & exit /B 1 )
+if defined RELEASE_TAG (
+  set "TESTFILES_URL=%EPANET_NRTESTS_URL%/archive/%RELEASE_TAG%.zip"
+  set "BENCHFILES_URL=%EPANET_NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip"
+) else ( echo ERROR: RELEASE_TAG invalid & exit /B 1 )
 
 
 :: create a clean directory for staging regression tests
@@ -103,7 +112,7 @@ if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined"
 
 
 :: set up symlinks for tests directory
-mklink /D .\tests .\epanet-nrtests-%LATEST_TAG:~1%\public > nul
+mklink /D .\tests .\epanet-nrtests-%RELEASE_TAG:~1%\public > nul
 
 :: return to project home
 cd ..
