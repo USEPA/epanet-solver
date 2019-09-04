@@ -1,19 +1,24 @@
 #
-# requirements-appveyor.txt 
+# requirements-appveyor.txt
 #
 # Date Created: 10/10/2017
+# Date Modified: 09/03/2019
+#
 # Author: Michael E. Tryby
 #         US EPA ORD/NRMRL
 #
-# Useful for configuring a python environment to run epanet-nrtestsuite 
-# on AppVeyor CI. 
+# Useful for configuring a python environment to run epanet-nrtestsuite
+# on AppVeyor CI.
 #
-# command: 
-#  $ pip install --src build/packages -r tools/requirements-appveyor.txt
+# command:
+#  $ pip install -r requirements-appveyor.txt
 #
 
-nrtest>=0.2.3
+-f https://github.com/michaeltryby/nrtest/releases/download/v0.2.4/nrtest-0.2.4-py2.py3-none-any.whl
+nrtest
 
--f https://github.com/OpenWaterAnalytics/epanet-python/releases/download/v0.1.0-alpha/epanet_output-0.1.0a0-cp27-cp27m-win32.whl
+-f https://github.com/OpenWaterAnalytics/epanet-python/releases/download/0.3.0-dev.1/epanet.output-0.2.0.dev0-cp36-cp36m-win_amd64.whl
+epanet.output
 
--e ./tools/nrtest-epanet
+-f https://github.com/michaeltryby/epanet-python/releases/download/0.4.0-dev/nrtest_epanet-0.6.0-py3-none-any.whl
+nrtest-epanet
