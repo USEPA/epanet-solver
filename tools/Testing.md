@@ -17,15 +17,15 @@ Before the project can be built and tested the required dependencies must be ins
 
 **Summary of Build Dependencies: Windows**
 
-  Build and Test
-    - CMake 3.13
-    - Build Tools for Visual Studio 2017
-    - Boost 1.67
+  - Build and Test
+      - CMake 3.13
+      - Build Tools for Visual Studio 2017
+      - Boost 1.67
 
-  Regression Test
-    - curl
-    - 7z
-    - Python 3.6 64 bit
+  - Regression Test
+      - curl
+      - 7z
+      - Python 3.6 64 bit
 
 
 The following command installs the Python packages required for regression testing.
