@@ -1,7 +1,8 @@
 <!---
    Testing.md
 
-   Date Created: Sept 4, 2019
+   Created: Sept 4, 2019
+   Updated: Sept 5, 2019
 
    Author: Michael E. Tryby
            US EPA - ORD/NRMRL
@@ -14,13 +15,14 @@
 
 Before the project can be built and tested the required dependencies must be installed.
 
-Summary of Build Dependencies: Windows
-  - Build and Test
+**Summary of Build Dependencies: Windows**
+
+  Build and Test
     - CMake 3.13
     - Build Tools for Visual Studio 2017
     - Boost 1.67
 
-  - Regression Test
+  Regression Test
     - curl
     - 7z
     - Python 3.6 64 bit
@@ -30,7 +32,6 @@ The following command installs the Python packages required for regression testi
 ```
 \>pip install -r tools\requirements-appveyor.txt
 ```
-
 
 
 ### Build and Test
