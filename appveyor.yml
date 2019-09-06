@@ -65,6 +65,10 @@ before_build:
 build_script:
   - cmake --build . --config Release
 
+after_build:
+  - cmake --build . --config Release --target install
+  - cpack
+
 before_test:
   - cd %EPANET_HOME%
   - tools\before-nrtest.cmd
@@ -79,8 +83,6 @@ test_script:
   - tools\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
 
 on_success:
-  - cmake --install . --config Release
-  - cpack
   - cd %TEST_HOME%\benchmark
   - appveyor PushArtifact receipt.json
 
