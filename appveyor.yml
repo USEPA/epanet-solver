@@ -79,6 +79,9 @@ test_script:
   - tools\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
 
 on_success:
+  - cmake --install . --config Release
+  - cpack
+  - appveyor PushArtifact epanet-solver-package
   - cd %TEST_HOME%\benchmark
   - appveyor PushArtifact receipt.json
 
@@ -87,3 +90,8 @@ on_failure:
   # zip up the SUT benchmarks
   - 7z a benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip .\epanet-%SUT_BUILD_ID%
   - appveyor PushArtifact benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip
+
+artifacts:
+  - path: %BUILD_HOME%\epanet-solver-*.zip
+    name: epanet-solver-package
+    type: zip
