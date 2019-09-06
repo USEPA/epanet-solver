@@ -65,9 +65,13 @@ before_build:
 build_script:
   - cmake --build . --config Release
 
+after_build:
+  - cmake --build . --config Release --target install
+  - cpack
+
 before_test:
   - cd %EPANET_HOME%
-  - tools\before-test.cmd
+  - tools\before-nrtest.cmd
 
 # run custom test script
 test_script:
@@ -87,3 +91,7 @@ on_failure:
   # zip up the SUT benchmarks
   - 7z a benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip .\epanet-%SUT_BUILD_ID%
   - appveyor PushArtifact benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip
+
+artifacts:
+  - path: '%BUILD_HOME%\epanet-solver-*.zip'
+    name: epanet-solver-package

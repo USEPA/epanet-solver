@@ -28,9 +28,9 @@
 
 
 :: check that dependencies are installed
-where curl
+where curl > nul
 if %ERRORLEVEL% neq 0 ( echo curl not installed & exit /B 1 )
-where 7z
+where 7z > nul
 if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
 
 
@@ -90,10 +90,8 @@ mkdir %TEST_HOME%
 cd %TEST_HOME%
 
 
-:: retrieve nrtest cases for regression testing
+:: retrieve nrtest cases and benchmark results for regression testing
 curl -fsSL -o nrtestfiles.zip %TESTFILES_URL%
-
-:: retrieve epanet benchmark results
 curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 
 

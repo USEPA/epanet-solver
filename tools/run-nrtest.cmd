@@ -58,13 +58,16 @@ if not exist apps\epanet-%SUT_BUILD_ID%.json (
 )
 
 
-:: build test list
+:: recursively build test list
 set TESTS=
-for /F "tokens=*" %%T in ('dir /b tests') do ( set "TESTS=!TESTS! tests\%%T" )
+for /F "tokens=*" %%T in ('dir /b /s /a:d tests') do (
+  set FULL_PATH=%%T
+  set TESTS=!TESTS! !FULL_PATH:*nrtestsuite\=!
+)
 
 
 :: determine location of python Scripts folder
-for /F "tokens=*" %%G in ('where python') do (
+for /F "tokens=*" %%G in ('where python.exe') do (
   set PYTHON_DIR=%%~dpG
   goto break_loop_1
 )
@@ -73,12 +76,12 @@ set "NRTEST_SCRIPT_PATH=%PYTHON_DIR%Scripts"
 
 
 :: build nrtest execute command
-set NRTEST_EXECUTE_CMD=python %NRTEST_SCRIPT_PATH%\nrtest execute
+set NRTEST_EXECUTE_CMD=python.exe %NRTEST_SCRIPT_PATH%\nrtest execute
 set TEST_APP_PATH=apps\epanet-%SUT_BUILD_ID%.json
 set TEST_OUTPUT_PATH=benchmark\epanet-%SUT_BUILD_ID%
 
 :: build nrtest compare command
-set NRTEST_COMPARE_CMD=python %NRTEST_SCRIPT_PATH%\nrtest compare
+set NRTEST_COMPARE_CMD=python.exe %NRTEST_SCRIPT_PATH%\nrtest compare
 set REF_OUTPUT_PATH=benchmark\epanet-%REF_BUILD_ID%
 set RTOL_VALUE=0.01
 set ATOL_VALUE=0.0

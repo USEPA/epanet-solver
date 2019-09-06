@@ -1,7 +1,8 @@
 <!---
    Testing.md
 
-   Date Created: Sept 4, 2019
+   Created: Sept 4, 2019
+   Updated: Sept 5, 2019
 
    Author: Michael E. Tryby
            US EPA - ORD/NRMRL
@@ -14,23 +15,23 @@
 
 Before the project can be built and tested the required dependencies must be installed.
 
-Summary of Build Dependencies: Windows
+**Summary of Build Dependencies: Windows**
+
   - Build and Test
-    - CMake 3.13
-    - Build Tools for Visual Studio 2017
-    - Boost 1.67
+      - CMake 3.13
+      - Build Tools for Visual Studio 2017
+      - Boost 1.67
 
   - Regression Test
-    - curl
-    - 7z
-    - Python 3.6 64 bit
+      - curl
+      - 7z
+      - Python 3.6 64 bit
 
 
 The following command installs the Python packages required for regression testing.
 ```
 \>pip install -r tools\requirements-appveyor.txt
 ```
-
 
 
 ### Build and Test
@@ -45,5 +46,5 @@ EPANET can be built and unit tests run in one composite ctest command.
 
 This command runs regression tests for the local build and compares them to the latest benchmark.
 ```
-\>tools\before-test.cmd && tools\run-nrtest.cmd
+\>tools\before-nrtest.cmd && tools\run-nrtest.cmd
 ```
