@@ -81,7 +81,6 @@ test_script:
 on_success:
   - cmake --install . --config Release
   - cpack
-  - appveyor PushArtifact epanet-solver-package
   - cd %TEST_HOME%\benchmark
   - appveyor PushArtifact receipt.json
 
