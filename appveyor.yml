@@ -92,6 +92,5 @@ on_failure:
   - appveyor PushArtifact benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip
 
 artifacts:
-  - path: %BUILD_HOME%\epanet-solver-*.zip
+  - path: '%BUILD_HOME%\epanet-solver-*.zip'
     name: epanet-solver-package
-    type: zip
