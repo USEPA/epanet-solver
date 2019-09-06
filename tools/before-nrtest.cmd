@@ -28,9 +28,9 @@
 
 
 :: check that dependencies are installed
-where curl
+where curl > nul
 if %ERRORLEVEL% neq 0 ( echo curl not installed & exit /B 1 )
-where 7z
+where 7z > nul
 if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
 
 
