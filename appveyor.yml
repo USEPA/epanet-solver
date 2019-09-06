@@ -67,7 +67,7 @@ build_script:
 
 before_test:
   - cd %EPANET_HOME%
-  - tools\before-test.cmd
+  - tools\before-nrtest.cmd
 
 # run custom test script
 test_script:
