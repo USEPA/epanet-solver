@@ -81,16 +81,17 @@ test_script:
   # run regression tests
   - cd %EPANET_HOME%
   - tools\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
-  # zip up the SUT benchmarks
-  - cd %TEST_HOME%\benchmark
-  - 7z a benchmark-%PLATFORM%.zip .\epanet-%SUT_BUILD_ID%
 
 on_success:
+  - cd %TEST_HOME%\benchmark
   - appveyor PushArtifact receipt.json
+
+on_failure:
+  - cd %TEST_HOME%\benchmark
+  # zip up the SUT benchmarks
+  - 7z a benchmark-%PLATFORM%.zip .\epanet-%SUT_BUILD_ID%
+  - appveyor PushArtifact benchmark-%PLATFORM%.zip
 
 artifacts:
   - path: '%BUILD_HOME%\epanet-solver-*.zip'
     name: SUT-package
-
-  - path: '%TEST_HOME%\benchmark\benchmark-%PLATFORM%.zip'
-    name: SUT-benchmark
