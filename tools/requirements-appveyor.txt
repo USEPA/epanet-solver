@@ -14,7 +14,6 @@
 #  $ pip install -r requirements-appveyor.txt
 #
 
--f https://github.com/michaeltryby/nrtest/releases/download/v0.2.4/nrtest-0.2.4-py2.py3-none-any.whl
 nrtest
 
 -f https://github.com/OpenWaterAnalytics/epanet-python/releases/download/0.3.0-dev.1/epanet.output-0.2.0.dev0-cp36-cp36m-win_amd64.whl
