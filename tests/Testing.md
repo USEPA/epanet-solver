@@ -24,9 +24,8 @@ Follow the link for more information about [Boost Test](https://www.boost.org/do
 
 ### Guidelines
 
- 1. To help minimize build time, add tests to existing test suites rather than creating separate test executables. Individual files already exist for each category of functions found in the epanet-solver library. At build time they linked together into a single test executable.
+ 1. To help minimize build time, add tests to existing test suites rather than creating separate test executables. Individual files already exist for each category of functions found in the epanet-solver library. At build time they get linked together into a single test executable.
 
  2. The `BOOST_REQUIRE` macro causes the code to exit immediately when an error is detected. This can cause memory leaks and other spurious runtime issues. When adding new tests, the `BOOST_CHECK` macro is preferred.
 
  3. Unit Tests are written to the C++11 Standard.
- 
