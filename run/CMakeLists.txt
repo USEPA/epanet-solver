@@ -25,3 +25,12 @@ if(NOT WIN32)
 else(NOT WIN32)
     target_link_libraries(runepanet LINK_PUBLIC epanet2)
 endif(NOT WIN32)
+
+
+
+install(TARGETS runepanet
+    EXPORT
+        epanet2Targets
+    RUNTIME DESTINATION
+        "${TOOL_DIST}" COMPONENT bin
+    )

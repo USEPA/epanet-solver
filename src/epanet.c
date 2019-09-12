@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 05/15/2019
+ Last Updated: 07/18/2019
  ******************************************************************************
 */
 
@@ -51,7 +51,7 @@ int DLLEXPORT EN_createproject(EN_Project *p)
     return 0;
 }
 
-int DLLEXPORT EN_deleteproject(EN_Project *p)
+int DLLEXPORT EN_deleteproject(EN_Project p)
 /*----------------------------------------------------------------
 **  Input:   none
 **  Output:  none
@@ -60,13 +60,14 @@ int DLLEXPORT EN_deleteproject(EN_Project *p)
 **----------------------------------------------------------------
 */
 {
-    if (*p == NULL) return -1;
-    if ((*p)->Openflag) EN_close(*p);
-    remove((*p)->TmpHydFname);
-    remove((*p)->TmpOutFname);
-    remove((*p)->TmpStatFname);
-    free(*p);
-    *p = NULL;
+    if (p == NULL) return -1;
+    if (p->Openflag) {
+      EN_close(p);
+    }
+    remove(p->TmpHydFname);
+    remove(p->TmpOutFname);
+    remove(p->TmpStatFname);
+    free(p);
     return 0;
 }
 
@@ -1038,19 +1039,25 @@ int DLLEXPORT EN_getstatistic(EN_Project p, int type, double *value)
     switch (type)
     {
     case EN_ITERATIONS:
-        *value = (double)p->hydraul.Iterations;
+        *value = p->hydraul.Iterations;
         break;
     case EN_RELATIVEERROR:
-        *value = (double)p->hydraul.RelativeError;
+        *value = p->hydraul.RelativeError;
         break;
     case EN_MAXHEADERROR:
-        *value = (double)(p->hydraul.MaxHeadError * p->Ucf[HEAD]);
+        *value = p->hydraul.MaxHeadError * p->Ucf[HEAD];
         break;
     case EN_MAXFLOWCHANGE:
-        *value = (double)(p->hydraul.MaxFlowChange * p->Ucf[FLOW]);
+        *value = p->hydraul.MaxFlowChange * p->Ucf[FLOW];
+        break;
+    case EN_DEFICIENTNODES:
+        *value = p->hydraul.DeficientNodes;
+        break;
+    case EN_DEMANDREDUCTION:
+        *value = p->hydraul.DemandReduction;
         break;
     case EN_MASSBALANCE:
-        *value = (double)(p->quality.MassBalance.ratio);
+        *value = p->quality.MassBalance.ratio;
         break;
     default:
         *value = 0.0;
@@ -2048,7 +2055,6 @@ int DLLEXPORT EN_getnodevalue(EN_Project p, int index, int property, double *val
     int nJuncs = net->Njuncs;
 
     double *Ucf = p->Ucf;
-    double *NodeDemand = hyd->NodeDemand;
     double *NodeHead = hyd->NodeHead;
     double *NodeQual = qual->NodeQual;
 
@@ -2126,7 +2132,7 @@ int DLLEXPORT EN_getnodevalue(EN_Project p, int index, int property, double *val
         break;
 
     case EN_DEMAND:
-        v = NodeDemand[index] * Ucf[FLOW];
+        v = hyd->NodeDemand[index] * Ucf[FLOW];
         break;
 
     case EN_HEAD:
@@ -2201,6 +2207,15 @@ int DLLEXPORT EN_getnodevalue(EN_Project p, int index, int property, double *val
     case EN_CANOVERFLOW:
         if (Node[index].Type != TANK) return 0;
         v = Tank[index - nJuncs].CanOverflow;
+        break;
+
+    case EN_DEMANDDEFICIT:
+        if (index > nJuncs) return 0;
+        // After an analysis, DemandFlow contains node's required demand
+        // while NodeDemand contains delivered demand + emitter flow
+        if (hyd->DemandFlow[index] < 0.0) return 0;
+        v = (hyd->DemandFlow[index] -
+            (hyd->NodeDemand[index] - hyd->EmitterFlow[index])) * Ucf[FLOW];
         break;
 
     default:
@@ -2425,7 +2440,7 @@ int DLLEXPORT EN_setnodevalue(EN_Project p, int index, int property, double valu
         vTmp = Tank[j].Vmax;                           // old max. volume
         Tank[j].Vmax = tankvolume(p, j, Tank[j].Hmax); // new max. volume
         Tank[j].V1max *= Tank[j].Vmax / vTmp;          // new mix zone volume
-        Tank[j].A = (curve->Y[n] - curve->Y[0]) /      // nominal area 
+        Tank[j].A = (curve->Y[n] - curve->Y[0]) /      // nominal area
             (curve->X[n] - curve->X[0]);
         break;
 
@@ -2700,9 +2715,9 @@ int DLLEXPORT EN_getdemandmodel(EN_Project p, int *model, double *pmin,
 */
 {
     *model = p->hydraul.DemandModel;
-    *pmin = (double)(p->hydraul.Pmin * p->Ucf[PRESSURE]);
-    *preq = (double)(p->hydraul.Preq * p->Ucf[PRESSURE]);
-    *pexp = (double)(p->hydraul.Pexp);
+    *pmin = p->hydraul.Pmin * p->Ucf[PRESSURE];
+    *preq = p->hydraul.Preq * p->Ucf[PRESSURE];
+    *pexp = p->hydraul.Pexp;
     return 0;
 }
 
@@ -2720,7 +2735,12 @@ int DLLEXPORT EN_setdemandmodel(EN_Project p, int model, double pmin,
 */
 {
     if (model < 0 || model > EN_PDA) return 251;
-    if (pmin > preq || pexp <= 0.0) return 209;
+    if (model == EN_PDA)
+    {
+        if (pexp <= 0.0) return 208;
+        if (pmin < 0.0) return 208;
+        if (preq - pmin < MINPDIFF) return 208;
+    }
     p->hydraul.DemandModel = model;
     p->hydraul.Pmin = pmin / p->Ucf[PRESSURE];
     p->hydraul.Preq = preq / p->Ucf[PRESSURE];

@@ -16,38 +16,42 @@ matrix:
   - GROUP: "EXPERIMENTAL"
 
 environment:
+  BUILD_HOME: "buildprod"
+  TEST_HOME: "nrtestsuite"
+  PYTHON: "C:\\Python36-x64"
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     GENERATOR: "Visual Studio 15 2017"
     GROUP: "SUPPORTED"
     BOOST_ROOT: "C:/Libraries/boost_1_67_0"
     PLATFORM: "win32"
-    REF_BUILD_ID: "538_1"
+    REF_BUILD_ID: "local"
   # New build on Visual Studio 15 2017
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     GENERATOR: "Visual Studio 15 2017 Win64"
     GROUP: "EXPERIMENTAL"
     BOOST_ROOT: "C:/Libraries/boost_1_67_0"
     PLATFORM: "win64"
-    REF_BUILD_ID: "538_2"
+    REF_BUILD_ID: "local"
 
 # called before repo cloning
 init:
   - set SUT_BUILD_ID=%APPVEYOR_BUILD_NUMBER%_%APPVEYOR_JOB_NUMBER%
   - set EPANET_HOME=%APPVEYOR_BUILD_FOLDER%
-  - set BUILD_HOME=buildprod
-  - set TEST_HOME=nrtestsuite
   - set PATH=%PATH%;%BOOST_ROOT%/
 
   # See values set
   - echo %APPVEYOR_BUILD_WORKER_IMAGE%
   - echo %BUILD_HOME%
+  - echo %TEST_HOME%
   - echo %GENERATOR%
   - echo %BOOST_ROOT%
 
 # called after repo clone
 install:
-  - python -m pip install -r tools\requirements-appveyor.txt
+  - set "PATH=%PYTHON%;%PYTHON%\Scripts;%PYTHON%\Library/bin;%path%"
+  - "%PYTHON%\\python.exe --version"
+  - "%PYTHON%\\python.exe -m pip install -r tools\\requirements-appveyor.txt"
 
 # called before build
 before_build:
@@ -61,9 +65,13 @@ before_build:
 build_script:
   - cmake --build . --config Release
 
+after_build:
+  - cmake --build . --config Release --target install
+  - cpack
+
 before_test:
   - cd %EPANET_HOME%
-  - tools\before-test.cmd %PLATFORM% %REF_BUILD_ID% %SUT_BUILD_ID% %APPVEYOR_REPO_COMMIT%
+  - tools\before-nrtest.cmd
 
 # run custom test script
 test_script:
@@ -72,7 +80,7 @@ test_script:
   - ctest -C Release --output-on-failure
   # run regression tests
   - cd %EPANET_HOME%
-  - tools\run-nrtest.cmd %REF_BUILD_ID% %SUT_BUILD_ID%
+  - tools\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
 
 on_success:
   - cd %TEST_HOME%\benchmark
@@ -81,5 +89,9 @@ on_success:
 on_failure:
   - cd %TEST_HOME%\benchmark
   # zip up the SUT benchmarks
-  - 7z a benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip .\epanet-%SUT_BUILD_ID%
-  - appveyor PushArtifact benchmark-%PLATFORM%-%SUT_BUILD_ID%.zip
+  - 7z a benchmark-%PLATFORM%.zip .\epanet-%SUT_BUILD_ID%
+  - appveyor PushArtifact benchmark-%PLATFORM%.zip
+
+artifacts:
+  - path: '%BUILD_HOME%\epanet-solver-*.zip'
+    name: SUT-package
