@@ -2,6 +2,7 @@
 # CMakeLists.txt - CMake configuration file for epanet/tests
 #
 # Created: February 13, 2018
+# Updated: September 13, 2019
 #
 # Modified by: Michael E. Tryby
 #              US EPA ORD/NRMRL
