@@ -17,7 +17,7 @@ set(EPANET_OUT_PRIVATE_HEADERS
     )
 
 set(EPANET_OUT_SOURCES
-    src/epanet_output.c
+    epanet_output.c
     ../util/errormanager.c
     ../util/filemanager.c
     ../util/cstr_helper.c

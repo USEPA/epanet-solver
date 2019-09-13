@@ -62,15 +62,17 @@
 
 #define MEMCHECK(x)  (((x) == NULL) ? 411 : 0 )
 
+
 // Typedefs for opaque pointer
-typedef struct data_s {
+typedef struct Handle {
     INT4  nodeCount, tankCount, linkCount, pumpCount, valveCount, nPeriods;
     F_OFF outputStartPos;  // starting file position of output data
     F_OFF bytesPerPeriod;  // bytes saved per simulation time period
 
     error_handle_t *error_handle;
     file_handle_t *file_handle;
-} data_t;
+} Handle, *EN_Handle;
+
 
 //-----------------------------------------------------------------------------
 //   Local functions
@@ -85,7 +87,7 @@ int   *newIntArray(int n);
 char  *newCharArray(int n);
 
 
-int EXPORT_OUT_API ENR_init(ENR_Handle *dp_handle)
+int EXPORT_OUT_API ENR_createHandle(ENR_Handle *p_handle)
 //  Purpose: Initialized pointer for the opaque ENR_Handle.
 //
 //  Returns: Error code 0 on success, -1 on failure
@@ -95,15 +97,15 @@ int EXPORT_OUT_API ENR_init(ENR_Handle *dp_handle)
 //
 {
     int errorcode = 0;
-    data_t* p_data;
+    Handle *handle;
 
     // Allocate memory for private data
-    p_data = (data_t*)calloc(1, sizeof(data_t));
+    handle = (Handle *)calloc(1, sizeof(Handle));
 
-    if (p_data != NULL){
-        p_data->error_handle = create_error_manager(&errorLookup);
-        p_data->file_handle = create_file_manager();
-        *dp_handle = p_data;
+    if (handle != NULL){
+        handle->error_handle = create_error_manager(&errorLookup);
+        handle->file_handle = create_file_manager();
+        *p_handle = handle;
     }
     else
         errorcode = -1;
@@ -112,9 +114,28 @@ int EXPORT_OUT_API ENR_init(ENR_Handle *dp_handle)
     return errorcode;
 }
 
-int EXPORT_OUT_API ENR_close(ENR_Handle *p_handle)
+int EXPORT_OUT_API ENR_deleteHandle(ENR_Handle p_handle)
+{
+    int errorcode = 0;
+
+    if (p_handle == NULL)
+        errorcode = -1;
+
+    else
+    {
+        delete_error_manager(p_handle->error_handle);
+        delete_file_manager(p_handle->file_handle);
+
+        free(p_handle);
+    }
+
+    return errorcode;
+}
+
+
+int EXPORT_OUT_API ENR_closeFile(ENR_Handle p_handle)
 /*------------------------------------------------------------------------
- **    Input:  *p_handle = pointer to ENR_Handle struct
+ **    Input:  p_handle = pointer to ENR_Handle struct
  **
  **  Returns:  Error code 0 on success, -1 on failure
  **
@@ -127,30 +148,20 @@ int EXPORT_OUT_API ENR_close(ENR_Handle *p_handle)
  **-------------------------------------------------------------------------
  */
 {
-    data_t *p_data;
     int errorcode = 0;
 
-    p_data = (data_t *)(*p_handle);
-
-    if (p_data == NULL || p_data->file_handle == NULL)
+    if (p_handle == NULL || p_handle->file_handle == NULL)
         errorcode = -1;
 
     else
     {
-        close_file(p_data->file_handle);
-
-        delete_error_manager(p_data->error_handle);
-        delete_file_manager(p_data->file_handle);
-
-        free(p_data);
-
-        *p_handle = NULL;
+        close_file(p_handle->file_handle);
     }
 
     return errorcode;
 }
 
-int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char *path)
+int EXPORT_OUT_API ENR_openFile(ENR_Handle p_handle, const char *path)
 /*------------------------------------------------------------------------
  **   Input:   path
  **   Output:  p_handle = pointer to ENR_Handle struct
@@ -163,51 +174,48 @@ int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char *path)
 {
     int err, errorcode = 0;
     F_OFF bytecount;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     else
     {
         // Attempt to open binary output file for reading only
-        if ((open_file(p_data->file_handle, path, "rb")) != 0)
+        if ((open_file(p_handle->file_handle, path, "rb")) != 0)
             errorcode = 434;
 
         // Perform checks to insure the file is valid
-        else if ((err = validateFile(p_data)) != 0) errorcode = err;
+        else if ((err = validateFile(p_handle)) != 0) errorcode = err;
 
         // If a warning is encountered read file header
         if (errorcode < 400 ) {
             // read network size
-            seek_file(p_data->file_handle, 2*WORDSIZE, SEEK_SET);
-            read_file(&(p_data->nodeCount), WORDSIZE, 1, p_data->file_handle);
-            read_file(&(p_data->tankCount), WORDSIZE, 1, p_data->file_handle);
-            read_file(&(p_data->linkCount), WORDSIZE, 1, p_data->file_handle);
-            read_file(&(p_data->pumpCount), WORDSIZE, 1, p_data->file_handle);
-            read_file(&(p_data->valveCount), WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, 2*WORDSIZE, SEEK_SET);
+            read_file(&(p_handle->nodeCount), WORDSIZE, 1, p_handle->file_handle);
+            read_file(&(p_handle->tankCount), WORDSIZE, 1, p_handle->file_handle);
+            read_file(&(p_handle->linkCount), WORDSIZE, 1, p_handle->file_handle);
+            read_file(&(p_handle->pumpCount), WORDSIZE, 1, p_handle->file_handle);
+            read_file(&(p_handle->valveCount), WORDSIZE, 1, p_handle->file_handle);
 
             // Compute positions and offsets for retrieving data
             // fixed portion of header + title section + filenames + chem names
             bytecount = PROLOGUE;
             // node names + link names
-            bytecount += MAXID_P1*p_data->nodeCount + MAXID_P1*p_data->linkCount;
+            bytecount += MAXID_P1*p_handle->nodeCount + MAXID_P1*p_handle->linkCount;
             // network connectivity + tank nodes + tank areas
-            bytecount += 3*WORDSIZE*p_data->linkCount + 2*WORDSIZE*p_data->tankCount;
+            bytecount += 3*WORDSIZE*p_handle->linkCount + 2*WORDSIZE*p_handle->tankCount;
             // node elevations + link lengths and link diameters
-            bytecount += WORDSIZE*p_data->nodeCount + 2*WORDSIZE*p_data->linkCount;
+            bytecount += WORDSIZE*p_handle->nodeCount + 2*WORDSIZE*p_handle->linkCount;
             // pump energy summary
-            bytecount += 7*WORDSIZE*p_data->pumpCount + WORDSIZE;
-            p_data->outputStartPos= bytecount;
+            bytecount += 7*WORDSIZE*p_handle->pumpCount + WORDSIZE;
+            p_handle->outputStartPos= bytecount;
 
-            p_data->bytesPerPeriod = NNODERESULTS*WORDSIZE*p_data->nodeCount +
-                    NLINKRESULTS*WORDSIZE*p_data->linkCount;
+            p_handle->bytesPerPeriod = NNODERESULTS*WORDSIZE*p_handle->nodeCount +
+                    NLINKRESULTS*WORDSIZE*p_handle->linkCount;
         }
     }
     // If error close the binary file
     if (errorcode > 400) {
-        set_error(p_data->error_handle, errorcode);
-        ENR_close(&p_handle);
+        set_error(p_handle->error_handle, errorcode);
+        ENR_closeFile(p_handle);
     }
 
     return errorcode;
@@ -224,19 +232,16 @@ int EXPORT_OUT_API ENR_getVersion(ENR_Handle p_handle, int *version)
  */
 {
     int errorcode = 0;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     else
     {
-        seek_file(p_data->file_handle, 1*WORDSIZE, SEEK_SET);
-        if (read_file(version, WORDSIZE, 1, p_data->file_handle) != 1)
+        seek_file(p_handle->file_handle, 1*WORDSIZE, SEEK_SET);
+        if (read_file(version, WORDSIZE, 1, p_handle->file_handle) != 1)
             errorcode = 436;
     }
 
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int **elementCount, int *length)
@@ -250,24 +255,21 @@ int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int **elementCount, int *
 {
     int errorcode = 0;
     int *temp = newIntArray(NELEMENTTYPES);
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     else
     {
-        temp[0] = p_data->nodeCount;
-        temp[1] = p_data->tankCount;
-        temp[2] = p_data->linkCount;
-        temp[3] = p_data->pumpCount;
-        temp[4] = p_data->valveCount;
+        temp[0] = p_handle->nodeCount;
+        temp[1] = p_handle->tankCount;
+        temp[2] = p_handle->linkCount;
+        temp[3] = p_handle->pumpCount;
+        temp[4] = p_handle->valveCount;
 
         *elementCount = temp;
         *length = NELEMENTTYPES;
     }
 
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int *unitFlag)
@@ -298,38 +300,35 @@ int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int *unitFl
     int errorcode = 0;
     F_OFF offset;
     char temp[MAXID_P1];
-    data_t *p_data;
 
     *unitFlag = -1;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     else
     {
         switch (code)
         {
         case ENR_flowUnits:
-            seek_file(p_data->file_handle, 9*WORDSIZE, SEEK_SET);
-            read_file(unitFlag, WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, 9*WORDSIZE, SEEK_SET);
+            read_file(unitFlag, WORDSIZE, 1, p_handle->file_handle);
             break;
 
         case ENR_pressUnits:
-            seek_file(p_data->file_handle, 10*WORDSIZE, SEEK_SET);
-            read_file(unitFlag, WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, 10*WORDSIZE, SEEK_SET);
+            read_file(unitFlag, WORDSIZE, 1, p_handle->file_handle);
             break;
 
         case ENR_qualUnits:
             offset = 7*WORDSIZE;
-            seek_file(p_data->file_handle, offset, SEEK_SET);
-            read_file(unitFlag, WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, offset, SEEK_SET);
+            read_file(unitFlag, WORDSIZE, 1, p_handle->file_handle);
 
             if (*unitFlag == 0) *unitFlag = ENR_NONE;
 
             else if (*unitFlag == 1) {
                 offset = 15*WORDSIZE + 3*MAXMSG_P1 + 2*(MAXFNAME+1) + MAXID_P1;
-                seek_file(p_data->file_handle, offset, SEEK_SET);
-                read_file(temp, MAXID_P1, 1, p_data->file_handle);
+                seek_file(p_handle->file_handle, offset, SEEK_SET);
+                read_file(temp, MAXID_P1, 1, p_handle->file_handle);
 
                 if (!strcmp(temp, "mg/L")) *unitFlag = ENR_MGL;
                 else *unitFlag = ENR_UGL;
@@ -344,7 +343,7 @@ int EXPORT_OUT_API ENR_getUnits(ENR_Handle p_handle, ENR_Units code, int *unitFl
         default: errorcode = 421;
         }
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int *time)
@@ -358,41 +357,38 @@ int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int *time)
  */
 {
     int errorcode = 0;
-    data_t* p_data;
 
     *time = -1;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     else
     {
         switch (code)
         {
         case ENR_reportStart:
-            seek_file(p_data->file_handle, 12*WORDSIZE, SEEK_SET);
-            read_file(time, WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, 12*WORDSIZE, SEEK_SET);
+            read_file(time, WORDSIZE, 1, p_handle->file_handle);
             break;
 
         case ENR_reportStep:
-            seek_file(p_data->file_handle, 13*WORDSIZE, SEEK_SET);
-            read_file(time, WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, 13*WORDSIZE, SEEK_SET);
+            read_file(time, WORDSIZE, 1, p_handle->file_handle);
             break;
 
         case ENR_simDuration:
-            seek_file(p_data->file_handle, 14*WORDSIZE, SEEK_SET);
-            read_file(time, WORDSIZE, 1, p_data->file_handle);
+            seek_file(p_handle->file_handle, 14*WORDSIZE, SEEK_SET);
+            read_file(time, WORDSIZE, 1, p_handle->file_handle);
             break;
 
         case ENR_numPeriods:
-            *time = p_data->nPeriods;
+            *time = p_handle->nPeriods;
             break;
 
         default:
             errorcode = 421;
         }
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getChemData(ENR_Handle p_handle, char **name, int *length)
@@ -417,11 +413,8 @@ int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
     F_OFF offset;
     int errorcode = 0;
     char *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     /* Allocate memory for name */
     else if MEMCHECK(temp = newCharArray(MAXID_P1)) errorcode = 411;
 
@@ -430,16 +423,16 @@ int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
         switch (type)
         {
         case ENR_node:
-            if (elementIndex < 1 || elementIndex > p_data->nodeCount)
+            if (elementIndex < 1 || elementIndex > p_handle->nodeCount)
                 errorcode = 423;
             else offset = PROLOGUE + (elementIndex - 1)*MAXID_P1;
             break;
 
         case ENR_link:
-            if (elementIndex < 1 || elementIndex > p_data->linkCount)
+            if (elementIndex < 1 || elementIndex > p_handle->linkCount)
                 errorcode = 423;
             else
-                offset = PROLOGUE + p_data->nodeCount*MAXID_P1 +
+                offset = PROLOGUE + p_handle->nodeCount*MAXID_P1 +
                 (elementIndex - 1)*MAXID_P1;
             break;
 
@@ -449,15 +442,15 @@ int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
 
         if (!errorcode)
         {
-            seek_file(p_data->file_handle, offset, SEEK_SET);
-            read_file(temp, 1, MAXID_P1, p_data->file_handle);
+            seek_file(p_handle->file_handle, offset, SEEK_SET);
+            read_file(temp, 1, MAXID_P1, p_handle->file_handle);
 
             *name = temp;
             *length = MAXID_P1;
         }
     }
 
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
@@ -477,32 +470,29 @@ int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
     F_OFF offset;
     int errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     // Check for valid pump index
-    else if (pumpIndex < 1 || pumpIndex > p_data->pumpCount) errorcode = 423;
+    else if (pumpIndex < 1 || pumpIndex > p_handle->pumpCount) errorcode = 423;
     // Check memory for outValues
     else if MEMCHECK(temp = newFloatArray(NENERGYRESULTS)) errorcode = 411;
 
     else
     {
         // Position offset to start of pump energy summary
-        offset = p_data->outputStartPos - (p_data->pumpCount*(WORDSIZE + 6*WORDSIZE) + WORDSIZE);
+        offset = p_handle->outputStartPos - (p_handle->pumpCount*(WORDSIZE + 6*WORDSIZE) + WORDSIZE);
         // Adjust offset by pump index
         offset += (pumpIndex - 1)*(WORDSIZE + 6*WORDSIZE);
 
         // Power summary is 1 int and 6 floats for each pump
-        seek_file(p_data->file_handle, offset, SEEK_SET);
-        read_file(linkIndex, WORDSIZE, 1, p_data->file_handle);
-        read_file(temp, WORDSIZE, 6, p_data->file_handle);
+        seek_file(p_handle->file_handle, offset, SEEK_SET);
+        read_file(linkIndex, WORDSIZE, 1, p_handle->file_handle);
+        read_file(temp, WORDSIZE, 6, p_handle->file_handle);
 
         *outValues = temp;
         *length = NENERGYRESULTS;
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **outValues, int *length)
@@ -518,11 +508,8 @@ int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **outValues, int 
     F_OFF offset;
     int errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     // Check memory for outValues
     else if MEMCHECK(temp = newFloatArray(NREACTRESULTS)) errorcode = 411;
 
@@ -531,24 +518,21 @@ int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **outValues, int 
         // Reaction summary is 4 floats located right before epilogue.
         // This offset is relative to the end of the file.
         offset = - 3*WORDSIZE - 4*WORDSIZE;
-        seek_file(p_data->file_handle, offset, SEEK_END);
-        read_file(temp, WORDSIZE, 4, p_data->file_handle);
+        seek_file(p_handle->file_handle, offset, SEEK_END);
+        read_file(temp, WORDSIZE, 4, p_handle->file_handle);
 
         *outValues = temp;
         *length = NREACTRESULTS;
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
-void EXPORT_OUT_API ENR_free(void **array)
+void EXPORT_OUT_API ENR_free(void *array)
 //
 //  Purpose: Frees memory allocated by API calls
 //
 {
-    if (array != NULL) {
-        free(*array);
-        *array = NULL;
-    }
+    free(array);
 }
 
 int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_NodeAttribute attr,
@@ -563,13 +547,10 @@ int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_Nod
 {
     int k, length, errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
-    else if (nodeIndex < 1 || nodeIndex > p_data->nodeCount) errorcode = 423;
-    else if (startPeriod < 0 || endPeriod >= p_data->nPeriods ||
+    if (p_handle == NULL) return -1;
+    else if (nodeIndex < 1 || nodeIndex > p_handle->nodeCount) errorcode = 423;
+    else if (startPeriod < 0 || endPeriod >= p_handle->nPeriods ||
             endPeriod <= startPeriod) errorcode = 422;
     // Check memory for outValues
     else if MEMCHECK(temp = newFloatArray(length = endPeriod - startPeriod)) errorcode = 411;
@@ -583,7 +564,7 @@ int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_Nod
         *outValueSeries = temp;
         *dim = length;
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int linkIndex, ENR_LinkAttribute attr,
@@ -599,13 +580,10 @@ int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int linkIndex, ENR_Lin
 {
     int k, length, errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
-    else if (linkIndex < 1 || linkIndex > p_data->linkCount) errorcode = 423;
-    else if (startPeriod < 0 || endPeriod >= p_data->nPeriods ||
+    if (p_handle == NULL) return -1;
+    else if (linkIndex < 1 || linkIndex > p_handle->linkCount) errorcode = 423;
+    else if (startPeriod < 0 || endPeriod >= p_handle->nPeriods ||
             endPeriod <= startPeriod) errorcode = 422;
     // Check memory for outValues
     else if MEMCHECK(temp = newFloatArray(length = endPeriod - startPeriod)) errorcode = 411;
@@ -618,7 +596,7 @@ int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int linkIndex, ENR_Lin
         *outValueSeries = temp;
         *dim = length;
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
@@ -643,31 +621,28 @@ int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
     F_OFF offset;
     int errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     // if the time index is out of range return an error
-    else if (periodIndex < 0 || periodIndex >= p_data->nPeriods) errorcode = 422;
+    else if (periodIndex < 0 || periodIndex >= p_handle->nPeriods) errorcode = 422;
     // Check memory for outValues
-    else if MEMCHECK(temp = newFloatArray(p_data->nodeCount)) errorcode = 411;
+    else if MEMCHECK(temp = newFloatArray(p_handle->nodeCount)) errorcode = 411;
 
     else
     {
         // calculate byte offset to start time for series
-        offset = p_data->outputStartPos + (periodIndex)*p_data->bytesPerPeriod;
+        offset = p_handle->outputStartPos + (periodIndex)*p_handle->bytesPerPeriod;
         // add offset for node and attribute
-        offset += ((attr - 1)*p_data->nodeCount)*WORDSIZE;
+        offset += ((attr - 1)*p_handle->nodeCount)*WORDSIZE;
 
-        seek_file(p_data->file_handle, offset, SEEK_SET);
-        read_file(temp, WORDSIZE, p_data->nodeCount, p_data->file_handle);
+        seek_file(p_handle->file_handle, offset, SEEK_SET);
+        read_file(temp, WORDSIZE, p_handle->nodeCount, p_handle->file_handle);
 
         *outValueArray = temp;
-        *length = p_data->nodeCount;
+        *length = p_handle->nodeCount;
     }
 
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
@@ -692,32 +667,29 @@ int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
     F_OFF offset;
     int errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
+    if (p_handle == NULL) return -1;
     // if the time index is out of range return an error
-    else if (periodIndex < 0 || periodIndex >= p_data->nPeriods) errorcode = 422;
+    else if (periodIndex < 0 || periodIndex >= p_handle->nPeriods) errorcode = 422;
     // Check memory for outValues
-    else if MEMCHECK(temp = newFloatArray(p_data->linkCount)) errorcode = 411;
+    else if MEMCHECK(temp = newFloatArray(p_handle->linkCount)) errorcode = 411;
 
     else
     {
         // calculate byte offset to start time for series
-        offset = p_data->outputStartPos + (periodIndex)*p_data->bytesPerPeriod
-                + (NNODERESULTS*p_data->nodeCount)*WORDSIZE;
+        offset = p_handle->outputStartPos + (periodIndex)*p_handle->bytesPerPeriod
+                + (NNODERESULTS*p_handle->nodeCount)*WORDSIZE;
         // add offset for link and attribute
-        offset += ((attr - 1)*p_data->linkCount)*WORDSIZE;
+        offset += ((attr - 1)*p_handle->linkCount)*WORDSIZE;
 
-        seek_file(p_data->file_handle, offset, SEEK_SET);
-        read_file(temp, WORDSIZE, p_data->linkCount, p_data->file_handle);
+        seek_file(p_handle->file_handle, offset, SEEK_SET);
+        read_file(temp, WORDSIZE, p_handle->linkCount, p_handle->file_handle);
 
         *outValueArray = temp;
-        *length = p_data->linkCount;
+        *length = p_handle->linkCount;
     }
 
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
@@ -730,13 +702,10 @@ int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
 {
     int j, errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t *)p_handle;
-
-    if (p_data == NULL) return -1;
-    else if (periodIndex < 0 || periodIndex >= p_data->nPeriods) errorcode = 422;
-    else if (nodeIndex < 1 || nodeIndex > p_data->nodeCount) errorcode = 423;
+    if (p_handle == NULL) return -1;
+    else if (periodIndex < 0 || periodIndex >= p_handle->nPeriods) errorcode = 422;
+    else if (nodeIndex < 1 || nodeIndex > p_handle->nodeCount) errorcode = 423;
     else if MEMCHECK(temp = newFloatArray(NNODERESULTS)) errorcode = 411;
     else
     {
@@ -747,7 +716,7 @@ int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
         *length = NNODERESULTS;
     }
 
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
@@ -758,13 +727,10 @@ int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
 {
     int j, errorcode = 0;
     float *temp;
-    data_t *p_data;
 
-    p_data = (data_t*)p_handle;
-
-    if (p_data == NULL) return -1;
-    else if (periodIndex < 0 || periodIndex >= p_data->nPeriods) errorcode = 422;
-    else if (linkIndex < 1 || linkIndex > p_data->linkCount) errorcode = 423;
+    if (p_handle == NULL) return -1;
+    else if (periodIndex < 0 || periodIndex >= p_handle->nPeriods) errorcode = 422;
+    else if (linkIndex < 1 || linkIndex > p_handle->linkCount) errorcode = 423;
     else if MEMCHECK(temp = newFloatArray(NLINKRESULTS)) errorcode = 411;
     else
     {
@@ -774,25 +740,19 @@ int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
         *outValueArray = temp;
         *length = NLINKRESULTS;
     }
-    return set_error(p_data->error_handle, errorcode);
+    return set_error(p_handle->error_handle, errorcode);
 }
 
 void EXPORT_OUT_API ENR_clearError(ENR_Handle p_handle)
 {
-    data_t *p_data;
-
-    p_data = (data_t *)p_handle;
-    clear_error(p_data->error_handle);
+    clear_error(p_handle->error_handle);
 }
 
 int EXPORT_OUT_API ENR_checkError(ENR_Handle p_handle, char **msg_buffer)
 {
-    data_t *p_data;
-    p_data = (data_t *)p_handle;
+    if (p_handle == NULL) return -1;
 
-    if (p_data == NULL) return -1;
-
-    return check_error(p_data->error_handle, msg_buffer);
+    return check_error(p_handle->error_handle, msg_buffer);
 }
 
 
@@ -837,26 +797,23 @@ int validateFile(ENR_Handle p_handle)
     INT4 magic1, magic2, hydcode;
     int errorcode = 0;
     F_OFF filepos;
-    data_t* p_data;
-
-    p_data = (data_t *)p_handle;
 
     // Read magic number from beginning of file
-    seek_file(p_data->file_handle, 0L, SEEK_SET);
-    read_file(&magic1, WORDSIZE, 1, p_data->file_handle);
+    seek_file(p_handle->file_handle, 0L, SEEK_SET);
+    read_file(&magic1, WORDSIZE, 1, p_handle->file_handle);
 
     // Fast forward to end and read file epilogue
-    seek_file(p_data->file_handle, -3*WORDSIZE, SEEK_END);
-    read_file(&(p_data->nPeriods), WORDSIZE, 1, p_data->file_handle);
-    read_file(&hydcode, WORDSIZE, 1, p_data->file_handle);
-    read_file(&magic2, WORDSIZE, 1, p_data->file_handle);
+    seek_file(p_handle->file_handle, -3*WORDSIZE, SEEK_END);
+    read_file(&(p_handle->nPeriods), WORDSIZE, 1, p_handle->file_handle);
+    read_file(&hydcode, WORDSIZE, 1, p_handle->file_handle);
+    read_file(&magic2, WORDSIZE, 1, p_handle->file_handle);
 
-    filepos = tell_file(p_data->file_handle);
+    filepos = tell_file(p_handle->file_handle);
 
     // Is the file an EPANET binary file?
     if (magic1 != magic2) errorcode = 435;
     // Does the binary file contain results?
-    else if (filepos < MINNREC*WORDSIZE || p_data->nPeriods == 0)
+    else if (filepos < MINNREC*WORDSIZE || p_handle->nPeriods == 0)
         errorcode = 436;
     // Issue warning if there were problems with the model run.
     else if (hydcode != 0) errorcode = 10;
@@ -871,17 +828,14 @@ float getNodeValue(ENR_Handle p_handle, int periodIndex, int nodeIndex, int attr
 {
     F_OFF offset;
     REAL4 y;
-    data_t *p_data;
-
-    p_data = (data_t *)p_handle;
 
     // calculate byte offset to start time for series
-    offset = p_data->outputStartPos + periodIndex*p_data->bytesPerPeriod;
+    offset = p_handle->outputStartPos + periodIndex*p_handle->bytesPerPeriod;
     // add byte position for attribute and node
-    offset += ((attr - 1)*p_data->nodeCount + (nodeIndex - 1))*WORDSIZE;
+    offset += ((attr - 1)*p_handle->nodeCount + (nodeIndex - 1))*WORDSIZE;
 
-    seek_file(p_data->file_handle, offset, SEEK_SET);
-    read_file(&y, WORDSIZE, 1, p_data->file_handle);
+    seek_file(p_handle->file_handle, offset, SEEK_SET);
+    read_file(&y, WORDSIZE, 1, p_handle->file_handle);
 
     return y;
 }
@@ -893,18 +847,15 @@ float getLinkValue(ENR_Handle p_handle, int periodIndex, int linkIndex, int attr
 {
     F_OFF offset;
     REAL4 y;
-    data_t *p_data;
-
-    p_data = (data_t *)p_handle;
 
     // Calculate byte offset to start time for series
-    offset = p_data->outputStartPos + periodIndex*p_data->bytesPerPeriod
-            + (NNODERESULTS*p_data->nodeCount)*WORDSIZE;
+    offset = p_handle->outputStartPos + periodIndex*p_handle->bytesPerPeriod
+            + (NNODERESULTS*p_handle->nodeCount)*WORDSIZE;
     // add byte position for attribute and link
-    offset += ((attr - 1)*p_data->linkCount + (linkIndex - 1))*WORDSIZE;
+    offset += ((attr - 1)*p_handle->linkCount + (linkIndex - 1))*WORDSIZE;
 
-    seek_file(p_data->file_handle, offset, SEEK_SET);
-    read_file(&y, WORDSIZE, 1, p_data->file_handle);
+    seek_file(p_handle->file_handle, offset, SEEK_SET);
+    read_file(&y, WORDSIZE, 1, p_handle->file_handle);
 
     return y;
 }
