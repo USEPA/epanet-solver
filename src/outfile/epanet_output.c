@@ -527,12 +527,12 @@ int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **outValues, int 
     return set_error(p_handle->error_handle, errorcode);
 }
 
-void EXPORT_OUT_API ENR_free(void *array)
+void EXPORT_OUT_API ENR_freeMemory(void *memory)
 //
 //  Purpose: Frees memory allocated by API calls
 //
 {
-    free(array);
+    free(memory);
 }
 
 int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int nodeIndex, ENR_NodeAttribute attr,

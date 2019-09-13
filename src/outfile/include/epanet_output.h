@@ -300,7 +300,7 @@ int EXPORT_OUT_API ENR_closeFile(ENR_Handle p_handle);
 @brief Free memory allocated by API call.
 @param array the memory to be freed.
 */
-void EXPORT_OUT_API ENR_free(void *array);
+void EXPORT_OUT_API ENR_freeMemory(void *memory);
 
 
 /**

@@ -147,7 +147,7 @@ struct FixtureOutput{
         array_dim = 0;
     }
     ~FixtureOutput() {
-        free(array);
+        ENR_freeMemory(array);
         ENR_closeFile(p_handle);
         ENR_deleteHandle(p_handle);
     }
@@ -178,7 +178,7 @@ BOOST_FIXTURE_TEST_CASE(test_getNetSize, FixtureOutput)
 
     BOOST_CHECK_EQUAL_COLLECTIONS(ref.begin(), ref.end(), test.begin(), test.end());
 
-    free(i_array);
+    ENR_freeMemory(i_array);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_getUnits, FixtureOutput) {
@@ -201,7 +201,7 @@ BOOST_FIXTURE_TEST_CASE(test_getElementName, FixtureOutput) {
     std::string ref ("10");
     BOOST_CHECK(check_string(test, ref));
 
-    free(name);
+    ENR_freeMemory(name);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_getNodeAttribute, FixtureOutput) {
