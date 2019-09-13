@@ -37,8 +37,7 @@ set(toolkit_test_srcs
      test_pattern.cpp
      test_curve.cpp
      test_control.cpp
-     test_overflow.cpp
-     test_pda.cpp
+     # DO NOT ADD NEW TESTS
 )
 
 add_executable(test_toolkit ${toolkit_test_srcs})
