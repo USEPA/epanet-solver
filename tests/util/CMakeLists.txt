@@ -1,11 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet-solver/tests/util
-#
-# Created: February 13, 2018
-# Updated: July 8, 2019
-#
-# Modified by: Michael E. Tryby
-#              US EPA ORD/NRMRL
+# CMakeLists.txt - CMake configuration file for tests/util
 #
 
 

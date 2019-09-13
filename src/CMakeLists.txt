@@ -1,18 +1,6 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet-solver/src
+# CMakeLists.txt - CMake configuration file for /src
 #
-# Created: July 2, 2019
-# Updated: July 8, 2019
-#
-# Modified by: Michael E. Tryby
-#              US EPA ORD/NRMRL
-#
-
-
-# Sets for output directory for executables and libraries.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 
 # TODO: Best practices discourage setting variables directly
@@ -180,3 +168,13 @@ install(
     DESTINATION
         "${INCLUDE_DIST}"
     )
+
+
+# copy epanet2 to build tree for testing
+if(BUILD_TESTS)
+    add_custom_command(TARGET epanet2 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:epanet2>
+            ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:epanet2>
+        )
+endif()
