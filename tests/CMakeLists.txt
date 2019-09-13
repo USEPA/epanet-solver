@@ -9,6 +9,22 @@
 #
 
 
+#Prep ourselves for compiling with boost
+if(WIN32)
+    set(Boost_USE_STATIC_LIBS       ON)
+else()
+    set(Boost_USE_STATIC_LIBS       OFF)
+    add_definitions(-DBOOST_ALL_DYN_LINK)
+endif()
+
+find_package(Boost COMPONENTS unit_test_framework system thread filesystem)
+include_directories (${Boost_INCLUDE_DIRS})
+
+
+add_subdirectory(outfile)
+add_subdirectory(util)
+
+
 # Sets for output directory for executables and libraries.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

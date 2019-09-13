@@ -12,6 +12,8 @@
 # Build Options:
 #   BUILD_TESTS = ON/OFF
 #   BUILD_PY_LIB = ON/OFF
+#   BUILD_DOCS = ON/OFF
+#   BUILD_COVERAGE = ON/OFF
 #
 # Generic Invocation:
 #   cmake -E make_directory buildprod
@@ -78,21 +80,8 @@ add_subdirectory(src/util)
 add_subdirectory(src/outfile)
 
 if(BUILD_TESTS)
-    #Prep ourselves for compiling with boost
-    IF(WIN32)
-        set(Boost_USE_STATIC_LIBS       ON)
-    ELSE(TRUE)
-        set(Boost_USE_STATIC_LIBS       OFF)
-        add_definitions(-DBOOST_ALL_DYN_LINK)
-    ENDIF(WIN32)
-
-    find_package(Boost COMPONENTS unit_test_framework system thread filesystem)
-    include_directories (${Boost_INCLUDE_DIRS})
-
     enable_testing()
     add_subdirectory(tests)
-    add_subdirectory(tests/outfile)
-    add_subdirectory(tests/util)
 endif(BUILD_TESTS)
 
 
