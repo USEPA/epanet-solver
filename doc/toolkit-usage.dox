@@ -13,7 +13,7 @@ EN_createproject(&ph);
 
 // Call functions that perform desired analysis
 
-EN_deleteproject(ph);
+EN_deleteproject(&ph);
 \endcode
 
 @section DetectingErrors Detecting Error Conditions
@@ -52,7 +52,7 @@ if (errcode == 0)
 {
     // Call functions that perform desired analysis
 }
-EN_deleteproject(ph);
+EN_deleteproject(&ph);
 \endcode
 
 After an input file has been loaded in this fashion the resulting network can have objects added or deleted, and their properties set using the various Toolkit functions .
@@ -180,14 +180,16 @@ The @ref EN_getnodevalue and @ref EN_getlinkvalue functions can also be used to 
 |For Nodes:                          | For Links:                                |
 |----------------------------------- | ----------------------------------------- |
 |\b EN_DEMAND (demand)                |\b EN_FLOW (flow rate)                      |
-|\b EN_HEAD (hydraulic head)          |\b EN_VELOCITY (flow velocity)              |
-|\b EN_PRESSURE (pressure)            |\b EN_HEADLOSS (head loss)                  |
-|\b EN_TANKLEVEL (tank water level)   |\b EN_STATUS (link status)                  |
-|\b EN_TANKVOLUME (tank water volume) |\b EN_SETTING (pump speed or valve setting) |
-|\b EN_QUALITY (water quality)        |\b EN_ENERGY (pump energy usage)            |
-|\b EN_SOURCEMASS (source mass inflow)|\b EN_PUMP_EFFIC (pump efficiency)          |
+|\b EN_DEMANDDEFICIT (demand deficit) |\b EN_VELOCITY (flow velocity)              |
+|\b EN_HEAD (hydraulic head)          |\b EN_HEADLOSS (head loss)                  |
+|\b EN_PRESSURE (pressure)            |\b EN_STATUS (link status)                  |
+|\b EN_TANKLEVEL (tank water level)   |\b EN_SETTING (pump speed or valve setting) |
+|\b EN_TANKVOLUME (tank water volume) |\b EN_ENERGY (pump energy usage)            |
+|\b EN_QUALITY (water quality)        |\b EN_PUMP_EFFIC (pump efficiency)          |
+|\b EN_SOURCEMASS (source mass inflow)| |
 
 The following code shows how to retrieve the pressure at each node of a network after each time step of a hydraulic analysis (`writetofile` is a user-defined function that will write a record to a file):
+
 \code {.c}
 void getPressures(EN_Project ph)
 {

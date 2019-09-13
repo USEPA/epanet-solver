@@ -1892,11 +1892,6 @@ int DLLEXPORT EN_deletenode(EN_Project p, int index, int actionCode)
         hashtable_update(net->NodeHashTable, net->Node[i].ID, i);
     }
 
-    // Remove references to demands & source in last (inactive) Node array entry
-    net->Node[net->Nnodes].D = NULL;
-    net->Node[net->Nnodes].S = NULL;
-    net->Node[net->Nnodes].Comment = NULL;
-
     // If deleted node is a tank, remove it from the Tank array
     if (nodeType != EN_JUNCTION)
     {
@@ -2208,16 +2203,16 @@ int DLLEXPORT EN_getnodevalue(EN_Project p, int index, int property, double *val
         if (Node[index].Type != TANK) return 0;
         v = Tank[index - nJuncs].CanOverflow;
         break;
-        
+
     case EN_DEMANDDEFICIT:
         if (index > nJuncs) return 0;
         // After an analysis, DemandFlow contains node's required demand
         // while NodeDemand contains delivered demand + emitter flow
         if (hyd->DemandFlow[index] < 0.0) return 0;
-        v = (hyd->DemandFlow[index] - 
+        v = (hyd->DemandFlow[index] -
             (hyd->NodeDemand[index] - hyd->EmitterFlow[index])) * Ucf[FLOW];
         break;
-        
+
     default:
         return 251;
     }
@@ -2440,7 +2435,7 @@ int DLLEXPORT EN_setnodevalue(EN_Project p, int index, int property, double valu
         vTmp = Tank[j].Vmax;                           // old max. volume
         Tank[j].Vmax = tankvolume(p, j, Tank[j].Hmax); // new max. volume
         Tank[j].V1max *= Tank[j].Vmax / vTmp;          // new mix zone volume
-        Tank[j].A = (curve->Y[n] - curve->Y[0]) /      // nominal area 
+        Tank[j].A = (curve->Y[n] - curve->Y[0]) /      // nominal area
             (curve->X[n] - curve->X[0]);
         break;
 
@@ -3261,7 +3256,6 @@ int DLLEXPORT EN_deletelink(EN_Project p, int index, int actionCode)
 
     // Remove link's comment
     free(net->Link[index].Comment);
-    net->Link[net->Nlinks].Comment = NULL;
 
     // Shift position of higher entries in Link array down one
     for (i = index; i <= net->Nlinks - 1; i++)
@@ -3890,7 +3884,7 @@ int DLLEXPORT EN_setlinkvalue(EN_Project p, int index, int property, double valu
         if (Link[index].Type == PUMP)
         {
             patIndex = ROUND(value);
-            if (patIndex <= 0 || patIndex > net->Npats) return 205;
+            if (patIndex < 0 || patIndex > net->Npats) return 205;
             pumpIndex = findpump(&p->network, index);
             net->Pump[pumpIndex].Upat = patIndex;
         }
@@ -3923,7 +3917,7 @@ int DLLEXPORT EN_setlinkvalue(EN_Project p, int index, int property, double valu
         if (Link[index].Type == PUMP)
         {
             curveIndex = ROUND(value);
-            if (curveIndex <= 0 || curveIndex > net->Ncurves) return 205;
+            if (curveIndex < 0 || curveIndex > net->Ncurves) return 205;
             pumpIndex = findpump(&p->network, index);
             net->Pump[pumpIndex].Ecurve = curveIndex;
         }
@@ -3942,7 +3936,7 @@ int DLLEXPORT EN_setlinkvalue(EN_Project p, int index, int property, double valu
         if (Link[index].Type == PUMP)
         {
             patIndex = ROUND(value);
-            if (patIndex <= 0 || patIndex > net->Npats) return 205;
+            if (patIndex < 0 || patIndex > net->Npats) return 205;
             pumpIndex = findpump(&p->network, index);
             net->Pump[pumpIndex].Epat = patIndex;
         }
@@ -4068,13 +4062,14 @@ int DLLEXPORT EN_setheadcurveindex(EN_Project p, int linkIndex, int curveIndex)
     if (!p->Openflag) return 102;
     if (linkIndex < 1 || linkIndex > net->Nlinks) return 204;
     if (PUMP != net->Link[linkIndex].Type) return 0;
-    if (curveIndex <= 0 || curveIndex > net->Ncurves) return 206;
+    if (curveIndex < 0 || curveIndex > net->Ncurves) return 206;
 
     // Assign the new curve to the pump
     pumpIndex = findpump(net, linkIndex);
     pump = &p->network.Pump[pumpIndex];
     pump->Ptype = NOCURVE;
     pump->Hcurve = curveIndex;
+    if (curveIndex == 0) return 0;
 
     // Update the pump curve's parameters and convert their units
     updatepumpparams(p, pumpIndex);
@@ -5373,7 +5368,7 @@ int DLLEXPORT EN_getelseaction(EN_Project p, int ruleIndex, int actionIndex,
 
   if (ruleIndex < 1 || ruleIndex > p->network.Nrules) return 257;
 
-  actions = p->network.Rule[ruleIndex].ThenActions;
+  actions = p->network.Rule[ruleIndex].ElseActions;
   action = getaction(actions, actionIndex);
   if (action == NULL) return 258;
 
@@ -5401,7 +5396,7 @@ int DLLEXPORT EN_setelseaction(EN_Project p, int ruleIndex, int actionIndex,
 
   if (ruleIndex < 1 || ruleIndex > p->network.Nrules) return 257;
 
-  actions = p->network.Rule[ruleIndex].ThenActions;
+  actions = p->network.Rule[ruleIndex].ElseActions;
   action = getaction(actions, actionIndex);
   if (action == NULL) return 258;
 
