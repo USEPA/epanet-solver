@@ -32,7 +32,7 @@ install(TARGETS runepanet
 
 
 # copy runepanet to build tree for testing
-if(BUILD_TESTING)
+if(BUILD_TESTS)
     add_custom_command(TARGET runepanet POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
             $<TARGET_FILE:runepanet>
