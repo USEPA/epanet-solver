@@ -66,7 +66,7 @@ if(BUILD_PY_LIB)
 
   # exclude legacy epanet 2.0 API and include epanet py API
   list(REMOVE_ITEM EPANET_SRC "epanet2.c")
-  add_library(epanet_py
+  add_library(epanet2
     SHARED
         ${EPANET_PRIVATE_HEADERS}
         ${EPANET_SOURCES}
@@ -75,14 +75,14 @@ if(BUILD_PY_LIB)
     )
 
   include(GenerateExportHeader)
-  GENERATE_EXPORT_HEADER(epanet_py
+  GENERATE_EXPORT_HEADER(epanet2
     BASE_NAME epanet_py
     EXPORT_MACRO_NAME EXPORT_PY_API
     EXPORT_FILE_NAME epanet_py_export.h
     STATIC_DEFINE SHARED_EXPORTS_BUILT_AS_STATIC)
 
   file(COPY ${CMAKE_CURRENT_BINARY_DIR}/epanet_py_export.h
-    DESTINATION ${CURRENT_SOURCE_DIR}/include)
+    DESTINATION ${HEADER_PATH})
 
 # create build target for code coverage
 elseif(BUILD_COVERAGE)

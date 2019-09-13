@@ -63,7 +63,7 @@ set(LIBRARY_DIST "lib")
 set(CONFIG_DIST  "cmake")
 
 
-include(ctest)
+option(BUILD_TESTS "Build component tests (requires Boost)" OFF)
 option(BUILD_DOCS "Build toolkit docs (requires Doxygen)" OFF)
 option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
 option(BUILD_COVERAGE "Build library for coverage" OFF)
@@ -81,7 +81,8 @@ add_subdirectory(src)
 add_subdirectory(src/util)
 add_subdirectory(src/outfile)
 
-if(BUILD_TESTING)
+if(BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
