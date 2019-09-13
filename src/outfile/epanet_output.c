@@ -28,8 +28,7 @@
 //   The Output API functions provide a convenient way to select "slices" of
 //   data from the output file. As such they return arrays of data. The API
 //   functions automatically allocate memory for the array to be returned. The
-//   caller is responsible for deallocating memory. The function ENR_free() is
-//   provided for that purpose.
+//   caller is responsible for deallocating memory using ENR_freeMemory().
 //
 //-----------------------------------------------------------------------------
 
