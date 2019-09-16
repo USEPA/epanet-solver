@@ -38,7 +38,7 @@
 /**
 @brief EPANET Output file handle
 */
-typedef void *ENR_Handle;
+typedef struct Handle *ENR_Handle;
 
 
 #include "epanet_output_enums.h"
@@ -51,12 +51,20 @@ extern "C" {
 
 
 /**
-@brief Initializes pointer to output handle.
-@param[out] p_handle an EPANET output handle that gets passed into
+@brief Creates output handle.
+@param[out] *p_handle an EPANET output handle that gets passed into
 all other Output API functions.
 @return an error code -- 0 on success or -1 on failure
 */
-int EXPORT_OUT_API ENR_init(ENR_Handle *p_handle);
+int EXPORT_OUT_API ENR_createHandle(ENR_Handle *p_handle);
+
+
+/**
+@brief Deletes output handle.
+@param[in] p_handle an EPANET output handle.
+@return an error code -- 0 on success or -1 on failure
+*/
+int EXPORT_OUT_API ENR_deleteHandle(ENR_Handle p_handle);
 
 
 /**
@@ -65,7 +73,7 @@ int EXPORT_OUT_API ENR_init(ENR_Handle *p_handle);
 @param path the name of the binary output file to be opened.
 @return an error code
 */
-int EXPORT_OUT_API ENR_open(ENR_Handle p_handle, const char *path);
+int EXPORT_OUT_API ENR_openFile(ENR_Handle p_handle, const char *path);
 
 
 /**
@@ -285,15 +293,14 @@ int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
 @param p_handle an EPANET output handle
 @return an error code -- 0 on success or -1 on failure
 */
-int EXPORT_OUT_API ENR_close(ENR_Handle *p_handle);
+int EXPORT_OUT_API ENR_closeFile(ENR_Handle p_handle);
 
 
 /**
 @brief Free memory allocated by API call.
 @param array the memory to be freed.
-@return an error code
 */
-void EXPORT_OUT_API ENR_free(void **array);
+void EXPORT_OUT_API ENR_freeMemory(void *memory);
 
 
 /**

@@ -1,57 +1,61 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet-output library
-#
-# Created: March 9, 2018
-# Author: Michael E. Tryby
-#         US EPA ORD/NRMRL
+# CMakeLists.txt - CMake configuration file for src/outfile
 #
 
 
-# Sets for output directory for executables and libraries.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-
-set(CMAKE_C_VISIBILITY_PRESET hidden)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-
+# configure file groups
 set(EPANET_OUT_PUBLIC_HEADERS
     include/epanet_output.h
     include/epanet_output_enums.h
     include/epanet_output_export.h
     )
 
+set(EPANET_OUT_PRIVATE_HEADERS
+    ../util/errormanager.h
+    ../util/filemanager.h
+    ../util/cstr_helper.h
+    )
+
+set(EPANET_OUT_SOURCES
+    epanet_output.c
+    ../util/errormanager.c
+    ../util/filemanager.c
+    ../util/cstr_helper.c
+    )
+
+source_group("Library"
+    FILES
+        ${EPANET_OUT_PRIVATE_HEADERS}
+        ${EPANET_OUT_SOURCES}
+    )
 
 # the binary output file API
 add_library(epanet-output
     SHARED
-        src/epanet_output.c
-        $<TARGET_OBJECTS:util_objs>
+        ${EPANET_OUT_PRIVATE_HEADERS}
+        ${EPANET_OUT_SOURCES}
     )
 
 target_include_directories(epanet-output
+    PRIVATE
+        "${PROJECT_SOURCE_DIR}/src"
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
-    PRIVATE
-        ${CMAKE_SOURCE_DIR}/src/
-    )
 
+    )
 
 include(GenerateExportHeader)
 generate_export_header(epanet-output
-  BASE_NAME epanet_output
-  EXPORT_MACRO_NAME EXPORT_OUT_API
-  EXPORT_FILE_NAME epanet_output_export.h
-  STATIC_DEFINE SHARED_EXPORTS_BUILT_AS_STATIC)
+    BASE_NAME epanet_output
+    EXPORT_MACRO_NAME EXPORT_OUT_API
+    EXPORT_FILE_NAME epanet_output_export.h
+    STATIC_DEFINE SHARED_EXPORTS_BUILT_AS_STATIC
+    )
 
-file(COPY ${CMAKE_CURRENT_BINARY_DIR}/epanet_output_export.h DESTINATION
-  ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
+file(COPY ${CMAKE_CURRENT_BINARY_DIR}/epanet_output_export.h
+    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
 
 
 install(TARGETS epanet-output EXPORT epanet-outputTargets
@@ -62,3 +66,13 @@ install(TARGETS epanet-output EXPORT epanet-outputTargets
     )
 
 install(FILES ${EPANET_OUT_PUBLIC_HEADERS} DESTINATION "${INCLUDE_DIST}")
+
+
+# copy epanet-output to build tree for testing
+if(BUILD_TESTS)
+    add_custom_command(TARGET epanet-output POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:epanet-output>
+            ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:epanet-output>
+        )
+endif()

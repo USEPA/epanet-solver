@@ -1,36 +1,41 @@
-# EPANET COMMAND LINE EXECUTABLE
-cmake_minimum_required (VERSION 2.8.8)
-
-
-# Sets for output directory for executables and libraries.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-# Sets the position independent code property for all targets.
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+#
+# CMakeLists.txt - CMake configuration file for /run
+#
 
 
 # Set up file groups for exe target
-set(EPANET_CLI_SOURCES main.c)
-include_directories(include)
-
-source_group("CLI" FILES ${EPANET_CLI_SOURCES})
+source_group("CLI" FILES main.c)
 
 
 # Creates the EPANET command line executable
-add_executable(runepanet ${EPANET_CLI_SOURCES})
+add_executable(runepanet
+    main.c
+    )
 if(NOT WIN32)
-    target_link_libraries(runepanet LINK_PUBLIC epanet2 m)
-else(NOT WIN32)
-    target_link_libraries(runepanet LINK_PUBLIC epanet2)
-endif(NOT WIN32)
+    target_link_libraries(runepanet
+        LINK_PUBLIC
+            epanet2
+            m
+        )
+else()
+    target_link_libraries(runepanet
+        LINK_PUBLIC
+            epanet2
+        )
+endif()
 
 
 
 install(TARGETS runepanet
-    EXPORT
-        epanet2Targets
-    RUNTIME DESTINATION
-        "${TOOL_DIST}" COMPONENT bin
-    )
+    EXPORT epanet2Targets
+    RUNTIME DESTINATION  "${TOOL_DIST}" COMPONENT bin)
+
+
+# copy runepanet to build tree for testing
+if(BUILD_TESTS)
+    add_custom_command(TARGET runepanet POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:runepanet>
+            ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:runepanet>
+        )
+endif()

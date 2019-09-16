@@ -74,17 +74,21 @@ boost::test_tools::predicate_result check_string(std::string test, std::string r
 BOOST_AUTO_TEST_SUITE (test_output_auto)
 
 BOOST_AUTO_TEST_CASE(OpenCloseTest) {
+    int error;
     std::string path = std::string(DATA_PATH_OUTPUT);
-
 	ENR_Handle p_handle = NULL;
-    ENR_init(&p_handle);
 
-    int error = ENR_open(p_handle, path.c_str());
+    error = ENR_createHandle(&p_handle);
     BOOST_REQUIRE(error == 0);
 
-    error = ENR_close(&p_handle);
+    error = ENR_openFile(p_handle, path.c_str());
     BOOST_REQUIRE(error == 0);
-    BOOST_CHECK(p_handle == NULL);
+
+    error = ENR_closeFile(p_handle);
+    BOOST_REQUIRE(error == 0);
+
+    error = ENR_deleteHandle(p_handle);
+    BOOST_REQUIRE(error == 0);
 }
 
 
@@ -136,16 +140,16 @@ struct FixtureOutput{
     FixtureOutput() {
         path = std::string(DATA_PATH_OUTPUT);
 
-        error = ENR_init(&p_handle);
-        ENR_clearError(p_handle);
-        error = ENR_open(p_handle, path.c_str());
+        ENR_createHandle(&p_handle);
+        ENR_openFile(p_handle, path.c_str());
 
         array = NULL;
         array_dim = 0;
     }
     ~FixtureOutput() {
-        free((void*)array);
-        error = ENR_close(&p_handle);
+        ENR_freeMemory(array);
+        ENR_closeFile(p_handle);
+        ENR_deleteHandle(p_handle);
     }
 
     std::string path;
@@ -174,7 +178,7 @@ BOOST_FIXTURE_TEST_CASE(test_getNetSize, FixtureOutput)
 
     BOOST_CHECK_EQUAL_COLLECTIONS(ref.begin(), ref.end(), test.begin(), test.end());
 
-    free((void*)i_array);
+    ENR_freeMemory(i_array);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_getUnits, FixtureOutput) {
@@ -197,7 +201,7 @@ BOOST_FIXTURE_TEST_CASE(test_getElementName, FixtureOutput) {
     std::string ref ("10");
     BOOST_CHECK(check_string(test, ref));
 
-    free((void *)name);
+    ENR_freeMemory(name);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_getNodeAttribute, FixtureOutput) {
