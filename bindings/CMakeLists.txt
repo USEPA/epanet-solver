@@ -1,4 +1,6 @@
-
+#
+# CMakeLists.txt - CMake configuration file for epanet/bindings
+#
 
 
 # Create install for bindings

@@ -1,4 +1,6 @@
-
+#
+# CMakeLists.txt - CMake configuration file for tests/solver
+#
 
 
 set(toolkit_test_srcs

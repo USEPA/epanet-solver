@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for /src
+# CMakeLists.txt - CMake configuration file for epanet/solver
 #
 
 

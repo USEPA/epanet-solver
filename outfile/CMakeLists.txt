@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for src/outfile
+# CMakeLists.txt - CMake configuration file for epanet/outfile
 #
 
 

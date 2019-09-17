@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for /tests
+# CMakeLists.txt - CMake configuration file for epanet/tests
 #
 
 

@@ -1,11 +1,6 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet/doc
 #
-# Created: August 16, 2019
-#
-# Author: Michael E. Tryby
-#         US EPA ORD/NRMRL
-#
 
 
 find_package(Doxygen)

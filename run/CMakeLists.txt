@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for /run
+# CMakeLists.txt - CMake configuration file for epanet/run
 #
 
 

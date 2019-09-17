@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet-solver
+# CMakeLists.txt - CMake configuration file for epanet
 #
 # Requirements:
 #   CMake - https://cmake.org/download/
