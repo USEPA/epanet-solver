@@ -167,10 +167,8 @@ install(
 
 
 # copy epanet2 to build tree for testing
-if(BUILD_TESTS)
-    add_custom_command(TARGET epanet2 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-            $<TARGET_FILE:epanet2>
-            ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:epanet2>
-        )
-endif()
+add_custom_command(TARGET epanet2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:epanet2>
+        ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:epanet2>
+    )
