@@ -71,6 +71,7 @@ before_test:
 # run custom test script
 test_script:
   # run unit tests
+  - cd %BUILD_HOME%
   - ctest -C Release --output-on-failure
   # run regression tests
   - cd %EPANET_HOME%
