@@ -16,7 +16,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
 
-#include "util/filemanager.h"
+#include "shared/filemanager.h"
 
 
 #define DATA_PATH_OUTPUT "./example1.out"

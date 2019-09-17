@@ -1,18 +1,18 @@
 #
-# CMakeLists.txt - CMake configuration file for tests/util
+# CMakeLists.txt - CMake configuration file for tests/shared
 #
 
 
 add_executable(test_cstrhelper
     test_cstrhelper.cpp
-    $<TARGET_OBJECTS:util_objs>
+    $<TARGET_OBJECTS:shared_objs>
     )
 
 target_include_directories(test_cstrhelper
     PUBLIC
         ${Boost_INCLUDE_DIRS}
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/
     )
 
 target_link_libraries(test_cstrhelper
@@ -22,12 +22,12 @@ target_link_libraries(test_cstrhelper
 
 add_executable(test_errormanager
     test_errormanager.cpp
-    $<TARGET_OBJECTS:util_objs>
+    $<TARGET_OBJECTS:shared_objs>
     )
 
 target_include_directories(test_errormanager
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/
     )
 
 target_link_libraries(test_errormanager
@@ -37,12 +37,12 @@ target_link_libraries(test_errormanager
 
 add_executable(test_filemanager
     test_filemanager.cpp
-    $<TARGET_OBJECTS:util_objs>
+    $<TARGET_OBJECTS:shared_objs>
     )
 
 target_include_directories(test_filemanager
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/
     )
 
 target_link_libraries(test_filemanager

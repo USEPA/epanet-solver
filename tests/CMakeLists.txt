@@ -16,7 +16,8 @@ include_directories (${Boost_INCLUDE_DIRS})
 
 
 add_subdirectory(outfile)
-add_subdirectory(util)
+add_subdirectory(shared)
+add_subdirectory(solver)
 
 
 # TODO: Bad practice should set specific target compile features instead
@@ -31,31 +32,6 @@ add_executable(test_net_builder
     test_net_builder.cpp
     )
 target_link_libraries(test_net_builder
-    ${Boost_LIBRARIES}
-    epanet2
-    )
-
-
-set(toolkit_test_srcs
-    test_toolkit.cpp
-    test_project.cpp
-    test_hydraulics.cpp
-    test_quality.cpp
-    test_report.cpp
-    test_analysis.cpp
-    test_node.cpp
-    test_demand.cpp
-    test_link.cpp
-#    test_pump.cpp
-    test_pattern.cpp
-    test_curve.cpp
-    test_control.cpp
-    # ADD NEW TESTS TO EXISTING TESTS SUITES
-    )
-add_executable(test_toolkit
-    ${toolkit_test_srcs}
-    )
-target_link_libraries(test_toolkit
     ${Boost_LIBRARIES}
     epanet2
     )
@@ -78,20 +54,21 @@ else()
 endif()
 
 
-set_target_properties(test_net_builder test_toolkit test_reent
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set_target_properties(test_net_builder test_reent
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    )
 
 
 # Setting up tests to run from build tree
 set(TEST_BIN_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>")
 
-add_test(NAME test_net_builder
-    COMMAND "${TEST_BIN_DIRECTORY}/test_net_builder"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
-    )
-
 add_test(NAME test_toolkit
     COMMAND "${TEST_BIN_DIRECTORY}/test_toolkit"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/solver/data
+    )
+
+add_test(NAME test_net_builder
+    COMMAND "${TEST_BIN_DIRECTORY}/test_net_builder"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
     )
 

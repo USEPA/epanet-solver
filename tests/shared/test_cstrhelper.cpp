@@ -16,7 +16,7 @@
 #define BOOST_TEST_MODULE cstr_helper
 #include <boost/test/unit_test.hpp>
 
-#include "util/cstr_helper.h"
+#include "shared/cstr_helper.h"
 
 
 boost::test_tools::predicate_result check_string(std::string test, std::string ref)

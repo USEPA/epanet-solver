@@ -226,7 +226,7 @@ temp/
 
 # Testing Stuff
 nrtestsuite/
-tests/data/
+#tests/data/
 tests/outfile/data/en*
 
 

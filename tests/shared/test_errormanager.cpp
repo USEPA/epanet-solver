@@ -4,7 +4,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "util/errormanager.h"
+#include "shared/errormanager.h"
 
 
 #define MESSAGE_STRING "This is unit testing!"
