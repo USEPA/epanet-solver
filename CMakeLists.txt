@@ -69,6 +69,8 @@ option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
 option(BUILD_COVERAGE "Build library for coverage" OFF)
 
 
+add_subdirectory(bindings)
+
 if(BUILD_DOCS)
   add_subdirectory(doc)
 endif()

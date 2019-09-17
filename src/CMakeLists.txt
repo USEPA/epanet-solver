@@ -115,9 +115,9 @@ else()
         SHARED
             ${EPANET_PRIVATE_HEADERS}
             ${EPANET_SOURCES}
-            ${PROJECT_SOURCE_DIR}/include/epanet2.def
+            ${PROJECT_SOURCE_DIR}/bindings/epanet2.def
         )
-    set_source_files_properties(${PROJECT_SOURCE_DIR}/include/epanet2.def
+    set_source_files_properties(${PROJECT_SOURCE_DIR}/bindings/epanet2.def
         PROPERTIES_HEADER_FILE_ONLY TRUE
         )
 
@@ -161,7 +161,6 @@ install(TARGETS epanet2
 # Need to list files out individually otherwise it won't work
 install(
     FILES
-        "${PROJECT_SOURCE_DIR}/include/epanet2.def"
         "${PROJECT_SOURCE_DIR}/include/epanet2.h"
         "${PROJECT_SOURCE_DIR}/include/epanet2_2.h"
         "${PROJECT_SOURCE_DIR}/include/epanet2_enums.h"
