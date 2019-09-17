@@ -226,8 +226,9 @@ temp/
 
 # Testing Stuff
 nrtestsuite/
-#tests/data/
-tests/outfile/data/en*
+tests/data/
+tests/outfile/data/
+tests/solver/data/
 
 
 #Cmake stuff
