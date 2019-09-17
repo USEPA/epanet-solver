@@ -10,12 +10,9 @@ IF (APPLE)
 ENDIF (APPLE)
 
 
-set(HEADER_PATH
-    "${PROJECT_SOURCE_DIR}/include"
-    )
 set(EPANET_PUBLIC_HEADERS
-    ${HEADER_PATH}/epanet2_2.h
-    ${HEADER_PATH}/epanet2_enums.h
+    include/epanet2_2.h
+    include/epanet2_enums.h
     )
 
 set(EPANET_PRIVATE_HEADERS
@@ -71,7 +68,7 @@ if(BUILD_PY_LIB)
         ${EPANET_PRIVATE_HEADERS}
         ${EPANET_SOURCES}
         epanet_py.c
-        util/errormanager.c
+        ${PROJECT_SOURCE_DIR}/shared/errormanager.c
     )
 
   include(GenerateExportHeader)
@@ -145,15 +142,15 @@ target_link_options(epanet2
 
 target_include_directories(epanet2
     PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
     )
 
 
 install(TARGETS epanet2
     EXPORT epanet2Targets
-    RUNTIME    DESTINATION "${TOOL_DIST}"    COMPONENT bin
-    LIBRARY    DESTINATION "${TOOL_DIST}"    COMPONENT shlib
+    RUNTIME    DESTINATION "${TOOL_DIST}"
+    LIBRARY    DESTINATION "${TOOL_DIST}"
     ARCHIVE    DESTINATION "${LIBRARY_DIST}"
     FRAMEWORK  DESTINATION "${TOOL_DIST}"
     )
@@ -161,9 +158,9 @@ install(TARGETS epanet2
 # Need to list files out individually otherwise it won't work
 install(
     FILES
-        "${PROJECT_SOURCE_DIR}/include/epanet2.h"
-        "${PROJECT_SOURCE_DIR}/include/epanet2_2.h"
-        "${PROJECT_SOURCE_DIR}/include/epanet2_enums.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/epanet2.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/epanet2_2.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/epanet2_enums.h"
     DESTINATION
         "${INCLUDE_DIST}"
     )

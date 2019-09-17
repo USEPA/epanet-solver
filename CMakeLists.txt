@@ -79,9 +79,9 @@ if(NOT BUILD_PY_LIB)
   add_subdirectory(run)
 endif()
 
-add_subdirectory(src)
-add_subdirectory(src/util)
-add_subdirectory(src/outfile)
+add_subdirectory(solver)
+add_subdirectory(shared)
+add_subdirectory(outfile)
 
 if(BUILD_TESTS)
     enable_testing()

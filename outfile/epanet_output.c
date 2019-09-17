@@ -36,8 +36,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "util/errormanager.h"
-#include "util/filemanager.h"
+#include "shared/errormanager.h"
+#include "shared/filemanager.h"
 
 #include "epanet_output.h"
 #include "messages.h"

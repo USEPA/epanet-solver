@@ -10,39 +10,20 @@ set(EPANET_OUT_PUBLIC_HEADERS
     include/epanet_output_export.h
     )
 
-set(EPANET_OUT_PRIVATE_HEADERS
-    ../util/errormanager.h
-    ../util/filemanager.h
-    ../util/cstr_helper.h
-    )
-
-set(EPANET_OUT_SOURCES
-    epanet_output.c
-    ../util/errormanager.c
-    ../util/filemanager.c
-    ../util/cstr_helper.c
-    )
-
-source_group("Library"
-    FILES
-        ${EPANET_OUT_PRIVATE_HEADERS}
-        ${EPANET_OUT_SOURCES}
-    )
 
 # the binary output file API
 add_library(epanet-output
     SHARED
-        ${EPANET_OUT_PRIVATE_HEADERS}
-        ${EPANET_OUT_SOURCES}
+        epanet_output.c
+        $<TARGET_OBJECTS:shared_objs>
     )
 
 target_include_directories(epanet-output
-    PRIVATE
-        "${PROJECT_SOURCE_DIR}/src"
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
-
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/
     )
 
 include(GenerateExportHeader)
