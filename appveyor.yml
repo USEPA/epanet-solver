@@ -1,11 +1,7 @@
 #
 #  appveyor.yml - Appveyor CI configuration for OWA EPANET
 #
-#  Date created: 01/09/2018
-#
-#  Author: Michael E. Tryby
-#          US EPA - ORD/NRMRL
-#
+
 
 version: 2.0.{build}
 
@@ -63,10 +59,9 @@ before_build:
 
 # run custom build script
 build_script:
-  - cmake --build . --config Release
+  - cmake --build . --config Release --target install
 
 after_build:
-  - cmake --build . --config Release --target install
   - cpack
 
 before_test:
@@ -76,7 +71,6 @@ before_test:
 # run custom test script
 test_script:
   # run unit tests
-  - cd %BUILD_HOME%\tests
   - ctest -C Release --output-on-failure
   # run regression tests
   - cd %EPANET_HOME%
