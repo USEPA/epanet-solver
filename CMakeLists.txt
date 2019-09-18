@@ -94,7 +94,7 @@ install(
     FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
         "${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes2_2.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes.md"
     DESTINATION
         "./"
     )
