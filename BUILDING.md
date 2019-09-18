@@ -6,15 +6,9 @@ The project's `CMake` configuration file (`CMakeLists.txt`) is located in its ro
 ```
 mkdir build
 cd build
-cmake ..
+cmake -G "Visual Studio 15 2017" ..
 cmake --build . --config Release
 ```
-Note: Use `cmake -G "Visual Studio 15 2017 Win64" ..` as the third command for a 64-bit build on Windows.
+Note: Use `-G "Visual Studio 15 2017 Win64" ..` as the third command for a 64-bit build on Windows.
 
-Under Windows the resulting EPANET toolkit library `epanet2.dll` and its command line executable `runepanet.exe` will be in the `build\bin\Release` directory. The `build\lib\Release` directory contains an `epanet2.lib` file which is needed to build C/C++ applications using the Windows version of the library. For Linux and Mac OS the EPANET toolkit shared library `libepanet2.so` appears in the `build/lib` directory and the command line executable `runepanet` is in the `build/bin` directory. 
-
-As an alternative to using `CMake` for a Windows build, two one-click-build scripts are included in the `win_build` directory:
-1. `Makefile2.bat`: this script requires both `CMake` and the build tools for Visual Studio (available from [https://visualstudio.microsoft.com/downloads/](https://visualstudio.microsoft.com/downloads/) be installed on your machine. It can be executed from any command prompt window. The Community version of Visual Studio will work just fine. This script was tested with both Visual Studio 2017 and 2019.
-2. `Makefile.bat`: this build script uses only Visual Studio commands and does not require `CMake`. It is  compatible with both Visual Studio 2010 and 2017 and should be executed from a Visual Studio x86 Native Tools command prompt window.
- 
-Both scripts will build the EPANET library and the command line executable for the 32 and 64 bit Windows platforms, placing them in the `win_build\32bit` and `win_build\64bit` directories, respectively.
+Under Windows the resulting EPANET toolkit library `epanet2.dll` and its command line executable `runepanet.exe` will be in the `build\bin\Release` directory. The `build\lib\Release` directory contains an `epanet2.lib` file which is needed to build C/C++ applications using the Windows version of the library. For Linux and Mac OS the EPANET toolkit shared library `libepanet2.so` appears in the `build/lib` directory and the command line executable `runepanet` is in the `build/bin` directory.

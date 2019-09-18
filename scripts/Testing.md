@@ -26,7 +26,7 @@ Before the project can be built and tested the required dependencies must be ins
       - curl
       - 7z
 
-Once Python is installed, the following command installs the required packages for regression testing.
+Once Python is present, the following command installs the required packages for regression testing.
 ```
 \> cd epanet
 \epanet>pip install -r scripts\requirements-appveyor.txt
