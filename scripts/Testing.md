@@ -17,7 +17,7 @@ Before the project can be built and tested the required dependencies must be ins
 
 **Summary of Build Dependencies: Windows**
 
-  - Build and Test
+  - Build
       - Build Tools for Visual Studio 2017
       - CMake 3.13
 
