@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for /run
+# CMakeLists.txt - CMake configuration file for epanet/run
 #
 
 
@@ -32,10 +32,8 @@ install(TARGETS runepanet
 
 
 # copy runepanet to build tree for testing
-if(BUILD_TESTS)
-    add_custom_command(TARGET runepanet POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-            $<TARGET_FILE:runepanet>
-            ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:runepanet>
-        )
-endif()
+add_custom_command(TARGET runepanet POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:runepanet>
+        ${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>/$<TARGET_FILE_NAME:runepanet>
+    )

@@ -225,14 +225,15 @@ temp/
 .pydevproject
 
 # Testing Stuff
-nrtestsuite/
+nrtests/
 tests/data/
-tests/outfile/data/en*
+tests/outfile/data/
+tests/solver/data/
 
 
 #Cmake stuff
 __cmake_systeminformation/
-buildprod*/
+build/
 *_export.h
 
 

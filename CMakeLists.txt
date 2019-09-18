@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet-solver
+# CMakeLists.txt - CMake configuration file for epanet
 #
 # Requirements:
 #   CMake - https://cmake.org/download/
@@ -69,6 +69,8 @@ option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
 option(BUILD_COVERAGE "Build library for coverage" OFF)
 
 
+add_subdirectory(bindings)
+
 if(BUILD_DOCS)
   add_subdirectory(doc)
 endif()
@@ -77,9 +79,9 @@ if(NOT BUILD_PY_LIB)
   add_subdirectory(run)
 endif()
 
-add_subdirectory(src)
-add_subdirectory(src/util)
-add_subdirectory(src/outfile)
+add_subdirectory(solver)
+add_subdirectory(shared)
+add_subdirectory(outfile)
 
 if(BUILD_TESTS)
     enable_testing()
@@ -92,7 +94,7 @@ install(
     FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
         "${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes2_2.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes.md"
     DESTINATION
         "./"
     )
