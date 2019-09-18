@@ -1,48 +1,57 @@
 ::
 ::  make.cmd - builds epanet
 ::
-:: Requires:
+::  Date Created: 9/18/2019
+::  Date Updated:
+::
+::  Author: Michael E. Tryby
+::          US EPA - ORD/NRMRL
+::
+::  Requires:
 ::    Build Tools for Visual Studio download:
 ::      https://visualstudio.microsoft.com/downloads/
 ::
 ::    CMake download:
 ::      https://cmake.org/download/
 ::
-:: Optional Arguments:
+::  Environment Variables:
+::    BUILD_HOME - defaults to build
+::
+::  Optional Arguments:
 ::    1 - ("GENERATOR") defaults to "Visual Studio 15 2017"
-::
-::
-:: Note:
-::    This script must be located at the root of the project folder
-::    in order to work properly.
 ::
 
 ::echo off
+setlocal EnableDelayedExpansion
+
+
 echo INFO: Building epanet  ...
 
 set "BUILD_HOME=build"
 
 
-:: Determine project path and strip trailing \ from path
-set "PROJECT_PATH=%~dp0"
-if %PROJECT_PATH:~-1%==\ ( set "PROJECT_PATH=%PROJECT_PATH:~0,-1%" )
-
+:: determine project directory
+set "CUR_DIR=%CD%"
+set "SCRIPT_HOME=%~dp0"
+cd %SCRIPT_HOME%
+cd ..
 
 :: check for requirements
 where cmake > nul
-if %ERRORLEVEL% NEQ 0 echo cmake not installed & exit /B 1
+if %ERRORLEVEL% NEQ 0 ( echo cmake not installed & exit /B 1 )
 
 
-:: Process optional arguments
+:: process args
 if [%1]==[] ( set "GENERATOR=Visual Studio 15 2017"
 ) else ( set "GENERATOR=%~1" )
 
 
 :: if generator has changed delete the build folder
-if exist BUILD_HOME (
+if exist %BUILD_HOME% (
   for /F "tokens=*" %%f in ( 'findstr CMAKE_GENERATOR:INTERNAL %BUILD_HOME%\CmakeCache.txt' ) do (
     for /F "delims=:= tokens=3" %%m in ( 'echo %%f' ) do (
-      if "%%m" NEQ "%GENERATOR%" ( rmdir /s /q %BUILD_HOME% & mkdir %BUILD_HOME% )
+      set CACHE_GEN=%%m
+      if not "!CACHE_GEN!" == "!GENERATOR!" ( rmdir /s /q %BUILD_HOME% & mkdir %BUILD_HOME% )
     )
   )
 ) else ( mkdir %BUILD_HOME% )
@@ -56,5 +65,5 @@ cmake --build . --config Release --target package
 move epanet-solver*.zip %PROJECT_PATH%
 
 
-:: return to project root
-cd %PROJECT_PATH%
+:: return to users current dir
+cd %CUR_DIR%

@@ -2,7 +2,7 @@
 ::  before-test.cmd - Stages test and benchmark files for epanet nrtest
 ::
 ::  Date Created: 4/3/2018
-::  Date Updated: 9/3/2019
+::  Date Updated: 9/18/2019
 ::
 ::  Author: Michael E. Tryby
 ::          US EPA - ORD/NRMRL
@@ -12,8 +12,8 @@
 ::    7z
 ::
 ::  Environment Variables:
-::    BUILD_HOME - relative path
-::    TEST_HOME  - relative path
+::    BUILD_HOME - defaults to "build"
+::    TEST_HOME  - defaults to "nrtests"
 ::
 ::  Arguments:
 ::    1 - (RELEASE_TAG) release tag for benchmark version (defaults to latest tag)
@@ -35,11 +35,10 @@ if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
 
 
 :: determine project directory
+set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
-pushd ..
-set PROJ_DIR=%CD%
-
+cd ..
 
 :: set URL to github repo with test files
 set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
@@ -50,8 +49,8 @@ if [%1] == [] (set "RELEASE_TAG="
 
 
 :: check BUILD_HOME and TEST_HOME and apply defaults
-if not defined BUILD_HOME ( set "BUILD_HOME=buildprod" )
-if not defined TEST_HOME ( set "TEST_HOME=nrtestsuite" )
+if not defined BUILD_HOME ( set "BUILD_HOME=build" )
+if not defined TEST_HOME ( set "TEST_HOME=nrtests" )
 
 
 :: if not already defined determine platform from CmakeCache.txt file
@@ -111,5 +110,5 @@ if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined"
 :: set up symlinks for tests directory
 mklink /D .\tests .\epanet-nrtests-%RELEASE_TAG:~1%\public > nul
 
-:: return to project home
-cd ..
+:: return to users current directory
+cd %CUR_DIR%

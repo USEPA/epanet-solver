@@ -2,7 +2,7 @@
 ::  run_nrtest.cmd - Runs numerical regression test
 ::
 ::  Date Created: 1/8/2018
-::  Date Updated: 7/18/2019
+::  Date Updated: 9/18/2019
 ::
 ::  Author: Michael E. Tryby
 ::          US EPA - ORD/NRMRL
@@ -33,6 +33,7 @@ if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID must be defined" & exit 
 
 
 :: determine project directory
+set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -62,7 +63,7 @@ if not exist apps\epanet-%SUT_BUILD_ID%.json (
 set TESTS=
 for /F "tokens=*" %%T in ('dir /b /s /a:d tests') do (
   set FULL_PATH=%%T
-  set TESTS=!TESTS! !FULL_PATH:*nrtestsuite\=!
+  set TESTS=!TESTS! !FULL_PATH:*%TEST_HOME%\=!
 )
 
 
@@ -106,3 +107,6 @@ echo.
 echo INFO: Comparing SUT artifacts to REF %REF_BUILD_ID%
 set NRTEST_COMMAND=%NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
 %NRTEST_COMMAND%
+
+:: Return user to their current dir
+cd %CUR_DIR%
