@@ -101,7 +101,7 @@ Element count array contents:
   4. values
 
 This function allocates memory for the element count array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getNetSize(ENR_Handle p_handle, int **count, int *size);
 
@@ -137,7 +137,7 @@ int EXPORT_OUT_API ENR_getTimes(ENR_Handle p_handle, ENR_Time code, int *value);
 @return an error code
 
 This function allocates memory for the element name string. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getElementName(ENR_Handle p_handle, ENR_ElementType type,
     int index, char **name, int *length);
@@ -162,7 +162,7 @@ Energy usage statistics:
   5. cost/day
 
 This function allocates memory for the energy usage array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getEnergyUsage(ENR_Handle p_handle, int pumpIndex,
     int *linkIndex, float **values, int *size);
@@ -183,7 +183,7 @@ Average reaction rates and souce mass values:
   3. source
 
 This function allocates memory for the network reaction array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **values, int *size);
 
@@ -200,7 +200,7 @@ int EXPORT_OUT_API ENR_getNetReacts(ENR_Handle p_handle, float **values, int *si
 @return an error code
 
 This function allocates memory for the node attribute series. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int index, ENR_NodeAttribute attr,
     int startPeriod, int endPeriod, float **series, int *length);
@@ -218,7 +218,7 @@ int EXPORT_OUT_API ENR_getNodeSeries(ENR_Handle p_handle, int index, ENR_NodeAtt
 @return an error code
 
 This function allocates memory for the link attribute series. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int index, ENR_LinkAttribute attr,
     int startPeriod, int endPeriod, float **series, int *length);
@@ -234,7 +234,7 @@ int EXPORT_OUT_API ENR_getLinkSeries(ENR_Handle p_handle, int index, ENR_LinkAtt
 @return an error code
 
 This function allocates memory for the node attribute array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
     ENR_NodeAttribute attr, float **values, int *size);
@@ -250,7 +250,7 @@ int EXPORT_OUT_API ENR_getNodeAttribute(ENR_Handle p_handle, int periodIndex,
 @return an error code
 
 This function allocates memory for the link attribute array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
     ENR_LinkAttribute attr, float **values, int *size);
@@ -266,7 +266,7 @@ int EXPORT_OUT_API ENR_getLinkAttribute(ENR_Handle p_handle, int periodIndex,
 @return an error code
 
 This function allocates memory for the node result array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
     int nodeIndex, float **values, int *size);
@@ -282,7 +282,7 @@ int EXPORT_OUT_API ENR_getNodeResult(ENR_Handle p_handle, int periodIndex,
 @return an error code
 
 This function allocates memory for the link result array. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_getLinkResult(ENR_Handle p_handle, int periodIndex,
     int linkIndex, float **values, int *size);
@@ -298,7 +298,7 @@ int EXPORT_OUT_API ENR_closeFile(ENR_Handle p_handle);
 
 /**
 @brief Free memory allocated by API call.
-@param array the memory to be freed.
+@param memory the memory to be freed.
 */
 void EXPORT_OUT_API ENR_freeMemory(void *memory);
 
@@ -317,7 +317,7 @@ void EXPORT_OUT_API ENR_clearError(ENR_Handle p_handle);
 @return the current error code
 
 This function allocates memory for the message buffer. The caller is
-responsible for freeing it using ::ENR_free.
+responsible for freeing it using ::ENR_freeMemory.
 */
 int EXPORT_OUT_API ENR_checkError(ENR_Handle p_handle, char **msg_buffer);
 
