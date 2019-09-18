@@ -47,7 +47,7 @@ init:
 install:
   - set "PATH=%PYTHON%;%PYTHON%\Scripts;%PYTHON%\Library/bin;%path%"
   - "%PYTHON%\\python.exe --version"
-  - "%PYTHON%\\python.exe -m pip install -r tools\\requirements-appveyor.txt"
+  - "%PYTHON%\\python.exe -m pip install -r scripts\\requirements-appveyor.txt"
 
 # called before build
 before_build:
@@ -66,7 +66,7 @@ after_build:
 
 before_test:
   - cd %EPANET_HOME%
-  - tools\before-nrtest.cmd
+  - scripts\before-nrtest.cmd
 
 # run custom test script
 test_script:
@@ -75,7 +75,7 @@ test_script:
   - ctest -C Release --output-on-failure
   # run regression tests
   - cd %EPANET_HOME%
-  - tools\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
+  - scripts\run-nrtest.cmd %APPVEYOR_REPO_COMMIT% %SUT_BUILD_ID%
 
 on_success:
   - cd %TEST_HOME%\benchmark
