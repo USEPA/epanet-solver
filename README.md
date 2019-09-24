@@ -14,11 +14,11 @@ This is the official EPANET source code repository maintained by the United Stat
 Intended Audience
 -----------------
 The intended audience for this repository can be divided roughly into two groups:
- 
+
  - Programmers interested in water distribution system modeling
  - Engineers working on water distribution system modeling interested in programming
- 
-EPANET has an active open source software community including consulting engineers, students, researchers, software companies, professional organizations, other interested members of the public, and EPA partners. An Open Source EPANET Initiative at http://community.wateranalytics.org has released source code for an EPANET engine version 2.1 that included community sourced bug fixes and they are working on additional releases with new feature requests. Others are encouraged to fork EPANET and develop a great new feature to share with the community. 
+
+EPANET has an active open source software community including consulting engineers, students, researchers, software companies, professional organizations, other interested members of the public, and EPA partners. An Open Source EPANET Initiative at http://community.wateranalytics.org has released source code for an EPANET engine version 2.1 that included community sourced bug fixes and they are working on additional releases with new feature requests. Others are encouraged to fork EPANET and develop a great new feature to share with the community.
 
 License
 -------------
@@ -30,11 +30,11 @@ Information on how to contribute to the development of EPANET can be found in th
 
 Find Out More
 -------------
-More information on the purpose, capabilities, and applications of EPANET can be found at the official [EPANET Website](http://www2.epa.gov/water-research/epanet). In addition, the source code distributed here and a user interface as well as extensions to EPANET are available for download. 
+More information on the purpose, capabilities, and applications of EPANET can be found at the official [EPANET Website](http://www2.epa.gov/water-research/epanet). In addition, the source code distributed here and a user interface as well as extensions to EPANET are available for download.
 
 Documentation
 -------------
-EPANET's user manual is available for download from the official [EPANET Website](http://www2.epa.gov/water-research/epanet). 
+EPANET's user manual is available for download from the official [EPANET Website](http://www2.epa.gov/water-research/epanet).
 
 Contact
 ------------------
