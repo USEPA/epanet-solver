@@ -25,6 +25,10 @@
 setlocal EnableDelayedExpansion
 
 
+:: Check for requirements
+where python > nul
+if %ERRORLEVEL% neq 0 ( echo "ERROR: python not installed" & exit /B 1 )
+
 :: Check that required environment variables are set
 if not defined BUILD_HOME ( echo "ERROR: BUILD_HOME must be defined" & exit /B 1 )
 if not defined TEST_HOME ( echo "ERROR: TEST_HOME must be defined" & exit /B 1 )
@@ -40,8 +44,9 @@ pushd ..
 set PROJ_DIR=%CD%
 popd
 
-
 cd %PROJ_DIR%\%TEST_HOME%
+if %ERRORLEVEL% neq 0 ( echo "ERROR: can't change to %TEST_HOME% dir" & exit /B 1 )
+
 
 :: Process optional arguments
 if [%1]==[] (set "SUT_VERSION=unknown"

@@ -38,7 +38,7 @@ cd ..
 
 :: check for requirements
 where cmake > nul
-if %ERRORLEVEL% NEQ 0 ( echo cmake not installed & exit /B 1 )
+if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
 
 
 :: process args
