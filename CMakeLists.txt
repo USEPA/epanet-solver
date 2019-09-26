@@ -5,7 +5,7 @@
 #   CMake - https://cmake.org/download/
 #
 # Build Options:
-#   BUILD_TESTING  = ON/OFF
+#   BUILD_TESTS  = ON/OFF
 #   BUILD_DOCS     = ON/OFF
 #   BUILD_PY_LIB   = ON/OFF
 #   BUILD_COVERAGE = ON/OFF
@@ -20,9 +20,9 @@
 #   clean
 #
 # Generic Invocation:
-#   cmake -E make_directory buildprod
-#   cmake -G"Visual Studio 15 2017" ./buildprod
-#   cmake --build ./buildprod --config Release --target some_target
+#   cmake -E make_directory build
+#   cmake -G"Visual Studio 15 2017" ./build
+#   cmake --build ./build --config Release --target some_target
 #
 # More information:
 #   cmake docs - https://cmake.org/documentation
