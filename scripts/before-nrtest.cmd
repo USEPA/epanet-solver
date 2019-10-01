@@ -29,9 +29,9 @@
 
 :: check that dependencies are installed
 where curl > nul
-if %ERRORLEVEL% neq 0 ( echo curl not installed & exit /B 1 )
+if %ERRORLEVEL% neq 0 ( echo "ERROR: curl not installed" & exit /B 1 )
 where 7z > nul
-if %ERRORLEVEL% neq 0 ( echo 7zip not installed & exit /B 1 )
+if %ERRORLEVEL% neq 0 ( echo "ERROR: 7zip not installed" & exit /B 1 )
 
 
 :: determine project directory
@@ -84,6 +84,7 @@ if defined RELEASE_TAG (
 :: create a clean directory for staging regression tests
 if exist %TEST_HOME% (
   rmdir /s /q %TEST_HOME%
+  if %ERRORLEVEL% NEQ 0 ( echo "ERROR: Unable to clean %TEST_HOME% dir" & exit /B 1 )
 )
 mkdir %TEST_HOME%
 cd %TEST_HOME%
