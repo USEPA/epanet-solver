@@ -173,12 +173,12 @@ int readdata(Project *pr)
     net->Ncontrols = 0;
     net->Nrules = 0;
 
-    // Patterns & Curves were created previously in netsize() 
+    // Patterns & Curves were created previously in netsize()
     parser->MaxPats = net->Npats;
     parser->MaxCurves = net->Ncurves;
     parser->PrevPat = NULL;
     parser->PrevCurve = NULL;
-    
+
     // Initialize full line comment, input data section and error count
     parser->LineComment[0] = '\0';
     sect = -1;
@@ -659,8 +659,8 @@ int match(const char *str, const char *substr)
         if (str[i] != ' ') break;
     }
 
-    // Check if substr matches remainder of str
-    for (j = 0; substr[j]; i++, j++)
+    // Checking first five chars or less, match substr to remainder of str 
+    for (j = 0; substr[j] && j < 5; i++, j++)
     {
         if (!str[i] || UCHAR(str[i]) != UCHAR(substr[j])) return 0;
     }
