@@ -18,16 +18,17 @@
 ::    BUILD_HOME - defaults to build
 ::
 ::  Optional Arguments:
-::    1 - ("GENERATOR") defaults to "Visual Studio 15 2017"
+::    /g ("GENERATOR") defaults to "Visual Studio 15 2017"
+::    /t builds and runs unit tests
 ::
 
 ::echo off
 setlocal EnableDelayedExpansion
 
 
-echo INFO: Building epanet  ...
-
-set "BUILD_HOME=build"
+:: check for requirements
+where cmake > nul
+if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
 
 
 :: determine project directory
@@ -36,14 +37,31 @@ set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 cd ..
 
-:: check for requirements
-where cmake > nul
-if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
 
+echo INFO: Building epanet  ...
+
+:: set defaults
+set "BUILD_HOME=build"
+set "GENERATOR=Visual Studio 15 2017"
+set "TESTING=0"
+
+:: process arguments
+:loop
+if NOT [%1]==[] (
+  if "%1"=="/g" (
+    set "GENERATOR=%~2"
+    shift
+  )
+  if "%1"=="/t" (
+    set "TESTING=1"
+  )
+  shift
+  goto :loop
+)
 
 :: process args
-if [%1]==[] ( set "GENERATOR=Visual Studio 15 2017"
-) else ( set "GENERATOR=%~1" )
+::if [%1]==[] ( set "GENERATOR=Visual Studio 15 2017"
+::) else ( set "GENERATOR=%~1" )
 
 
 :: if generator has changed delete the build folder
@@ -54,15 +72,23 @@ if exist %BUILD_HOME% (
       if not "!CACHE_GEN!" == "!GENERATOR!" ( rmdir /s /q %BUILD_HOME% & mkdir %BUILD_HOME% )
     )
   )
-) else ( mkdir %BUILD_HOME% )
+) else (
+  mkdir %BUILD_HOME%^
+  & if %ERRORLEVEL% NEQ 0 ( echo "ERROR: unable to make %BUILD_HOME% dir" & exit /B 1 )
+)
 
+
+:: perform the build
 cd %BUILD_HOME%
-cmake -G"%GENERATOR%" -DBUILD_TESTS=OFF ..
-
-:: perform build
-cmake --build . --config Release --target package
-
-move epanet-solver*.zip %PROJECT_PATH%
+if %TESTING% EQU 1 (
+  cmake -G"%GENERATOR%" -DBUILD_TESTS=ON -DBOOST_ROOT=C:\local\boost_1_67_0 ..^
+  && cmake --build . --config Debug^
+  & echo. && ctest -C Debug --output-on-failure
+) else (
+  cmake -G"%GENERATOR%" -DBUILD_TESTS=OFF ..^
+  && cmake --build . --config Release --target package^
+  && move epanet-solver*.zip %PROJECT_PATH%
+)
 
 
 :: return to users current dir

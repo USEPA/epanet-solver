@@ -86,6 +86,7 @@ if exist %TEST_HOME% (
   rmdir /s /q %TEST_HOME%
 )
 mkdir %TEST_HOME%
+if %ERRORLEVEL% NEQ 0 ( echo "ERROR: unable to make %TEST_HOME% dir" & exit /B 1 )
 cd %TEST_HOME%
 
 
