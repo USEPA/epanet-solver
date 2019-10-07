@@ -84,7 +84,6 @@ if defined RELEASE_TAG (
 :: create a clean directory for staging regression tests
 if exist %TEST_HOME% (
   rmdir /s /q %TEST_HOME%
-  if %ERRORLEVEL% NEQ 0 ( echo "ERROR: Unable to clean %TEST_HOME% dir" & exit /B 1 )
 )
 mkdir %TEST_HOME%
 cd %TEST_HOME%
