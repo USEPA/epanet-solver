@@ -53,12 +53,10 @@ if not defined BUILD_HOME ( set "BUILD_HOME=build" )
 if not defined TEST_HOME ( set "TEST_HOME=nrtests" )
 
 
-:: if not already defined determine platform from CmakeCache.txt file
-if [%PLATFORM%]==[] (
-  for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do (
-    for /F "delims=: tokens=3" %%m in ( 'echo %%f' ) do (
-      if "%%m" == "X86" ( set "PLATFORM=win32" ) else if "%%m" == "x64" ( set "PLATFORM=win64" )
-    )
+:: determine platform from CmakeCache.txt file
+for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do (
+  for /F "delims=: tokens=3" %%m in ( 'echo %%f' ) do (
+    if "%%m" == "X86" ( set "PLATFORM=win32" ) else if "%%m" == "x64" ( set "PLATFORM=win64" )
   )
 )
 if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit /B 1 )
