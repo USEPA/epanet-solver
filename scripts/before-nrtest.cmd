@@ -2,7 +2,7 @@
 ::  before-test.cmd - Stages test and benchmark files for epanet nrtest
 ::
 ::  Date Created: 4/3/2018
-::  Date Updated: 9/18/2019
+::  Date Updated: 10/9/2019
 ::
 ::  Author: Michael E. Tryby
 ::          US EPA - ORD/NRMRL
@@ -14,6 +14,7 @@
 ::  Environment Variables:
 ::    BUILD_HOME - defaults to "build"
 ::    TEST_HOME  - defaults to "nrtests"
+::    PLATFORM
 ::
 ::  Arguments:
 ::    1 - (RELEASE_TAG) release tag for benchmark version (defaults to latest tag)
@@ -26,6 +27,14 @@
 
 ::@echo off
 
+:: determine project directory
+set "CUR_DIR=%CD%"
+set "SCRIPT_HOME=%~dp0"
+cd %SCRIPT_HOME%
+cd ..
+
+setlocal
+
 
 :: check that dependencies are installed
 where curl > nul
@@ -33,12 +42,6 @@ if %ERRORLEVEL% neq 0 ( echo "ERROR: curl not installed" & exit /B 1 )
 where 7z > nul
 if %ERRORLEVEL% neq 0 ( echo "ERROR: 7zip not installed" & exit /B 1 )
 
-
-:: determine project directory
-set "CUR_DIR=%CD%"
-set "SCRIPT_HOME=%~dp0"
-cd %SCRIPT_HOME%
-cd ..
 
 :: set URL to github repo with test files
 set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
@@ -51,16 +54,7 @@ if [%1] == [] (set "RELEASE_TAG="
 :: check BUILD_HOME and TEST_HOME and apply defaults
 if not defined BUILD_HOME ( set "BUILD_HOME=build" )
 if not defined TEST_HOME ( set "TEST_HOME=nrtests" )
-
-
-:: determine platform from CmakeCache.txt file
-for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do (
-  for /F "delims=: tokens=3" %%m in ( 'echo %%f' ) do (
-    if "%%m" == "X86" ( set "PLATFORM=win32" ) else if "%%m" == "x64" ( set "PLATFORM=win64" )
-  )
-)
-if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit /B 1 )
-
+if not defined PLATFORM ( echo "ERROR: PLATFORM must be defined" & exit /B 1 )
 
 
 echo INFO: Staging files for regression testing
@@ -99,15 +93,19 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 7z e benchmark.zip -o. manifest.json -r > nul
 
 
+:: set up symlinks for tests directory
+mklink /D .\tests .\epanet-nrtests-%RELEASE_TAG:~1%\public > nul
+
+
+endlocal
+
+
 :: determine REF_BUILD_ID from manifest file
-for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% manifest.json' ) do (
+for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.json' ) do (
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
 )
 if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined" & exit /B 1 )
 
-
-:: set up symlinks for tests directory
-mklink /D .\tests .\epanet-nrtests-%RELEASE_TAG:~1%\public > nul
 
 :: return to users current directory
 cd %CUR_DIR%

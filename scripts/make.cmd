@@ -2,7 +2,7 @@
 ::  make.cmd - builds epanet
 ::
 ::  Date Created: 9/18/2019
-::  Date Updated:
+::  Date Updated: 10/9/2019
 ::
 ::  Author: Michael E. Tryby
 ::          US EPA - ORD/NRMRL
@@ -19,17 +19,17 @@
 ::
 ::  Optional Arguments:
 ::    /g ("GENERATOR") defaults to "Visual Studio 15 2017"
-::    /t builds and runs unit tests
+::    /t builds and runs unit tests (requires Boost)
 ::
 
+
 ::echo off
-setlocal EnableDelayedExpansion
 
 
-:: check for requirements
-where cmake > nul
-if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
-
+:: set global defaults
+set "BUILD_HOME=build"
+set "TEST_HOME=nrtests"
+set "PLATFORM=win32"
 
 :: determine project directory
 set "CUR_DIR=%CD%"
@@ -37,11 +37,18 @@ set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 cd ..
 
+:: check for requirements
+where cmake > nul
+if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
+
+
+setlocal EnableDelayedExpansion
+
 
 echo INFO: Building epanet  ...
 
-:: set defaults
-set "BUILD_HOME=build"
+
+:: set local defaults
 set "GENERATOR=Visual Studio 15 2017"
 set "TESTING=0"
 
@@ -89,6 +96,18 @@ if %TESTING% EQU 1 (
   && cmake --build . --config Release --target package^
   && move epanet-solver*.zip %PROJECT_PATH%
 )
+
+
+endlocal
+
+
+:: determine platform from CmakeCache.txt file
+for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do (
+  for /F "delims=: tokens=3" %%m in ( 'echo %%f' ) do (
+    if "%%m" == "X86" ( set "PLATFORM=win32" ) else if "%%m" == "x64" ( set "PLATFORM=win64" )
+  )
+)
+if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit /B 1 )
 
 
 :: return to users current dir
