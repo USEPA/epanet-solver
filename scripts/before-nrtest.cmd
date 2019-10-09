@@ -41,6 +41,7 @@ set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 cd ..
 
+
 :: set URL to github repo with test files
 set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
 

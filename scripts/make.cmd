@@ -22,26 +22,27 @@
 ::    /t builds and runs unit tests (requires Boost)
 ::
 
+
+::echo off
+
+
 :: set global defaults
 set "BUILD_HOME=build"
 set "TEST_HOME=nrtests"
 set "PLATFORM=win32"
-
-
-::echo off
-setlocal EnableDelayedExpansion
-
-
-:: check for requirements
-where cmake > nul
-if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
-
 
 :: determine project directory
 set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 cd ..
+
+:: check for requirements
+where cmake > nul
+if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
+
+
+setlocal EnableDelayedExpansion
 
 
 echo INFO: Building epanet  ...
