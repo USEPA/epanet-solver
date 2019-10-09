@@ -19,7 +19,7 @@
 ::
 ::  Optional Arguments:
 ::    /g ("GENERATOR") defaults to "Visual Studio 15 2017"
-::    /t builds and runs unit tests
+::    /t builds and runs unit tests (requires Boost)
 ::
 
 :: set global defaults
