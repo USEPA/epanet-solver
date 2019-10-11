@@ -15,7 +15,13 @@
 #define CSTR_HELPER_H_
 
 
-#include <stdbool.h>
+#if (_MSC_VER <= 1600)
+  #define bool  int
+  #define true  1
+  #define false 0
+#else
+  #include <stdbool.h>
+#endif
 
 
 #if defined(__cplusplus)
