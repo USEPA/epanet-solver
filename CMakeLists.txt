@@ -7,7 +7,6 @@
 # Build Options:
 #   BUILD_TESTS  = ON/OFF
 #   BUILD_DOCS     = ON/OFF
-#   BUILD_PY_LIB   = ON/OFF
 #   BUILD_COVERAGE = ON/OFF
 #
 # Targets:
@@ -65,7 +64,6 @@ set(CONFIG_DIST  "cmake")
 
 option(BUILD_TESTS "Build component tests (requires Boost)" OFF)
 option(BUILD_DOCS "Build toolkit docs (requires Doxygen)" OFF)
-option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
 option(BUILD_COVERAGE "Build library for coverage" OFF)
 
 
@@ -75,10 +73,7 @@ if(BUILD_DOCS)
   add_subdirectory(doc)
 endif()
 
-if(NOT BUILD_PY_LIB)
-  add_subdirectory(run)
-endif()
-
+add_subdirectory(run)
 add_subdirectory(solver)
 add_subdirectory(shared)
 add_subdirectory(outfile)

@@ -66,10 +66,6 @@ if NOT [%1]==[] (
   goto :loop
 )
 
-:: process args
-::if [%1]==[] ( set "GENERATOR=Visual Studio 15 2017"
-::) else ( set "GENERATOR=%~1" )
-
 
 :: if generator has changed delete the build folder
 if exist %BUILD_HOME% (
