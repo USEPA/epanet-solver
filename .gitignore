@@ -225,7 +225,7 @@ temp/
 .pydevproject
 
 # Testing Stuff
-nrtests/
+nrtests*/
 tests/data/
 tests/outfile/data/
 tests/solver/data/
