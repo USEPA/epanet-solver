@@ -24,6 +24,7 @@ Before the project can be built and tested the required dependencies must be ins
   - Regression Test
       - Python 3.6 64 bit
       - curl
+      - git
       - 7z
 
 Once Python is present, the following command installs the required packages for regression testing.
