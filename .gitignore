@@ -233,7 +233,7 @@ tests/solver/data/
 
 #Cmake stuff
 __cmake_systeminformation/
-build/
+build*/
 *_export.h
 
 
