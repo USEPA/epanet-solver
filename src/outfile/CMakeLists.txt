@@ -23,7 +23,7 @@ target_include_directories(epanet-output
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 include(GenerateExportHeader)
