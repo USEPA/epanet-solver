@@ -18,6 +18,7 @@
 ::      https://www.boost.org/users/download/
 ::
 ::  Environment Variables:
+::    BOOST_ROOT - defaults to C:\local\boost_1_67_0
 ::    BUILD_HOME - defaults to build
 ::
 ::  Optional Arguments:
@@ -69,6 +70,8 @@ if NOT [%1]==[] (
   goto :loop
 )
 
+if not defined BOOST_ROOT ( set "BOOST_ROOT=C:\local\boost_1_67_0" )
+
 
 :: if generator has changed delete the build folder
 if exist %BUILD_HOME% (
@@ -87,7 +90,7 @@ if exist %BUILD_HOME% (
 :: perform the build
 cd %BUILD_HOME%
 if %TESTING% EQU 1 (
-  cmake -G"%GENERATOR%" -DBUILD_TESTS=ON -DBOOST_ROOT=C:\local\boost_1_67_0 ..^
+  cmake -G"%GENERATOR%" -DBUILD_TESTS=ON -DBOOST_ROOT=%BOOST_ROOT% ..^
   && cmake --build . --config Debug^
   & echo. && ctest -C Debug --output-on-failure
 ) else (
