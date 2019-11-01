@@ -94,7 +94,7 @@ install(
         "./"
     )
 
-# Create target import scripts so other cmake projects can use epanet libraries
+# Install target import scripts so other cmake projects can use epanet libraries
 install(
     EXPORT
         epanet2Targets

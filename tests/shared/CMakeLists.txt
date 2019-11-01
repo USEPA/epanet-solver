@@ -12,7 +12,7 @@ target_include_directories(test_cstrhelper
     PUBLIC
         ${Boost_INCLUDE_DIRS}
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 target_link_libraries(test_cstrhelper
@@ -27,7 +27,7 @@ add_executable(test_errormanager
 
 target_include_directories(test_errormanager
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 target_link_libraries(test_errormanager
@@ -42,7 +42,7 @@ add_executable(test_filemanager
 
 target_include_directories(test_filemanager
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 target_link_libraries(test_filemanager
