@@ -47,7 +47,7 @@ IF [%3]==[] ( set "BUILD_ID=unknown"
 
 :: determine version
 for /F "tokens=1" %%v in ( 'git rev-parse --short HEAD' ) do ( set "VERSION=%%v" )
-
+if not defined VERSION ( echo "ERROR: VERSION could not be determined" & exit /B 1 )
 
 echo {
 echo     "name" : "epanet",
