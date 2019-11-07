@@ -17,11 +17,11 @@ set(DOXY_SOURCES
     toolkit-files.dox
     input-file.dox
     toolkit-units.dox
-    ../solver/include/epanet2_2.h
-    ../solver/include/epanet2_enums.h
+    ../src/solver/include/epanet2_2.h
+    ../src/solver/include/epanet2_enums.h
     modules.dox
-    ../outfile/include/epanet_output.h
-    ../outfile/include/epanet_output_enums.h
+    ../src/outfile/include/epanet_output.h
+    ../src/outfile/include/epanet_output_enums.h
     output.dox
     )
 
