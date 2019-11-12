@@ -46,7 +46,7 @@ EXPORTS
     ENgetlinknodes                = _ENgetlinknodes@12                  
     ENsetlinknodes                = _ENsetlinknodes@12                  
     ENgetlinktype                 = _ENgetlinktype@8                    
-    ENgetlinkvalue                = _ENgetlinkvalue@12                  
+    ENgetlinkvalue                = _ENgetlinkvalue@12
     ENgetnodeid                   = _ENgetnodeid@8                      
     ENgetnodeindex                = _ENgetnodeindex@8                   
     ENgetnodetype                 = _ENgetnodetype@8                    
@@ -60,7 +60,8 @@ EXPORTS
     ENgetpremise                  = _ENgetpremise@36
     ENgetpumptype                 = _ENgetpumptype@8
     ENgetqualinfo                 = _ENgetqualinfo@16
-    ENgetqualtype                 = _ENgetqualtype@8                    
+    ENgetqualtype                 = _ENgetqualtype@8
+    ENgetresultindex              = _ENgetresultindex@12    
     ENgetrule                     = _ENgetrule@20
     ENgetruleID                   = _ENgetruleID@8
     ENgetstatistic                = _ENgetstatistic@8
@@ -68,6 +69,8 @@ EXPORTS
     ENgettimeparam                = _ENgettimeparam@8
     ENgettitle                    = _ENgettitle@12    
     ENgetversion                  = _ENgetversion@4
+    ENgetvertex                   = _ENgetvertex@16
+    ENgetvertexcount              = _ENgetvertexcount@8    
     ENinit                        = _ENinit@16
     ENinitH                       = _ENinitH@4                          
     ENinitQ                       = _ENinitQ@4                          
@@ -120,6 +123,7 @@ EXPORTS
     ENsetthenaction               = _ENsetthenaction@20
     ENsettimeparam                = _ENsettimeparam@8
     ENsettitle                    = _ENsettitle@12    
+    ENsetvertices                 = _ENsetvertices@16
     ENsolveH                      = _ENsolveH@0                         
     ENsolveQ                      = _ENsolveQ@0                         
     ENstepQ                       = _ENstepQ@4

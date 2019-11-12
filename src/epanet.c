@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 07/18/2019
+ Last Updated: 11/09/2019
  ******************************************************************************
 */
 
@@ -1066,6 +1066,33 @@ int DLLEXPORT EN_getstatistic(EN_Project p, int type, double *value)
     return 0;
 }
 
+int DLLEXPORT EN_getresultindex(EN_Project p, int type, int index, int *value)
+/*----------------------------------------------------------------
+**  Input:   type = type of object (either EN_NODE or EN_LINK)
+**           index = the object's index
+**  Output:  value = the order in which the object's results were saved
+**  Returns: error code
+**  Purpose: retrieves the order in which a node's or link's results
+**           were saved to an output file.
+**----------------------------------------------------------------
+*/
+{
+    *value = 0;
+    if (!p->Openflag) return 102;
+    if (type == EN_NODE)
+    {
+        if (index <= 0 || index > p->network.Nnodes) return 203;
+        *value = p->network.Node[index].ResultIndex;
+    }
+    else if (type == EN_LINK)
+    {
+        if (index <= 0 || index > p->network.Nlinks) return 204;
+        *value = p->network.Link[index].ResultIndex;
+    }
+    else return 251;
+    return 0;
+}
+
 /********************************************************************
 
     Analysis Options Functions
@@ -1827,6 +1854,7 @@ int DLLEXPORT EN_addnode(EN_Project p, char *id, int nodeType, int *index)
     node->C0 = 0;
     node->Ke = 0;
     node->Rpt = 0;
+    node->ResultIndex = 0;
     node->X = MISSING;
     node->Y = MISSING;
     node->Comment = NULL;
@@ -3210,7 +3238,9 @@ int DLLEXPORT EN_addlink(EN_Project p, char *id, int linkType,
     link->R = 0;
     link->Rc = 0;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = NULL;
+    link->Vertices = NULL;
 
     hashtable_insert(net->LinkHashTable, link->ID, n);
     *index = n;
@@ -3260,8 +3290,9 @@ int DLLEXPORT EN_deletelink(EN_Project p, int index, int actionCode)
     // Remove link from its hash table
     hashtable_delete(net->LinkHashTable, link->ID);
 
-    // Remove link's comment
-    free(net->Link[index].Comment);
+    // Remove link's comment and vertices
+    free(link->Comment);
+    freelinkvertices(link);
 
     // Shift position of higher entries in Link array down one
     for (i = index; i <= net->Nlinks - 1; i++)
@@ -3956,17 +3987,17 @@ int DLLEXPORT EN_setlinkvalue(EN_Project p, int index, int property, double valu
 
 int DLLEXPORT EN_setpipedata(EN_Project p, int index, double length,
                              double diam, double rough, double mloss)
-    /*----------------------------------------------------------------
-    **  Input:   index = pipe link index
-    **           length = pipe length
-    **           diam = pipe diameter
-    **           rough = pipe roughness coefficient
-    **           mloss = minor loss coefficient
-    **  Output:  none
-    **  Returns: error code
-    **  Purpose: sets several properties for a pipe link
-    **----------------------------------------------------------------
-    */
+/*----------------------------------------------------------------
+**  Input:   index = pipe link index
+**           length = pipe length
+**           diam = pipe diameter
+**           rough = pipe roughness coefficient
+**           mloss = minor loss coefficient
+**  Output:  none
+**  Returns: error code
+**  Purpose: sets several properties for a pipe link
+**----------------------------------------------------------------
+*/
 {
     Network *net = &p->network;
 
@@ -3995,6 +4026,96 @@ int DLLEXPORT EN_setpipedata(EN_Project p, int index, double length,
     return 0;
 }
 
+int DLLEXPORT EN_getvertexcount(EN_Project p, int index, int *count)
+/*----------------------------------------------------------------
+**  Input:   index = link index
+**  Output:  count = number of link's vertex points
+**  Returns: error code
+**  Purpose: retrieves number of vertex points in a link
+**----------------------------------------------------------------
+*/
+{
+    Network *net = &p->network;
+    
+    Slink *Link = net->Link;
+    Pvertices vertices;
+    
+    // Check that link exists
+    *count = 0;
+    if (!p->Openflag) return 102;
+    if (index <= 0 || index > net->Nlinks) return 204;
+    
+    // Set count to number of vertices
+    vertices = Link[index].Vertices;
+    if (vertices) *count = vertices->Npts;
+    return 0;
+}    
+
+int DLLEXPORT EN_getvertex(EN_Project p, int index, int vertex, double *x, double *y)
+/*----------------------------------------------------------------
+**  Input:   index = link index
+**           vertex = index of a link vertex point
+**  Output:  x = vertex point's X-coordinate
+**           y = vertex point's Y-coordinate
+**  Returns: error code
+**  Purpose: retrieves the coordinates of a vertex point in a link
+**----------------------------------------------------------------
+*/
+{
+    Network *net = &p->network;
+    
+    Slink *Link = net->Link;
+    Pvertices vertices;
+    
+    // Check that link exists
+    *x = MISSING;
+    *y = MISSING;
+    if (!p->Openflag) return 102;
+    if (index <= 0 || index > net->Nlinks) return 204;
+    
+    // Check that vertex exists
+    vertices = Link[index].Vertices;
+    if (vertices == NULL) return 255;
+    if (vertex <= 0 || vertex > vertices->Npts) return 255;
+    *x = vertices->X[vertex - 1];
+    *y = vertices->Y[vertex - 1];    
+    return 0;
+}
+    
+int DLLEXPORT EN_setvertices(EN_Project p, int index, double *x, double *y, int count)
+/*----------------------------------------------------------------
+**  Input:   index = link index
+**           x = array of X-coordinates for vertex points
+**           y = array of Y-coordinates for vertex points
+**           count = number of vertex points
+**  Returns: error code
+**  Purpose: assigns a set of vertex points to a link
+**----------------------------------------------------------------
+*/
+{
+    Network *net = &p->network;
+    
+    Slink *link;
+    int i;
+    int err = 0;
+    
+    // Check that link exists
+    if (!p->Openflag) return 102;
+    if (index <= 0 || index > net->Nlinks) return 204;
+    link = &net->Link[index];
+
+    // Delete existing set of vertices
+    freelinkvertices(link);
+    
+    // Add each new vertex to the link
+    for (i = 0; i < count; i++)
+    {
+        err = addlinkvertex(link, x[i], y[i]);
+        if (err) break;
+    }
+    if (err) freelinkvertices(link);
+    return err;
+}    
 
 /********************************************************************
 
@@ -4062,6 +4183,9 @@ int DLLEXPORT EN_setheadcurveindex(EN_Project p, int linkIndex, int curveIndex)
 
     double *Ucf = p->Ucf;
     int pumpIndex;
+    int oldCurveIndex;
+    int newCurveType;
+    int err = 0;
     Spump *pump;
 
     // Check for valid parameters
@@ -4070,15 +4194,33 @@ int DLLEXPORT EN_setheadcurveindex(EN_Project p, int linkIndex, int curveIndex)
     if (PUMP != net->Link[linkIndex].Type) return 0;
     if (curveIndex < 0 || curveIndex > net->Ncurves) return 206;
 
-    // Assign the new curve to the pump
+    // Save values that need to be restored in case new curve is invalid
     pumpIndex = findpump(net, linkIndex);
     pump = &p->network.Pump[pumpIndex];
+    oldCurveIndex = pump->Hcurve;
+    newCurveType = p->network.Curve[curveIndex].Type;
+    
+    // Assign the new curve to the pump
     pump->Ptype = NOCURVE;
     pump->Hcurve = curveIndex;
     if (curveIndex == 0) return 0;
-
-    // Update the pump curve's parameters and convert their units
-    updatepumpparams(p, pumpIndex);
+    
+    // Update the pump's head curve parameters (which also changes
+    // the new curve's Type to PUMP_CURVE)
+    err = updatepumpparams(p, pumpIndex);
+    
+    // If the parameter updating failed (new curve was not a valid pump curve)
+    // restore the pump's original curve and its parameters
+    if (err > 0)
+    {
+        p->network.Curve[curveIndex].Type = newCurveType;
+        pump->Ptype = NOCURVE;
+        pump->Hcurve = oldCurveIndex;
+        if (oldCurveIndex == 0) return err;
+        updatepumpparams(p, pumpIndex);
+    }    
+    
+    // Convert the units of the updated pump parameters to feet and cfs
     if (pump->Ptype == POWER_FUNC)
     {
         pump->H0 /= Ucf[HEAD];
@@ -4088,9 +4230,7 @@ int DLLEXPORT EN_setheadcurveindex(EN_Project p, int linkIndex, int curveIndex)
     pump->Qmax /= Ucf[FLOW];
     pump->Hmax /= Ucf[HEAD];
 
-    // Designate the newly assigned curve as being a Pump Curve
-    p->network.Curve[curveIndex].Type = PUMP_CURVE;
-    return 0;
+    return err;
 }
 
 /********************************************************************
@@ -4353,7 +4493,8 @@ int DLLEXPORT EN_setpattern(EN_Project p, int index, double *values, int len)
     // Check for valid arguments
     if (!p->Openflag) return 102;
     if (index <= 0 || index > net->Npats) return 205;
-    if (len <= 0) return 251;
+    if (values == NULL) return 205;
+    if (len <= 0) return 202;
 
     // Re-set number of time periods & reallocate memory for multipliers
     Pattern[index].Length = len;
@@ -4620,7 +4761,9 @@ int DLLEXPORT EN_setcurvevalue(EN_Project p, int curveIndex, int pointIndex,
     // Insert new point into curve
     curve->X[n] = x;
     curve->Y[n] = y;
-    return 0;
+    
+    // Adjust parameters for pumps using curve as a head curve
+    return adjustpumpparams(p, curveIndex);
 }
 
 int DLLEXPORT EN_getcurve(EN_Project p, int index, char *id, int *nPoints,
@@ -4644,6 +4787,7 @@ int DLLEXPORT EN_getcurve(EN_Project p, int index, char *id, int *nPoints,
 
     if (!p->Openflag) return 102;
     if (index <= 0 || index > p->network.Ncurves) return 206;
+    if (xValues == NULL || yValues == NULL) return 206;
     curve = &p->network.Curve[index];
     strncpy(id, curve->ID, MAXID);
     *nPoints = curve->Npts;
@@ -4674,6 +4818,7 @@ int DLLEXPORT EN_setcurve(EN_Project p, int index, double *xValues,
     // Check for valid arguments
     if (!p->Openflag) return 102;
     if (index <= 0 || index > net->Ncurves) return 206;
+    if (xValues == NULL || yValues == NULL) return 206;
     if (nPoints <= 0) return 202;
 
     // Check that x values are increasing
@@ -4690,7 +4835,9 @@ int DLLEXPORT EN_setcurve(EN_Project p, int index, double *xValues,
         curve->X[j] = xValues[j];
         curve->Y[j] = yValues[j];
     }
-    return 0;
+    
+    // Adjust parameters for pumps using curve as a head curve
+    return adjustpumpparams(p, index);
 }
 
 /********************************************************************
@@ -5099,34 +5246,30 @@ int DLLEXPORT EN_getrule(EN_Project p, int index, int *nPremises,
     if (index < 1 || index > net->Nrules) return 257;
     *priority = (double)p->network.Rule[index].priority;
 
-    count = 1;
+    count = 0;
     premise = net->Rule[index].Premises;
-    while (premise->next != NULL)
+    while (premise != NULL)
     {
         count++;
         premise = premise->next;
     }
     *nPremises = count;
 
-    count = 1;
+    count = 0;
     action = net->Rule[index].ThenActions;
-    while (action->next != NULL)
+    while (action != NULL)
     {
         count++;
         action = action->next;
     }
     *nThenActions = count;
 
-    action = net->Rule[index].ElseActions;
     count = 0;
-    if (action != NULL)
+    action = net->Rule[index].ElseActions;
+    while (action != NULL)
     {
-        count = 1;
-        while (action->next != NULL)
-        {
-            count++;
-            action = action->next;
-        }
+        count++;
+        action = action->next;
     }
     *nElseActions = count;
     return 0;

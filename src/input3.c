@@ -7,7 +7,7 @@ Description:  parses network data from a line of an EPANET input file
 Authors:      see AUTHORS
 Copyright:    see AUTHORS
 License:      see LICENSE
-Last Updated: 06/19/2019
+Last Updated: 10/29/2019
 ******************************************************************************
 */
 
@@ -109,6 +109,7 @@ int juncdata(Project *pr)
     node->S = NULL;
     node->Ke = 0.0;
     node->Rpt = 0;
+    node->ResultIndex = 0;
     node->Type = JUNCTION;
     node->Comment = xstrcpy(&node->Comment, parser->Comment, MAXMSG);
 
@@ -222,6 +223,7 @@ int tankdata(Project *pr)
     node->X = MISSING;
     node->Y = MISSING;
     node->Rpt = 0;
+    node->ResultIndex = 0;
     node->El = el;
     node->C0 = 0.0;
     node->S = NULL;
@@ -335,6 +337,7 @@ int pipedata(Project *pr)
     link->Type = type;
     link->Status = status;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = xstrcpy(&link->Comment, parser->Comment, MAXMSG);
     return 0;
 }
@@ -400,6 +403,7 @@ int pumpdata(Project *pr)
     link->Type = PUMP;
     link->Status = OPEN;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = xstrcpy(&link->Comment, parser->Comment, MAXMSG);
     pump->Link = net->Nlinks;
     pump->Ptype = NOCURVE; // NOCURVE is a placeholder
@@ -556,6 +560,7 @@ int valvedata(Project *pr)
     link->Type = type;
     link->Status = status;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = xstrcpy(&link->Comment, parser->Comment, MAXMSG);
     net->Valve[net->Nvalves].Link = net->Nlinks;
     return 0;
@@ -710,6 +715,37 @@ int coordata(Project *pr)
     node->Y = y;
     return 0;
 }
+
+int vertexdata(Project *pr)
+/*
+ **--------------------------------------------------------------
+ **  Input:   none
+ **  Output:  returns error code
+ **  Purpose: processes link vertex data
+ **  Format:
+ **    [VERTICES]
+ **      id  x  y
+ **--------------------------------------------------------------
+ */
+{
+    Network *net = &pr->network;
+    Parser  *parser = &pr->parser;
+
+    int j;
+    double x, y;
+    
+    // Check for valid link ID
+    if (parser->Ntokens < 3) return 201;
+    if ((j = findlink(net, parser->Tok[0])) == 0) return setError(parser, 0, 204);
+
+    // Check for valid coordinate data
+    if (!getfloat(parser->Tok[1], &x)) return setError(parser, 1, 202);
+    if (!getfloat(parser->Tok[2], &y)) return setError(parser, 2, 202);
+
+    // Add to link's list of vertex points
+    return addlinkvertex(&net->Link[j], x, y);
+}
+
 
 int demanddata(Project *pr)
 /*
