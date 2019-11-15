@@ -7,13 +7,14 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 05/24/2019
+ Last Updated: 11/02/2019
  ******************************************************************************
 */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h> 
 
 //*** For the Windows SDK _tempnam function ***//
 #ifdef _WIN32
@@ -172,10 +173,9 @@ int openoutfile(Project *pr)
     // Close output file if already opened
     closeoutfile(pr);
 
-    // If output file name was supplied, then attempt to
-    // open it. Otherwise open a temporary output file.
+    // Try to open binary output file
     pr->outfile.OutFile = fopen(pr->outfile.OutFname, "w+b");
-    if (pr->outfile.OutFile == NULL) errcode = 304;
+    if (pr->outfile.OutFile == NULL) return 304;
 
     // Save basic network data & energy usage results
     ERRCODE(savenetdata(pr));
@@ -362,6 +362,7 @@ int allocdata(Project *pr)
         }
         for (n = 0; n <= pr->parser.MaxLinks; n++)
         {
+            pr->network.Link[n].Vertices = NULL;
             pr->network.Link[n].Comment = NULL;
         }
     }
@@ -408,8 +409,9 @@ void freedata(Project *pr)
     // Free memory for link data
     if (pr->network.Link != NULL)
     {
-        for (j = 0; j <= pr->parser.MaxLinks; j++)
+        for (j = 1; j <= pr->parser.MaxLinks; j++)
         {
+            freelinkvertices(&pr->network.Link[j]);
             free(pr->network.Link[j].Comment);
         }
     }
@@ -535,6 +537,61 @@ void freedemands(Snode *node)
         demand = nextdemand;
     }
     node->D = NULL;
+}
+
+int  addlinkvertex(Slink *link, double x, double y)
+/*----------------------------------------------------------------
+**  Input:   link = pointer to a network link
+**           x = x-coordinate of a new vertex
+**           y = y-coordiante of a new vertex
+**  Returns: an error code
+**  Purpose: adds to a link's collection of vertex points.
+**----------------------------------------------------------------
+*/
+{
+    static int CHUNKSIZE = 5;
+    int n;
+    Pvertices vertices;
+    if (link->Vertices == NULL)
+    {
+        vertices = (struct Svertices *) malloc(sizeof(struct Svertices));
+        if (vertices == NULL) return 101;
+        vertices->Npts = 0;
+        vertices->Capacity = CHUNKSIZE;
+        vertices->X = (double *) calloc(vertices->Capacity, sizeof(double));
+        vertices->Y = (double *) calloc(vertices->Capacity, sizeof(double));
+        link->Vertices = vertices;
+    }
+    vertices = link->Vertices;
+    if (vertices->Npts >= vertices->Capacity)
+    {
+        vertices->Capacity += CHUNKSIZE;
+        vertices->X = realloc(vertices->X, vertices->Capacity * sizeof(double));
+        vertices->Y = realloc(vertices->Y, vertices->Capacity * sizeof(double));
+    }
+    if (vertices->X == NULL || vertices->Y == NULL) return 101;
+    n = vertices->Npts;
+    vertices->X[n] = x;
+    vertices->Y[n] = y;
+    vertices->Npts++;
+    return 0;    
+}
+
+void freelinkvertices(Slink *link)
+/*----------------------------------------------------------------
+**  Input:   vertices = list of link vertex points
+**  Output:  none
+**  Purpose: frees the memory used for a link's list of vertices.
+**----------------------------------------------------------------
+*/
+{
+    if (link->Vertices)
+    {
+        free(link->Vertices->X);
+        free(link->Vertices->Y);
+        free(link->Vertices);
+        link->Vertices = NULL;
+    }
 }
 
 int  buildadjlists(Network *net)
@@ -942,6 +999,48 @@ void adjustcurves(Network *network, int index)
     }
 }
 
+int adjustpumpparams(Project *pr, int curveIndex)
+/*----------------------------------------------------------------
+**  Input:   curveIndex = index of a data curve
+**  Output:  returns an error code
+**  Purpose: updates head curve parameters for pumps using a 
+**           curve whose data have been modified.
+**----------------------------------------------------------------
+*/
+{
+    Network *network = &pr->network;
+
+    double *Ucf = pr->Ucf;
+    int j, err = 0;
+    Spump *pump;
+    
+    // Check each pump
+    for (j = 1; j <= network->Npumps; j++)
+    {
+        // Pump uses curve as head curve
+        pump = &network->Pump[j];
+        if ( curveIndex == pump->Hcurve)
+        {
+            // Update its head curve parameters
+            pump->Ptype = NOCURVE;
+            err = updatepumpparams(pr, curveIndex);
+            if (err > 0) break;
+            
+            // Convert parameters to internal units
+            if (pump->Ptype == POWER_FUNC)
+            {
+                pump->H0 /= Ucf[HEAD];
+                pump->R *= (pow(Ucf[FLOW], pump->N) / Ucf[HEAD]);
+            }
+            pump->Q0 /= Ucf[FLOW];
+            pump->Qmax /= Ucf[FLOW];
+            pump->Hmax /= Ucf[HEAD];
+        }
+    }
+    return err;
+}
+        
+
 int resizecurve(Scurve *curve, int size)
 /*----------------------------------------------------------------
 **  Input:   curve = a data curve object
@@ -1065,11 +1164,12 @@ int namevalid(const char *name)
     return TRUE;
 }
 
-char *getTmpName(char *fname)
+void getTmpName(char *fname)
 //----------------------------------------------------------------
 //  Input:   fname = file name string
-//  Output:  returns pointer to file name
-//  Purpose: creates a temporary file name with path prepended to it.
+//  Output:  an unused file name
+//  Purpose: creates a temporary file name with an "en" prefix
+//           or a blank name if an error occurs.
 //----------------------------------------------------------------
 {
 #ifdef _WIN32
@@ -1078,23 +1178,32 @@ char *getTmpName(char *fname)
 
     // --- use Windows _tempnam function to get a pointer to an
     //     unused file name that begins with "en"
+    strcpy(fname, "");
     name = _tempnam(NULL, "en");
-    if (name == NULL) return NULL;
+    if (name)
+    {
+        // --- copy the file name to fname
+        if (strlen(name) < MAXFNAME) strncpy(fname, name, MAXFNAME);
 
-    // --- copy the file name to fname
-    if (strlen(name) < MAXFNAME) strncpy(fname, name, MAXFNAME);
-    else fname = NULL;
-
-    // --- free the pointer returned by _tempnam
-    if (name) free(name);
-
+        // --- free the pointer returned by _tempnam
+        free(name);
+    }
     // --- for non-Windows systems:
 #else
     // --- use system function mkstemp() to create a temporary file name
+/*    
+    int f = -1;
     strcpy(fname, "enXXXXXX");
-    mkstemp(fname);
+    f = mkstemp(fname);
+    close(f);
+    remove(fname);
+*/
+    strcpy(fname, "enXXXXXX");
+    FILE *f = fdopen(mkstemp(fname), "r");
+    if (f == NULL) strcpy(fname, "");
+    else fclose(f);
+    remove(fname);
 #endif
-    return fname;
 }
 
 char *xstrcpy(char **s1, const char *s2, const size_t n)
@@ -1133,7 +1242,7 @@ char *xstrcpy(char **s1, const char *s2, const size_t n)
     if (n2 > n1) *s1 = realloc(*s1, (n2 + 1) * sizeof(char));
 
     // Copy the source string into the destination string
-    strcpy(*s1, s2);
+    strncpy(*s1, s2, n2+1);
     return *s1;
 }
 

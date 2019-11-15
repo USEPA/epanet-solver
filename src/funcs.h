@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 07/08/2019
+ Last Updated: 11/02/2019
  ******************************************************************************
 */
 #ifndef FUNCS_H
@@ -41,15 +41,19 @@ Pdemand finddemand(Pdemand, int);
 int     adddemand(Snode *, double, int, char *);
 void    freedemands(Snode *);
 
+int     addlinkvertex(Slink *, double, double);
+void    freelinkvertices(Slink *);
+
 void    adjustpatterns(Network *, int);
 void    adjustcurves(Network *, int);
+int     adjustpumpparams(Project *, int);
 int     resizecurve(Scurve *, int);
 
 int     getcomment(Network *, int, int, char *);
 int     setcomment(Network *, int, int, const char *);
 
 int     namevalid(const char *);
-char    *getTmpName(char *);
+void    getTmpName(char *);
 char    *xstrcpy(char **, const char *, const size_t n);
 int     strcomp(const char *, const char *);
 double  interp(int, double [], double [], double);
@@ -101,6 +105,7 @@ int     statusdata(Project *);
 int     reportdata(Project *);
 int     timedata(Project *);
 int     optiondata(Project *);
+int     vertexdata(Project *);
 
 // ------- RULES.C ------------------
 
