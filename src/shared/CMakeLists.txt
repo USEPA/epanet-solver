@@ -1,6 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet/shared
 #
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 
 set(SHARED_SOURCES

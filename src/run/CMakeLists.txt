@@ -1,7 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet/run
 #
-
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 # Set up file groups for exe target
 source_group("CLI" FILES main.c)

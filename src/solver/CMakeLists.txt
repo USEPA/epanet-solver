@@ -1,6 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet/solver
 #
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 
 # TODO: Best practices discourage setting variables directly

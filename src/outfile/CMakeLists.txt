@@ -1,6 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet/outfile
 #
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 
 # configure file groups

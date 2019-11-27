@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 07/08/2019
+ Last Updated: 10/29/2019
  ******************************************************************************
 */
 
@@ -366,6 +366,15 @@ struct Ssource             // Water Quality Source Object
 };
 typedef struct Ssource *Psource; // Pointer to source object
 
+struct Svertices           // Coordinates of a link's vertices
+{
+  double *X;               // array of x-coordinates
+  double *Y;               // array of y-coordinates
+  int    Npts;             // number of vertex points
+  int    Capacity;         // capacity of coordinate arrays
+};
+typedef struct Svertices *Pvertices; // Pointer to a link's vertices
+
 typedef struct             // Node Object
 {
   char     ID[MAXID+1];    // node ID
@@ -377,6 +386,7 @@ typedef struct             // Node Object
   double   C0;             // initial quality
   double   Ke;             // emitter coeff.
   int      Rpt;            // reporting flag
+  int      ResultIndex;    // saved result index
   NodeType Type;           // node type
   char     *Comment;       // node comment
 } Snode;
@@ -396,7 +406,9 @@ typedef struct             // Link Object
   double   Rc;             // reaction coeff.
   LinkType Type;           // link type
   StatusType Status;       // initial status
+  Pvertices  Vertices;     // internal vertex coordinates
   int      Rpt;            // reporting flag
+  int      ResultIndex;    // saved result index
   char     *Comment;       // link comment
 } Slink;
 

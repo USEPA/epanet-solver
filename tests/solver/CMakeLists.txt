@@ -1,7 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for tests/solver
 #
-
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 set(toolkit_test_srcs
     test_toolkit.cpp

@@ -7,7 +7,7 @@ Description:  reads and interprets network data from an EPANET input file
 Authors:      see AUTHORS
 Copyright:    see AUTHORS
 License:      see LICENSE
-Last Updated: 05/15/2019
+Last Updated: 10/29/2019
 ******************************************************************************
 */
 
@@ -330,11 +330,11 @@ int newline(Project *pr, int sect, char *line)
         case _TIMES:       return (timedata(pr));
         case _OPTIONS:     return (optiondata(pr));
         case _COORDS:      return (coordata(pr));
+        case _VERTICES:    return (vertexdata(pr));
 
         // Data in these sections are not used for any computations
         case _LABELS:
         case _TAGS:
-        case _VERTICES:
         case _BACKDROP:
           return (0);
     }
@@ -472,8 +472,10 @@ int addnodeID(Network *net, int n, char *id)
 **--------------------------------------------------------------
 */
 {
-    if (findnode(net,id)) return 215;
-    if (strlen(id) > MAXID) return 252;
+    if (findnode(net,id))
+      return 215;  // duplicate id
+    if (strlen(id) > MAXID)
+      return 252;  // invalid format (too long)
     strncpy(net->Node[n].ID, id, MAXID);
     hashtable_insert(net->NodeHashTable, net->Node[n].ID, n);
     return 0;
@@ -489,8 +491,10 @@ int addlinkID(Network *net, int n, char *id)
 **--------------------------------------------------------------
 */
 {
-    if (findlink(net,id)) return 215;
-    if (strlen(id) > MAXID) return 252;
+    if (findlink(net,id))
+      return 215;  // duplicate id
+    if (strlen(id) > MAXID)
+      return 252; // invalid formt (too long);
     strncpy(net->Link[n].ID, id, MAXID);
     hashtable_insert(net->LinkHashTable, net->Link[n].ID, n);
     return 0;
@@ -659,7 +663,7 @@ int match(const char *str, const char *substr)
         if (str[i] != ' ') break;
     }
 
-    // Checking first five chars or less, match substr to remainder of str 
+    // Checking first five chars or less, match substr to remainder of str
     for (j = 0; substr[j] && j < 5; i++, j++)
     {
         if (!str[i] || UCHAR(str[i]) != UCHAR(substr[j])) return 0;
