@@ -1,8 +1,18 @@
+
+This project utilizes material from https://github.com/OpenWaterAnalytics/EPANET.
+All material created by the AUTHORS is licensed under the MIT License.
+
+This project also contains new work prepared by the United States Government for which domestic copyright protection is not available under 17 USC § 105.
+
+
+Public Domain
+
+Output library, build system, and test framework No Copyright Restrictions 2019 U.S. Federal Government
+
+
 MIT License
 
 Copyright (c) 2019 see AUTHORS, excluding materials in the public domain.
-Output library, build system, and test framework Copyright (c) 2019 U.S. Federal
-Government (in countries where recognized)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
