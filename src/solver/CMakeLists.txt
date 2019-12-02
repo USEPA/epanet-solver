@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet/solver
+# CMakeLists.txt - CMake configuration file for epanet/src/solver
 #
 # Date Created: 9/17/2019
 #

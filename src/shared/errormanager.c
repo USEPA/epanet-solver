@@ -1,15 +1,12 @@
 /*
- ******************************************************************************
- Project:      OWA EPANET
- Version:      2.2
- Module:       util/errormanager.c
- Description:  Provides a simple interface for managing errors
- Authors:      see AUTHORS
- Copyright:    see AUTHORS
- License:      see LICENSE
- Last Updated: 04/02/2019
- ******************************************************************************
-*/
+ *  shared/errormanager.c - Provides a simple interface for managing errors
+ *
+ *  Created on: July 13, 2018
+ *  Updated on: Dec 2, 2019
+ *
+ *  Author:     Michael E. Tryby
+ *              US EPA - ORD/NRMRL
+ */
 
 //#ifdef _WIN32
 //#define _CRTDBG_MAP_ALLOC

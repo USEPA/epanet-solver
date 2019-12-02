@@ -1,15 +1,12 @@
 /*
- ******************************************************************************
- Project:      OWA EPANET
- Version:      2.2
- Module:       util/cstr_helper.h
- Description:  Provides C string helper functions
- Authors:      see AUTHORS
- Copyright:    see AUTHORS
- License:      see LICENSE
- Last Updated: 04/02/2019
- ******************************************************************************
-*/
+ *  shared/cstr_helper.h - Provides C string helper functions
+ *
+ *  Created on: April 2, 2019
+ *  Updated on: Dec 2, 2019
+ *
+ *  Author:     Michael E. Tryby
+ *              US EPA - ORD/NRMRL
+ */
 
 #ifndef CSTR_HELPER_H_
 #define CSTR_HELPER_H_

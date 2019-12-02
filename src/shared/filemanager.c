@@ -1,15 +1,12 @@
 /*
- ******************************************************************************
- Project:      OWA EPANET
- Version:      2.2
- Module:       util/filemanager.c
- Description:  Provides a simple interface for managing files
- Authors:      see AUTHORS
- Copyright:    see AUTHORS
- License:      see LICENSE
- Last Updated: 04/01/2019
- ******************************************************************************
-*/
+ *  shared/filemanager.c - Provides a simple interface for managing files
+ *
+ *  Created on: Mar 28, 2019
+ *  Updated on: Dec 2, 2019
+ *
+ *  Author:     Michael E. Tryby
+ *              US EPA - ORD/NRMRL
+ */
 
 
 // MSVC ONLY

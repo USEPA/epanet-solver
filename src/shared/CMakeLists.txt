@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet/shared
+# CMakeLists.txt - CMake configuration file for epanet/src/shared
 #
 # Date Created: 9/17/2019
 #

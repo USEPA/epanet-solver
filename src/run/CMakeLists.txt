@@ -1,5 +1,5 @@
 #
-# CMakeLists.txt - CMake configuration file for epanet/run
+# CMakeLists.txt - CMake configuration file for epanet/src/run
 #
 # Date Created: 9/17/2019
 #
