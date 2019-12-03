@@ -1,7 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for tests/shared
 #
-
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 add_executable(test_cstrhelper
     test_cstrhelper.cpp

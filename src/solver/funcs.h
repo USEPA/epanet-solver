@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 07/08/2019
+ Last Updated: 11/15/2019
  ******************************************************************************
 */
 #ifndef FUNCS_H
@@ -28,7 +28,7 @@ int     buildadjlists(Network *);
 void    freeadjlists(Network *);
 
 int     incontrols(Project *, int, int);
-int     valvecheck(Project *, int, int, int);
+int     valvecheck(Project *, int, int, int, int);
 int     findnode(Network *, char *);
 int     findlink(Network *, char *);
 int     findtank(Network *, int);
@@ -41,8 +41,12 @@ Pdemand finddemand(Pdemand, int);
 int     adddemand(Snode *, double, int, char *);
 void    freedemands(Snode *);
 
+int     addlinkvertex(Slink *, double, double);
+void    freelinkvertices(Slink *);
+
 void    adjustpatterns(Network *, int);
 void    adjustcurves(Network *, int);
+int     adjustpumpparams(Project *, int);
 int     resizecurve(Scurve *, int);
 
 int     getcomment(Network *, int, int, char *);
@@ -101,6 +105,7 @@ int     statusdata(Project *);
 int     reportdata(Project *);
 int     timedata(Project *);
 int     optiondata(Project *);
+int     vertexdata(Project *);
 
 // ------- RULES.C ------------------
 

@@ -1,6 +1,11 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet
 #
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 # Requirements:
 #   CMake - https://cmake.org/download/
 #
@@ -45,10 +50,6 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # Sets the position independent code property for all targets
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-
-# Searches for and create install rules for vcruntime.dll, msvcp.dll, etc.
-include(InstallRequiredSystemLibraries)
 
 # Sets default install prefix when cmakecache is initialized for first time
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -114,6 +115,8 @@ install(
     )
 
 
+# Searches for and create install rules for vcruntime.dll, msvcp.dll, etc.
+include(InstallRequiredSystemLibraries)
 
 # Configure CPack driven installer package
 set(CPACK_GENERATOR "ZIP")

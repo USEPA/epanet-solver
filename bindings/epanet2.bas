@@ -5,7 +5,7 @@ Attribute VB_Name = "Module1"
 'Declarations of functions in the EPANET PROGRAMMERs TOOLKIT
 '(EPANET2.DLL)
 
-'Last updated on 07/18/2019
+'Last updated on 11/04/2019
 
 ' These are codes used by the DLL functions
 Public Const EN_ELEVATION = 0     ' Node parameters
@@ -239,6 +239,8 @@ Public Const EN_R_IS_OPEN = 1     ' Rule status types
 Public Const EN_R_IS_CLOSED = 2
 Public Const EN_R_IS_ACTIVE = 3
 
+Public Const EN_MISSING As Double = -1.0E10
+
 'These are the external functions that comprise the DLL
 
 'Project Functions
@@ -282,6 +284,7 @@ Public Const EN_R_IS_ACTIVE = 3
  Declare Function ENgetcount Lib "epanet2.dll" (ByVal object As Long, count As Long) As Long
  Declare Function ENgeterror Lib "epanet2.dll" (ByVal errcode As Long, ByVal errmsg As String, ByVal maxLen As Long) As Long
  Declare Function ENgetstatistic Lib "epanet2.dll" (ByVal type_ As Long, ByRef value As Single) As Long
+ Declare Function ENgetresultindex Lib "epanet2.dll" (ByVal type_ As Long, ByVal index As Long, ByRef value As Long) As Long
 
 'Analysis Options Functions
  Declare Function ENgetoption Lib "epanet2.dll" (ByVal option_ As Long, value As Single) As Long
@@ -335,6 +338,9 @@ Public Const EN_R_IS_ACTIVE = 3
  Declare Function ENgetlinkvalue Lib "epanet2.dll" (ByVal index As Long, ByVal property As Long, value As Single) As Long
  Declare Function ENsetlinkvalue Lib "epanet2.dll" (ByVal index As Long, ByVal property As Long, ByVal value As Single) As Long
  Declare Function ENsetpipedata Lib "epanet2.dll" (ByVal index As Long, ByVal length As Single, ByVal diam As Single, ByVal rough As Single, ByVal mloss As Single) As Long
+ Declare Function ENgetvertexcount Lib "epanet2.dll" (ByVal index As Long, count As Long) As Long
+ Declare Function ENgetvertex Lib "epanet2.dll" (ByVal index As Long, ByVal vertex As Long, x As Double, y As Double) As Long
+ Declare Function ENsetvertices Lib "epanet2.dll" (ByVal index As Long, xCoords As Any, yCoords As Any, ByVal count As Long) As Long
 
 'Pump Functions
  Declare Function ENgetheadcurveindex Lib "epanet2.dll" (ByVal linkIndex As Long, curveIndex As Long) As Long

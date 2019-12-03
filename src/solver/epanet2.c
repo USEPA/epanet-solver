@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 05/15/2019
+ Last Updated: 11/02/2019
  ******************************************************************************
 */
 
@@ -226,6 +226,12 @@ int DLLEXPORT ENgetstatistic(int type, EN_API_FLOAT_TYPE *value)
     *value = (EN_API_FLOAT_TYPE)v;
     return errcode;
 }
+
+int DLLEXPORT ENgetresultindex(int type, int index, int *value)
+{
+    return EN_getresultindex(_defaultProject, type, index, value);
+}
+
 
 /********************************************************************
 
@@ -506,6 +512,20 @@ int DLLEXPORT ENsetpipedata(int index, EN_API_FLOAT_TYPE length,
     return EN_setpipedata(_defaultProject, index, length, diam, rough, mloss);
 }
 
+int DLLEXPORT ENgetvertexcount(int index, int *count)
+{
+    return EN_getvertexcount(_defaultProject, index, count);
+}
+    
+int DLLEXPORT ENgetvertex(int index, int vertex, double *x, double *y)
+{
+    return EN_getvertex(_defaultProject, index, vertex, x, y);
+}
+
+int DLLEXPORT ENsetvertices(int index, double *x, double *y, int count)
+{
+    return EN_setvertices(_defaultProject, index, x, y, count);
+}    
 
 /********************************************************************
 
@@ -589,6 +609,7 @@ int DLLEXPORT ENsetpattern(int index, EN_API_FLOAT_TYPE *values, int len)
 {
     double *v = NULL;
     int i, errcode;
+    if (values == NULL) return 206;
     v = (double *)calloc(len, sizeof(double));
     if (v)
     {
@@ -665,6 +686,7 @@ int DLLEXPORT ENgetcurve(int index, char *id, int *nPoints,
     Scurve *curve;
 
     if (index <= 0 || index > net->Ncurves) return 206;
+    if (xValues == NULL || yValues == NULL) return 206;
     curve = &net->Curve[index];
     strncpy(id, curve->ID, MAXID);
     *nPoints = curve->Npts;
@@ -681,7 +703,11 @@ int DLLEXPORT ENsetcurve(int index, EN_API_FLOAT_TYPE *xValues,
 {
     double *xx = NULL;
     double *yy = NULL;
-    int i, errcode;
+    int i, errcode = 0;
+    
+    if (xValues == NULL || yValues == NULL) return 206;
+    if (nPoints < 1) return 202;
+    
     xx = (double *)calloc(nPoints, sizeof(double));
     yy = (double *)calloc(nPoints, sizeof(double));
     if (xx && yy)

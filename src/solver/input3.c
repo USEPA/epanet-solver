@@ -7,7 +7,7 @@ Description:  parses network data from a line of an EPANET input file
 Authors:      see AUTHORS
 Copyright:    see AUTHORS
 License:      see LICENSE
-Last Updated: 06/19/2019
+Last Updated: 11/29/2019
 ******************************************************************************
 */
 
@@ -76,10 +76,11 @@ int juncdata(Project *pr)
     int p = 0;                  // time pattern index
     int n;                      // number of tokens
     int njuncs;                 // number of network junction nodes
-    int err;                    // error code
     double el,                  // elevation
            y = 0.0;             // base demand
     Snode *node;
+
+    int err = 0;
 
     // Add new junction to data base
     n = parser->Ntokens;
@@ -89,7 +90,7 @@ int juncdata(Project *pr)
     njuncs = net->Njuncs;
     err = addnodeID(net, net->Njuncs, parser->Tok[0]);
     if (err) return setError(parser, 0, err);
-    
+
     // Check for valid data
     if (n < 2) return 201;
     if (!getfloat(parser->Tok[1], &el)) return setError(parser, 1, 202);
@@ -109,6 +110,7 @@ int juncdata(Project *pr)
     node->S = NULL;
     node->Ke = 0.0;
     node->Rpt = 0;
+    node->ResultIndex = 0;
     node->Type = JUNCTION;
     node->Comment = xstrcpy(&node->Comment, parser->Comment, MAXMSG);
 
@@ -139,10 +141,10 @@ int tankdata(Project *pr)
 
     int    i,               // Node index
            n,               // # data items
-           err,             // error code
            pattern = 0,     // Time pattern index
            curve = 0,       // Curve index
-           overflow = FALSE;// Overflow indicator    
+           overflow = FALSE;// Overflow indicator
+
     double el = 0.0,        // Elevation
            initlevel = 0.0, // Initial level
            minlevel = 0.0,  // Minimum level
@@ -152,6 +154,8 @@ int tankdata(Project *pr)
            area;            // X-sect. area
     Snode *node;
     Stank *tank;
+
+    int err = 0;
 
     // Add new tank to data base
     n = parser->Ntokens;
@@ -220,6 +224,7 @@ int tankdata(Project *pr)
     node->X = MISSING;
     node->Y = MISSING;
     node->Rpt = 0;
+    node->ResultIndex = 0;
     node->El = el;
     node->C0 = 0.0;
     node->S = NULL;
@@ -269,7 +274,6 @@ int pipedata(Project *pr)
 
     int      j1,               // Start-node index
              j2,               // End-node index
-             err,              // Error code
              n;                // # data items
     double   length,           // Pipe length
              diam,             // Pipe diameter
@@ -278,6 +282,8 @@ int pipedata(Project *pr)
     LinkType type = PIPE;      // Link type
     StatusType status = OPEN;  // Link status
     Slink *link;
+
+    int err = 0;
 
     // Add new pipe to data base
     n = parser->Ntokens;
@@ -333,6 +339,7 @@ int pipedata(Project *pr)
     link->Type = type;
     link->Status = status;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = xstrcpy(&link->Comment, parser->Comment, MAXMSG);
     return 0;
 }
@@ -361,12 +368,13 @@ int pumpdata(Project *pr)
     int    j, m,  // Token array indexes
            j1,    // Start-node index
            j2,    // End-node index
-           err,   // Error code
            n,     // # data items
            c, p;  // Curve & Pattern indexes
     double y;
     Slink *link;
     Spump *pump;
+
+    int err = 0;
 
     /* Add new pump to data base */
     n = parser->Ntokens;
@@ -398,6 +406,7 @@ int pumpdata(Project *pr)
     link->Type = PUMP;
     link->Status = OPEN;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = xstrcpy(&link->Comment, parser->Comment, MAXMSG);
     pump->Link = net->Nlinks;
     pump->Ptype = NOCURVE; // NOCURVE is a placeholder
@@ -475,7 +484,6 @@ int valvedata(Project *pr)
     int c,                     // Curve index
         j1,                    // Start-node index
         j2,                    // End-node index
-        err,                   // Error code
         n;                     // # data items
     char  status = ACTIVE,     // Valve status
           type;                // Valve type
@@ -483,6 +491,8 @@ int valvedata(Project *pr)
            setting,            // Valve setting
            lcoeff = 0.0;       // Minor loss coeff.
     Slink *link;
+
+    int err = 0;
 
     // Add new valve to data base
     n = parser->Ntokens;
@@ -494,18 +504,29 @@ int valvedata(Project *pr)
     if (err) return setError(parser, 0, err);
 
     // Check for valid data
-    if (n < 6) return 201;
-    if ((j1 = findnode(net, parser->Tok[1])) == 0) return setError(parser, 1, 203);
-    if ((j2 = findnode(net, parser->Tok[2])) == 0) return setError(parser, 2, 203);
-    if (j1 == j2) return setError(parser, 0, 222);
+    if (n < 6)
+      return 201;
+    if ((j1 = findnode(net, parser->Tok[1])) == 0)
+      return setError(parser, 1, 203);
+    if ((j2 = findnode(net, parser->Tok[2])) == 0)
+      return setError(parser, 2, 203);
+    if (j1 == j2)
+      return setError(parser, 0, 222);
 
-    if (match(parser->Tok[4], w_PRV))       type = PRV;
-    else if (match(parser->Tok[4], w_PSV))  type = PSV;
-    else if (match(parser->Tok[4], w_PBV))  type = PBV;
-    else if (match(parser->Tok[4], w_FCV))  type = FCV;
-    else if (match(parser->Tok[4], w_TCV))  type = TCV;
-    else if (match(parser->Tok[4], w_GPV))  type = GPV;
-    else return setError(parser, 4, 213);
+    if (match(parser->Tok[4], w_PRV))
+      type = PRV;
+    else if (match(parser->Tok[4], w_PSV))
+      type = PSV;
+    else if (match(parser->Tok[4], w_PBV))
+      type = PBV;
+    else if (match(parser->Tok[4], w_FCV))
+      type = FCV;
+    else if (match(parser->Tok[4], w_TCV))
+      type = TCV;
+    else if (match(parser->Tok[4], w_GPV))
+      type = GPV;
+    else
+      return setError(parser, 4, 213);
 
     if (!getfloat(parser->Tok[3], &diam)) return setError(parser, 3, 202);
     if (diam <= 0.0) return setError(parser, 3, 211);
@@ -523,7 +544,7 @@ int valvedata(Project *pr)
     if (n >= 7 && !getfloat(parser->Tok[6], &lcoeff)) return setError(parser, 6, 202);
 
     // Check for illegal connections
-    if (valvecheck(pr, type, j1, j2))
+    if (valvecheck(pr, net->Nlinks, type, j1, j2))
     {
         if      (j1 > net->Njuncs) return setError(parser, 1, 219);
         else if (j2 > net->Njuncs) return setError(parser, 2, 219);
@@ -543,6 +564,7 @@ int valvedata(Project *pr)
     link->Type = type;
     link->Status = status;
     link->Rpt = 0;
+    link->ResultIndex = 0;
     link->Comment = xstrcpy(&link->Comment, parser->Comment, MAXMSG);
     net->Valve[net->Nvalves].Link = net->Nlinks;
     return 0;
@@ -697,6 +719,37 @@ int coordata(Project *pr)
     node->Y = y;
     return 0;
 }
+
+int vertexdata(Project *pr)
+/*
+ **--------------------------------------------------------------
+ **  Input:   none
+ **  Output:  returns error code
+ **  Purpose: processes link vertex data
+ **  Format:
+ **    [VERTICES]
+ **      id  x  y
+ **--------------------------------------------------------------
+ */
+{
+    Network *net = &pr->network;
+    Parser  *parser = &pr->parser;
+
+    int j;
+    double x, y;
+
+    // Check for valid link ID
+    if (parser->Ntokens < 3) return 201;
+    if ((j = findlink(net, parser->Tok[0])) == 0) return setError(parser, 0, 204);
+
+    // Check for valid coordinate data
+    if (!getfloat(parser->Tok[1], &x)) return setError(parser, 1, 202);
+    if (!getfloat(parser->Tok[2], &y)) return setError(parser, 2, 202);
+
+    // Add to link's list of vertex points
+    return addlinkvertex(&net->Link[j], x, y);
+}
+
 
 int demanddata(Project *pr)
 /*
@@ -1121,9 +1174,6 @@ int reactdata(Project *pr)
     else if (match(parser->Tok[0], w_WALL)) item = 2;
     else if (match(parser->Tok[0], w_TANK)) item = 3;
     else return setError(parser, 0, 213);
-
-    // Save the first link/node ID in the first token
-    strcpy(parser->Tok[0], parser->Tok[1]);
 
     // Case where tank rate coeffs. are being set
     if (item == 3)
