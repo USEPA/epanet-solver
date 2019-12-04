@@ -1,29 +1,37 @@
-# CMakeLists.txt - CMake configuration file for EPANET 2.0
 #
-# CMake is a cross-platform build tool. CMake generates platform native
-# build systems that can be used with your compiler of choice. CMake uses a
-# generator concept to represent different build tooling. CMake automatically
-# detects the platform it is running on and generates the appropriate makefiles
-# for the platform default compiler. Different generators can also be specified.
+# CMakeLists.txt - CMake configuration file for epanet
 #
-# Note: CMake requires that your platform build system and compiler are
-# properly installed. Build using Visual Studio requires msbuild shell.
+# Date Created: 9/17/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
+# Requirements:
+#   CMake - https://cmake.org/download/
 #
 # Build Options:
-#   BUILD_TESTS = ON/OFF
-#   BUILD_PY_LIB = ON/OFF
+#   BUILD_TESTS  = ON/OFF
+#   BUILD_DOCS     = ON/OFF
+#   BUILD_COVERAGE = ON/OFF
+#
+# Targets:
+#   ALL_BUILD  - Builds all targets
+#   ZERO_CHECK - Reruns cmake
+#   RUN_TESTS  - Builds and runs tests
+#   INSTALL    - Stages build artifacts in install dir
+#   PACKAGE    - Creates install package (zip file)
+#   doxygen    - Builds toolkit docs
+#   clean
 #
 # Generic Invocation:
-#   cmake -E make_directory buildprod
-#   cd build
-#   cmake -G GENERATOR -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON ..
-#   cmake --build . --target SOME_TARGET --config Release
+#   cmake -E make_directory build
+#   cmake -G"Visual Studio 15 2017" ./build
+#   cmake --build ./build --config Release --target some_target
 #
 # More information:
-#   cmake --help
+#   cmake docs - https://cmake.org/documentation
 #
-#   CMake is available at https://cmake.org/download/
-#
+
 
 cmake_minimum_required (VERSION 3.13)
 
@@ -43,10 +51,6 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 # Sets the position independent code property for all targets
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-
-# Searches for and create install rules for vcruntime.dll, msvcp.dll, etc.
-include(InstallRequiredSystemLibraries)
-
 # Sets default install prefix when cmakecache is initialized for first time
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "..." FORCE)
@@ -59,36 +63,26 @@ set(LIBRARY_DIST "lib")
 set(CONFIG_DIST  "cmake")
 
 
-option(BUILD_TESTS "Build tests (requires Boost)" OFF)
-option(BUILD_PY_LIB "Build library for Python wrapper" OFF)
+option(BUILD_TESTS "Build component tests (requires Boost)" OFF)
+option(BUILD_DOCS "Build toolkit docs (requires Doxygen)" OFF)
 option(BUILD_COVERAGE "Build library for coverage" OFF)
 
 
-IF (NOT BUILD_PY_LIB)
-  add_subdirectory(run)
-ENDIF (NOT BUILD_PY_LIB)
+add_subdirectory(bindings)
 
-add_subdirectory(src)
-add_subdirectory(src/util)
+if(BUILD_DOCS)
+  add_subdirectory(doc)
+endif()
+
+add_subdirectory(src/run)
+add_subdirectory(src/solver)
+add_subdirectory(src/shared)
 add_subdirectory(src/outfile)
 
-IF (BUILD_TESTS)
-    #Prep ourselves for compiling with boost
-    IF(WIN32)
-        set(Boost_USE_STATIC_LIBS       ON)
-    ELSE(TRUE)
-        set(Boost_USE_STATIC_LIBS       OFF)
-        add_definitions(-DBOOST_ALL_DYN_LINK)
-    ENDIF(WIN32)
-
-    find_package(Boost COMPONENTS unit_test_framework system thread filesystem)
-    include_directories (${Boost_INCLUDE_DIRS})
-
+if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
-    add_subdirectory(tests/outfile)
-    add_subdirectory(tests/util)
-ENDIF (BUILD_TESTS)
+endif()
 
 
 # Install license, authors, releaseNotes
@@ -96,12 +90,12 @@ install(
     FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
         "${CMAKE_CURRENT_SOURCE_DIR}/AUTHORS"
-        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes2_2.md"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes.md"
     DESTINATION
         "./"
     )
 
-# Create target import scripts so other cmake projects can use epanet libraries
+# Install target import scripts so other cmake projects can use epanet libraries
 install(
     EXPORT
         epanet2Targets
@@ -121,6 +115,8 @@ install(
     )
 
 
+# Searches for and create install rules for vcruntime.dll, msvcp.dll, etc.
+include(InstallRequiredSystemLibraries)
 
 # Configure CPack driven installer package
 set(CPACK_GENERATOR "ZIP")

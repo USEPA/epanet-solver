@@ -1,0 +1,27 @@
+
+
+
+/**
+@defgroup OutputGroup Output API
+These function are associated with the EPANET Output Library
+*/
+
+/**
+@defgroup MessageCodes Warnings and Errors
+@ingroup OutputGroup
+
+| Code   | Description                       |
+|--------|---------                          |
+| WARN10 | Warning: model run issued warnings                   |
+|  ||
+| ERR411 | Input Error 411: no memory allocated for results     |
+| ERR412 | Input Error 412: binary file hasn't been opened      |
+| ERR421 | Input Error 421: invalid parameter code              |
+| ERR422 | Input Error 422: reporting period index out of range |
+| ERR423 | Input Error 423: element index out of range          |
+| ERR434 | File Error 434: unable to open binary file           |
+| ERR435 | File Error 435: invalid binary file type             |
+| ERR436 | File Error 436: no results in binary file            |
+| ERRERR | Error: An unknown error has occurred                 |
+
+*/

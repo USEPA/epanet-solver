@@ -137,6 +137,10 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+# Doxygen
+doc/html/
+
+
 # Click-Once directory
 publish/
 
@@ -223,13 +227,13 @@ temp/
 # Testing Stuff
 nrtests*/
 tests/data/
+tests/outfile/data/
 tests/solver/data/
-tests/outfile/data/en*
 
 
 #Cmake stuff
 __cmake_systeminformation/
-buildprod*/
+build*/
 *_export.h
 
 
