@@ -8,22 +8,7 @@
 #
 
 
-<<<<<<< HEAD
-# Sets for output directory for executables and libraries.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-
-set(CMAKE_C_VISIBILITY_PRESET hidden)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-
-=======
 # configure file groups
->>>>>>> 4dd550fc997bf8e2187859c9acdbd98b6d9eb43e
 set(EPANET_OUT_PUBLIC_HEADERS
     include/epanet_output.h
     include/epanet_output_enums.h
