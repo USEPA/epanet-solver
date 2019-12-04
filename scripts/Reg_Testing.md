@@ -2,7 +2,7 @@
    Reg_Testing.md
 
    Created: Sept 4, 2019
-   Updated: Oct 7, 2019
+   Updated: Dec 4, 2019
 
    Author: Michael E. Tryby
            US EPA - ORD/NRMRL
@@ -48,3 +48,7 @@ This command runs regression tests for the local build and compares them to the 
 ```
 \epanet>scripts\before-nrtest.cmd && scripts\run-nrtest.cmd
 ```
+
+
+### More Information
+See [Wiki/Testing System](https://github.com/USEPA/epanet-solver/wiki/Testing-System)

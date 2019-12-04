@@ -2,7 +2,7 @@
    Build.md
 
    Created: Oct 30, 2019
-   Updated:
+   Updated: Dec 4, 2019
 
    Author: Michael E. Tryby
            US EPA - ORD/CESER
@@ -30,3 +30,7 @@ EPANET can be built with one simple command.
 \> cd epanet
 \epanet>scripts\make.cmd
 ```
+
+### More Information
+
+See [Wiki/Build System](https://github.com/USEPA/epanet-solver/wiki/Build-System)
