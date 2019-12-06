@@ -4,10 +4,11 @@
 </p>
 
 
-Water-Distribution-Network-Model
-================================
+epanet-solver
+=============
 
-ORD Water Distribution Network Model (AKA "EPANET")
+(f.k.a "Water-Distribution-Network-Model")
+
 
 Introduction
 ------------
@@ -28,7 +29,7 @@ EPANET has an active open source software community including consulting enginee
 
 License
 -------------
-EPANET is released under the Creative Commons CC0 public domain license. See the LICENSE.txt file.
+EPANET is released under the MIT license. See the LICENSE.txt file.
 
 Contributing to EPANET
 -------------
