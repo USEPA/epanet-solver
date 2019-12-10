@@ -842,7 +842,7 @@ These functions are used to manage a project.
   @param[out] index the index of the newly added node
   @return an error code.
 
-  When a new node is created all of it's properties (see @ref EN_NodeProperty) are set to 0.
+  When a new node is created all of its properties (see @ref EN_NodeProperty) are set to 0.
   */
   int DLLEXPORT EN_addnode(EN_Project ph, char *id, int nodeType, int *index);
 
