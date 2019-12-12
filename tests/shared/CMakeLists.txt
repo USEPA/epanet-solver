@@ -13,8 +13,6 @@ add_executable(test_cstrhelper
     )
 
 target_include_directories(test_cstrhelper
-    PUBLIC
-        ${Boost_INCLUDE_DIRS}
     PRIVATE
         ${CMAKE_SOURCE_DIR}/src
     )
