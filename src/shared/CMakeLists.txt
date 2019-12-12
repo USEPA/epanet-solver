@@ -21,8 +21,3 @@ set(SHARED_HEADERS
     )
 
 add_library(shared_objs OBJECT ${SHARED_SOURCES})
-
-target_include_directories(shared_objs
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-    )
