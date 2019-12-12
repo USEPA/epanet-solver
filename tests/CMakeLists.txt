@@ -44,18 +44,12 @@ target_link_libraries(test_net_builder
 add_executable(test_reent
     test_reent.cpp
     )
-if(MSVC)
-    target_link_libraries(test_reent
-        ${Boost_LIBRARIES}
-        epanet2
-        )
-else()
-    target_link_libraries(test_reent
-        ${Boost_LIBRARIES}
-        pthread
-        epanet2
-        )
-endif()
+
+target_link_libraries(test_reent
+    ${Boost_LIBRARIES}
+    $<$<NOT:$<BOOL:$<C_COMPILER_ID:MSVC>>>:pthread>
+    epanet2
+    )
 
 
 set_target_properties(test_net_builder test_reent
