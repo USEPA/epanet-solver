@@ -105,7 +105,7 @@ endif()
 
 target_compile_options(epanet2
     PUBLIC
-        "$<$<CXX_COMPILER_ID:MSVC>:"
+        "$<$<C_COMPILER_ID:MSVC>:"
             "$<$<CONFIG:Release>:/GL>"
         ">"
     )
@@ -117,7 +117,7 @@ target_compile_definitions(epanet2
 
 target_link_options(epanet2
     PUBLIC
-        "$<$<CXX_COMPILER_ID:MSVC>:"
+        "$<$<C_COMPILER_ID:MSVC>:"
             "$<$<CONFIG:Release>:/LTCG>"
         ">"
     )
@@ -126,6 +126,11 @@ target_include_directories(epanet2
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${INCLUDE_DIST}>
+    )
+
+target_link_libraries(epanet2
+    PUBLIC
+        $<$<NOT:$<BOOL:$<C_COMPILER_ID:MSVC>>>:m>
     )
 
 

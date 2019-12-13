@@ -15,19 +15,11 @@ source_group("CLI" FILES main.c)
 add_executable(runepanet
     main.c
     )
-if(NOT WIN32)
-    target_link_libraries(runepanet
-        LINK_PUBLIC
-            epanet2
-            m
-        )
-else()
-    target_link_libraries(runepanet
-        LINK_PUBLIC
-            epanet2
-        )
-endif()
 
+target_link_libraries(runepanet
+    LINK_PUBLIC
+        epanet2
+    )
 
 
 install(TARGETS runepanet
