@@ -20,7 +20,7 @@
 ::    1 - (RELEASE_TAG) release tag for benchmark version (defaults to latest tag)
 ::
 ::  Note:
-::    Tests and benchmark files are stored in the epanet-nrtests repo.
+::    Tests and benchmark files are stored in the epanet-nrtestsuite repo.
 ::    This script retrieves them using a stable URL associated with a GitHub
 ::    release, stages the files, and sets up the environment for nrtest to run.
 ::
@@ -44,7 +44,7 @@ if %ERRORLEVEL% neq 0 ( echo "ERROR: 7zip not installed" & exit /B 1 )
 
 
 :: set URL to github repo with test files
-set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtests"
+set "EPANET_NRTESTS_URL=https://github.com/michaeltryby/epanet-nrtestsuite"
 
 :: if release tag isn't provided latest tag will be retrieved
 if [%1] == [] (set "RELEASE_TAG="
@@ -94,7 +94,7 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 
 
 :: set up symlinks for tests directory
-mklink /D .\tests .\epanet-nrtests-%RELEASE_TAG:~1%\public > nul
+mklink /D .\tests .\epanet-nrtestsuite-%RELEASE_TAG:~1%\public > nul
 
 
 endlocal
