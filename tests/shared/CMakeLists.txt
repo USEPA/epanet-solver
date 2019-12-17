@@ -1,7 +1,12 @@
 #
 # CMakeLists.txt - CMake configuration file for tests/shared
 #
-
+# Created: 9/17/2019
+# Updated: 12/12/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
 
 add_executable(test_cstrhelper
     test_cstrhelper.cpp
@@ -9,10 +14,8 @@ add_executable(test_cstrhelper
     )
 
 target_include_directories(test_cstrhelper
-    PUBLIC
-        ${Boost_INCLUDE_DIRS}
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 target_link_libraries(test_cstrhelper
@@ -27,7 +30,7 @@ add_executable(test_errormanager
 
 target_include_directories(test_errormanager
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 target_link_libraries(test_errormanager
@@ -42,7 +45,7 @@ add_executable(test_filemanager
 
 target_include_directories(test_filemanager
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/
+        ${CMAKE_SOURCE_DIR}/src
     )
 
 target_link_libraries(test_filemanager

@@ -1,7 +1,13 @@
 #
 # CMakeLists.txt - CMake configuration file for epanet/doc
 #
-
+# Date Created:  8/16/2019
+#
+# Author: Michael E. Tryby
+#         US EPA - ORD/NRMRL
+#
+# Purpose: Create build target for documentation
+#
 
 find_package(Doxygen)
 
@@ -17,11 +23,11 @@ set(DOXY_SOURCES
     toolkit-files.dox
     input-file.dox
     toolkit-units.dox
-    ../solver/include/epanet2_2.h
-    ../solver/include/epanet2_enums.h
+    ../src/solver/include/epanet2_2.h
+    ../src/solver/include/epanet2_enums.h
     modules.dox
-    ../outfile/include/epanet_output.h
-    ../outfile/include/epanet_output_enums.h
+    ../src/outfile/include/epanet_output.h
+    ../src/outfile/include/epanet_output_enums.h
     output.dox
     )
 

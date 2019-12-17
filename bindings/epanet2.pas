@@ -3,7 +3,7 @@ unit epanet2;
 { Declarations of imported procedures from the EPANET PROGRAMMERs TOOLKIT }
 { (EPANET2.DLL) }
 
-{Last updated on 7/18/19}
+{Last updated on 11/12/19}
 
 interface
 
@@ -12,6 +12,7 @@ const
 { These are codes used by the DLL functions }
  EN_MAXID = 31;        { Max. # characters in ID name }
  EN_MAXMSG = 255;      { Max. # characters in strings }
+ EN_MISSING = -1.E10;
 
  EN_ELEVATION  = 0;    { Node parameters }
  EN_BASEDEMAND = 1;
@@ -297,7 +298,8 @@ const
  function  ENsetstatusreport(Code: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetversion(var Version: Integer): Integer; stdcall; external EpanetLib;
  function  ENgeterror(Errcode: Integer; Errmsg: PAnsiChar; MaxLen: Integer): Integer; stdcall; external EpanetLib;
- function  ENgetstatistic(StatType: Integer; var Value: Single): Integer; stdcall; external EpanetLib; 
+ function  ENgetstatistic(StatType: Integer; var Value: Single): Integer; stdcall; external EpanetLib;
+ function  ENgetresultindex(Code: Integer; Index: Integer; var Value: Integer): Integer; stdcall; external EpanetLib; 
 
 {Analysis Options Functions}
  function  ENgetoption(Code: Integer; var Value: Single): Integer; stdcall; external EpanetLib;
@@ -311,7 +313,7 @@ const
  function  ENsetqualtype(QualCode: Integer; ChemName: PAnsiChar; ChemUnits: PAnsiChar; TraceNodeID: PAnsiChar): Integer; stdcall; external EpanetLib;
 
 {Node Functions} 
- function  ENaddnode(ID: PAnsiChar; NodeType: Integer): Integer; stdcall; external EpanetLib;
+ function  ENaddnode(ID: PAnsiChar; NodeType: Integer; var Index: Integer): Integer; stdcall; external EpanetLib;
  function  ENdeletenode(Index: Integer; ActionCode: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetnodeindex(ID: PAnsiChar; var Index: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetnodeid(Index: Integer; ID: PAnsiChar): Integer; stdcall; external EpanetLib;
@@ -328,9 +330,9 @@ const
  function  ENgetdemandmodel(var Model: Integer; var Pmin: Single; var Preq: Single; var Pexp: Single): Integer; stdcall; external EpanetLib;
  function  ENsetdemandmodel(Model: Integer; Pmin: Single; Preq: Single; Pexp: Single): Integer; stdcall; external EpanetLib;
  function  ENgetnumdemands(NodeIndex: Integer; var NumDemands: Integer): Integer; stdcall; external EpanetLib;
- function  ENadddemand(NodeIndex: Integer; BaseDemand: Single; PatIndex: Integer; DemandName: PAnsiChar): Integer; stdcall; external EpanetLib;
+ function  ENadddemand(NodeIndex: Integer; BaseDemand: Single; PatName: PAnsiChar; DemandName: PAnsiChar): Integer; stdcall; external EpanetLib;
  function  ENdeletedemand(NodeIndex: Integer; DemandIndex: Integer): Integer; stdcall; external EpanetLib;
- function  ENgetdemandindex(NodeIndex: Integer; DemandName: PAnsiString; var DemandIndex: Integer): Integer; stdcall; external EpanetLib;
+ function  ENgetdemandindex(NodeIndex: Integer; DemandName: PAnsiChar; var DemandIndex: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetbasedemand(NodeIndex: Integer; DemandIndex: Integer; var BaseDemand: Single): Integer; stdcall; external EpanetLib;
  function  ENsetbasedemand(NodeIndex: Integer; DemandIndex: Integer; BaseDemand: Single): Integer; stdcall; external EpanetLib;
  function  ENgetdemandpattern(NodeIndex: Integer; DemandIndex: Integer; var PatIndex: Integer): Integer; stdcall; external EpanetLib;
@@ -339,7 +341,7 @@ const
  function  ENsetdemandname(NodeIndex: Integer; DemandIndex: Integer; DemandName: PAnsiChar): Integer; stdcall; external EpanetLib;
 
 {Link Functions}
- function  ENaddlink(ID: PAnsiChar; LinkType: Integer; FromNode: PAnsiChar; ToNode: PAnsiChar): Integer; stdcall; external EpanetLib;
+ function  ENaddlink(ID: PAnsiChar; LinkType: Integer; FromNode: PAnsiChar; ToNode: PAnsiChar; var Index: Integer): Integer; stdcall; external EpanetLib;
  function  ENdeletelink(Index: Integer; ActionCode: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetlinkindex(ID: PAnsiChar; var Index: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetlinkid(Index: Integer; ID: PAnsiChar): Integer; stdcall; external EpanetLib;
@@ -352,6 +354,10 @@ const
  function  ENsetlinkvalue(Index: Integer; Code: Integer; Value: Single): Integer; stdcall; external EpanetLib;
  function  ENsetpipedata(Index: Integer; Length: Single; Diam: Single; Rough: Single; Mloss:Single): Integer; stdcall; external EpanetLib;
 
+ function  ENgetvertexcount(Index: Integer; var Count: Integer): Integer; stdcall; external EpanetLib;
+ function  ENgetvertex(Index: Integer; Vertex: Integer; var X: Double; var Y: Double): Integer; stdcall; external EpanetLib;
+ function  ENsetvertices(Index: Integer; var X: Double; var Y: Double; Count: Integer): Integer; stdcall; external EpanetLib;
+ 
 {Pump Functions}
  function  ENgetpumptype(LinkIndex: Integer; var PumpType: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetheadcurveindex(LinkIndex: Integer; var CurveIndex: Integer): Integer; stdcall; external EpanetLib;
@@ -367,7 +373,7 @@ const
  function  ENgetpatternvalue(Index: Integer; Period: Integer; var Value: Single): Integer; stdcall; external EpanetLib;
  function  ENsetpatternvalue(Index: Integer; Period: Integer; Value: Single): Integer; stdcall; external EpanetLib;
  function  ENgetaveragepatternvalue(Index: Integer; var Value: Single): Integer; stdcall; external EpanetLib;
- function  ENsetpattern(Index: Integer; F: array of Single; N: Integer): Integer; stdcall; external EpanetLib;
+ function  ENsetpattern(Index: Integer; var F: Single; N: Integer): Integer; stdcall; external EpanetLib;
            
 {Curve Functions}
  function  ENaddcurve(ID: PAnsiChar): Integer; stdcall; external EpanetLib;
@@ -379,8 +385,8 @@ const
  function  ENgetcurvetype(Index: Integer; var CurveType: Integer): Integer; stdcall; external EpanetLib;
  function  ENgetcurvevalue(CurveIndex: Integer; PointIndex: Integer; var X: Single; var Y: Single): Integer; stdcall; external EpanetLib;
  function  ENsetcurvevalue(CurveIndex: Integer; PointIndex: Integer; X: Single; Y: Single): Integer; stdcall; external EpanetLib;
- function  ENgetcurve(Index: Integer; ID: PAnsiChar; var N: Integer; var X: array of Single; var Y: array of Single): Integer; stdcall; external EpanetLib;
- function  ENsetcurve(Index: Integer; X: array of Single; Y: array of Single; N: Integer): Integer; stdcall; external EpanetLib;
+ function  ENgetcurve(Index: Integer; ID: PAnsiChar; var N: Integer; var X: Single; var Y: Single): Integer; stdcall; external EpanetLib;
+ function  ENsetcurve(Index: Integer; var X: Single; var Y: Single; N: Integer): Integer; stdcall; external EpanetLib;
 
 {Control Functions}
  function  ENaddcontrol(Ctype: Integer; Link: Integer; Setting: Single; Node: Integer; Level: Single; var Index: Integer): Integer; stdcall; external EpanetLib;
@@ -389,11 +395,11 @@ const
  function  ENsetcontrol(Index: Integer; Ctype: Integer; Link: Integer; Setting: Single; Node: Integer; Level: Single): Integer; stdcall; external EpanetLib;
 
  {Rule-Based Control Functions}
- function ENaddrule(Rule: PAnsiString): Integer; stdcall; external EpanetLib;
+ function ENaddrule(Rule: PAnsiChar): Integer; stdcall; external EpanetLib;
  function ENdeleterule(Index: Integer): Integer; stdcall; external EpanetLib;
  function ENgetrule(Index: Integer; var Npremises: Integer; var NthenActions: Integer;
                     var NelseActions: Integer; var Priority: Single): Integer; stdcall; external EpanetLib;
- function ENgetruleID(Index: Integer; ID: PAnsiString): Integer; stdcall; external EpanetLib;
+ function ENgetruleID(Index: Integer; ID: PAnsiChar): Integer; stdcall; external EpanetLib;
  function ENsetrulepriority(Index: Integer; Priority: Single): Integer; stdcall; external EpanetLib;
  function ENgetpremise(RuleIndex: Integer; PremiseIndex: Integer; var LogOp: Integer;
           var ObjType: Integer; var ObjIndex: Integer; var Param: Integer; var RelOp: Integer;

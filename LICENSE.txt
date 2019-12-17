@@ -1,13 +1,36 @@
+
+This project contains original material released as part of EPANET v2.0.12.
+Original material residing in the public domain is unclaimable.
+
+This project also contains new material prepared by the United States
+Government for which domestic copyright protection is not available under 17
+USC § 105.
+
+
+Public Domain
+
+Material original to EPANET v2.0.12 No Copyright Restrictions
+
+Output library, shared objects, build and test systems No Copyright
+Restrictions 2019 U.S. Federal Government
+
+===============================================================================
+
+This project contains material from https://github.com/OpenWaterAnalytics/
+EPANET. All material created by the AUTHORS is released under the MIT License.
+
+
 MIT License
 
-Copyright (c) 2019 see AUTHORS
+Copyright (c) 2016 - 2019 see AUTHORS, excluding material in the public
+domain.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.

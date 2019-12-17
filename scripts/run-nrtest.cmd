@@ -17,13 +17,16 @@
 ::    REF_BUILD_ID
 ::
 ::  Arguments:
-::    1 - (SUT_VERSION)  - optional argument
-::    2 - (SUT_BUILD_ID) - optional argument
+::    1 - (SUT_BUILD_ID) - optional argument
 ::
 
 ::@echo off
 setlocal EnableDelayedExpansion
 
+
+:: Check for requirements
+where python > nul
+if %ERRORLEVEL% neq 0 ( echo "ERROR: python not installed" & exit /B 1 )
 
 :: Check that required environment variables are set
 if not defined BUILD_HOME ( echo "ERROR: BUILD_HOME must be defined" & exit /B 1 )
@@ -40,22 +43,20 @@ pushd ..
 set PROJ_DIR=%CD%
 popd
 
-
 cd %PROJ_DIR%\%TEST_HOME%
+if %ERRORLEVEL% neq 0 ( echo "ERROR: can't change to %TEST_HOME% dir" & exit /B 1 )
+
 
 :: Process optional arguments
-if [%1]==[] (set "SUT_VERSION=unknown"
-) else ( set "SUT_VERSION=%~1" )
-
-if [%2]==[] ( set "SUT_BUILD_ID=local"
-) else ( set "SUT_BUILD_ID=%~2" )
+if [%1]==[] ( set "SUT_BUILD_ID=local"
+) else ( set "SUT_BUILD_ID=%~1" )
 
 
 :: check if app config file exists
 if not exist apps\epanet-%SUT_BUILD_ID%.json (
   mkdir apps
   call %SCRIPT_HOME%\app-config.cmd %PROJ_DIR%\%BUILD_HOME%\bin\Release^
-    %PLATFORM% %SUT_BUILD_ID% %SUT_VERSION% > apps\epanet-%SUT_BUILD_ID%.json
+    %PLATFORM% %SUT_BUILD_ID% > apps\epanet-%SUT_BUILD_ID%.json
 )
 
 
@@ -106,7 +107,7 @@ echo.
 :: perform nrtest compare
 echo INFO: Comparing SUT artifacts to REF %REF_BUILD_ID%
 set NRTEST_COMMAND=%NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
-%NRTEST_COMMAND%
+%NRTEST_COMMAND% || exit /B 1
 
 :: Return user to their current dir
 cd %CUR_DIR%
