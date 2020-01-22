@@ -7,7 +7,7 @@
 epanet-solver
 =============
 
-(f.k.a "Water-Distribution-Network-Model")
+(f.k.a. "Water-Distribution-Network-Model")
 
 
 Introduction
