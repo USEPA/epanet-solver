@@ -30,10 +30,10 @@ jobs:
       BUILD_HOME: build
 
     steps:
-    - name: Checkout repo
+    - name: Checkout epanet-solver repo
       uses: actions/checkout@v2
 
-    - name: Checkout submodule
+    - name: Checkout ci-tools repo
       uses: actions/checkout@v2
       with:
         repository: michaeltryby/ci-tools
@@ -62,10 +62,10 @@ jobs:
       NRTESTS_URL: https://github.com/EPANET-Project/epanet-nrtestsuite
 
     steps:
-    - name: Checkout repo
+    - name: Checkout epanet-solver repo
       uses: actions/checkout@v2
 
-    - name: Checkout submodule
+    - name: Checkout ci-tools repo
       uses: actions/checkout@v2
       with:
         repository: michaeltryby/ci-tools
@@ -80,7 +80,7 @@ jobs:
     - name: Install requirements
       run: |
         python -m pip install --upgrade pip
-        python -m pip install -r requirements-swmm.txt
+        python -m pip install -r requirements-epanet.txt
 
     - name: Build for reg test
       run: make.cmd
