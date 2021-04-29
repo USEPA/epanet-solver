@@ -40,6 +40,9 @@ jobs:
         ref: master
         path: ci-tools
 
+    - name: Install system deps
+      run:  choco install boost-msvc-14.1
+
     - name: Build and unit test
       run: make.cmd /t
 
