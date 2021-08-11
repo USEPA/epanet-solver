@@ -3,11 +3,15 @@
   <img src="https://raw.githubusercontent.com/michaeltryby/epanet-image/master/src/logo.png"/>
 </p>
 
-
 epanet-solver
 =============
 
 (f.k.a. "Water-Distribution-Network-Model")
+
+
+Build Status
+------------
+[![Build and Test](https://github.com/USEPA/epanet-solver/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/USEPA/epanet-solver/actions/workflows/build-and-test.yml)
 
 
 Introduction
