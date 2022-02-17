@@ -1,7 +1,5 @@
+<img src="https://user-images.githubusercontent.com/2470152/154557669-477fddfe-01a5-4c0b-ad81-daa8dd3dfee5.png" title="logo" width="300px" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![epanet](https://user-images.githubusercontent.com/2470152/154557490-747a0ce8-0957-4244-9d07-e11e7e9c323e.gif)
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/michaeltryby/epanet-image/master/src/logo.png"/>
-</p>
 
 epanet-solver
 =============
